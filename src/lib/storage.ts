@@ -85,3 +85,8 @@ export function getOrCreateCardReviewData(
     fsrsCard: createEmptyCard(),
   };
 }
+
+export function clearAllData(): void {
+  localStorage.removeItem(REVIEW_DATA_KEY);
+  localStorage.removeItem(SETTINGS_KEY);
+}

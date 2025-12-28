@@ -16,6 +16,7 @@ import {
   loadSettings,
   saveSettings,
   getOrCreateCardReviewData,
+  clearAllData,
 } from './lib/storage';
 import {
   getSessionCards,
@@ -176,6 +177,21 @@ export default function App() {
     saveSettings(newSettings);
   };
 
+  const handleResetAllData = () => {
+    if (
+      window.confirm(
+        'Are you sure? This will erase all your progress and cannot be undone.'
+      )
+    ) {
+      clearAllData();
+      setReviewStore(loadReviewData());
+      setSettings(loadSettings());
+      setLearningQueue([]);
+      setCurrentIndex(0);
+      setShowSettings(false);
+    }
+  };
+
   const intervals: RatingIntervals = useMemo(() => {
     if (!currentSessionCard) {
       return {
@@ -241,7 +257,7 @@ export default function App() {
       </div>
 
       {showSettings && !practiceMode && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6 w-96">
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6 w-96 space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-slate-300 text-sm">New cards per day:</label>
             <input
@@ -254,6 +270,14 @@ export default function App() {
               }
               className="w-20 bg-slate-700 text-white border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-rose-500"
             />
+          </div>
+          <div className="border-t border-slate-700 pt-4">
+            <button
+              onClick={handleResetAllData}
+              className="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium rounded-lg transition-colors"
+            >
+              Reset All Progress
+            </button>
           </div>
         </div>
       )}
