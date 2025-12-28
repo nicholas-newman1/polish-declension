@@ -1,0 +1,300 @@
+import { useState, useMemo, useCallback } from 'react';
+import { Rating } from 'ts-fsrs';
+import { Flashcard, type RatingIntervals } from './components/Flashcard';
+import cardsData from './data/cards.json';
+import type {
+  Card,
+  Case,
+  Gender,
+  Number,
+  ReviewDataStore,
+  Settings,
+} from './types';
+import {
+  loadReviewData,
+  saveReviewData,
+  loadSettings,
+  saveSettings,
+  getOrCreateCardReviewData,
+} from './lib/storage';
+import {
+  getSessionCards,
+  rateCard,
+  getNextIntervals,
+  type SessionCard,
+} from './lib/scheduler';
+
+const allCards: Card[] = cardsData as Card[];
+
+const CASES: Case[] = [
+  'Nominative',
+  'Genitive',
+  'Dative',
+  'Accusative',
+  'Instrumental',
+  'Locative',
+  'Vocative',
+];
+const GENDERS: Gender[] = ['Masculine', 'Feminine', 'Neuter', 'Pronoun'];
+const NUMBERS: Number[] = ['Singular', 'Plural'];
+
+export default function App() {
+  const [reviewStore, setReviewStore] = useState<ReviewDataStore>(() =>
+    loadReviewData()
+  );
+  const [settings, setSettings] = useState<Settings>(() => loadSettings());
+  const [showSettings, setShowSettings] = useState(false);
+
+  const [caseFilter, setCaseFilter] = useState<Case | 'All'>('All');
+  const [genderFilter, setGenderFilter] = useState<Gender | 'All'>('All');
+  const [numberFilter, setNumberFilter] = useState<Number | 'All'>('All');
+
+  const [learningQueue, setLearningQueue] = useState<SessionCard[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const { sessionQueue, reviewCount, newCount } = useMemo(() => {
+    const filters = {
+      case: caseFilter,
+      gender: genderFilter,
+      number: numberFilter,
+    };
+    const { reviewCards, newCards } = getSessionCards(
+      allCards,
+      reviewStore,
+      filters,
+      settings
+    );
+    return {
+      sessionQueue: [...reviewCards, ...newCards],
+      reviewCount: reviewCards.length,
+      newCount: newCards.length,
+    };
+  }, [caseFilter, genderFilter, numberFilter, reviewStore, settings]);
+
+  const resetSession = useCallback(() => {
+    setLearningQueue([]);
+    setCurrentIndex(0);
+  }, []);
+
+  const checkForNewCards = useCallback(() => {
+    setReviewStore(loadReviewData());
+    setLearningQueue([]);
+    setCurrentIndex(0);
+  }, []);
+
+  const currentSessionCard = sessionQueue[currentIndex] ?? learningQueue[0];
+  const isFinished =
+    currentIndex >= sessionQueue.length && learningQueue.length === 0;
+
+  const handleRate = (rating: Rating) => {
+    if (!currentSessionCard) return;
+
+    const updatedReviewData = rateCard(currentSessionCard.reviewData, rating);
+
+    const newStore = { ...reviewStore };
+    newStore.cards = { ...newStore.cards };
+    newStore.cards[currentSessionCard.card.id] = updatedReviewData;
+
+    if (
+      currentSessionCard.isNew &&
+      !newStore.newCardsToday.includes(currentSessionCard.card.id)
+    ) {
+      newStore.newCardsToday = [
+        ...newStore.newCardsToday,
+        currentSessionCard.card.id,
+      ];
+    }
+
+    if (rating === Rating.Again) {
+      if (currentIndex < sessionQueue.length) {
+        setLearningQueue((prev) => [
+          ...prev,
+          { ...currentSessionCard, reviewData: updatedReviewData },
+        ]);
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        const updated = learningQueue.map((item, idx) =>
+          idx === 0 ? { ...item, reviewData: updatedReviewData } : item
+        );
+        setLearningQueue([...updated.slice(1), updated[0]]);
+      }
+    } else {
+      if (!newStore.reviewedToday.includes(currentSessionCard.card.id)) {
+        newStore.reviewedToday = [
+          ...newStore.reviewedToday,
+          currentSessionCard.card.id,
+        ];
+      }
+
+      if (currentIndex < sessionQueue.length) {
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        setLearningQueue((prev) => prev.slice(1));
+      }
+    }
+
+    setReviewStore(newStore);
+    saveReviewData(newStore);
+  };
+
+  const handleSettingsChange = (newCardsPerDay: number) => {
+    const newSettings = { ...settings, newCardsPerDay };
+    setSettings(newSettings);
+    saveSettings(newSettings);
+  };
+
+  const intervals: RatingIntervals = useMemo(() => {
+    if (!currentSessionCard) {
+      return {
+        [Rating.Again]: '',
+        [Rating.Hard]: '',
+        [Rating.Good]: '',
+        [Rating.Easy]: '',
+      };
+    }
+    const allIntervals = getNextIntervals(
+      getOrCreateCardReviewData(currentSessionCard.card.id, reviewStore)
+        .fsrsCard
+    );
+    return {
+      [Rating.Again]: allIntervals[Rating.Again],
+      [Rating.Hard]: allIntervals[Rating.Hard],
+      [Rating.Good]: allIntervals[Rating.Good],
+      [Rating.Easy]: allIntervals[Rating.Easy],
+    };
+  }, [currentSessionCard, reviewStore]);
+
+  const totalRemaining =
+    sessionQueue.length - currentIndex + learningQueue.length;
+
+  return (
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
+      <div className="flex items-center gap-4 mb-6">
+        <h1 className="text-4xl font-light text-white tracking-tight">
+          Polish Declension
+        </h1>
+        <button
+          onClick={() => setShowSettings(!showSettings)}
+          className="text-slate-400 hover:text-white transition-colors"
+          title="Settings"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+      </div>
+
+      {showSettings && (
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6 w-96">
+          <div className="flex items-center justify-between">
+            <label className="text-slate-300 text-sm">New cards per day:</label>
+            <input
+              type="number"
+              min="1"
+              max="100"
+              value={settings.newCardsPerDay}
+              onChange={(e) =>
+                handleSettingsChange(Math.max(1, parseInt(e.target.value) || 1))
+              }
+              className="w-20 bg-slate-700 text-white border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-rose-500"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-3 mb-6 justify-center">
+        <select
+          value={caseFilter}
+          onChange={(e) => {
+            setCaseFilter(e.target.value as Case | 'All');
+            resetSession();
+          }}
+          className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+        >
+          <option value="All">All Cases</option>
+          {CASES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={genderFilter}
+          onChange={(e) => {
+            setGenderFilter(e.target.value as Gender | 'All');
+            resetSession();
+          }}
+          className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+        >
+          <option value="All">All Genders</option>
+          {GENDERS.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={numberFilter}
+          onChange={(e) => {
+            setNumberFilter(e.target.value as Number | 'All');
+            resetSession();
+          }}
+          className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+        >
+          <option value="All">All Numbers</option>
+          {NUMBERS.map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <p className="text-slate-500 mb-8">
+        {isFinished
+          ? ''
+          : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
+      </p>
+
+      {isFinished ? (
+        <div className="relative">
+          <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 via-white to-rose-500 rounded-3xl blur opacity-30" />
+          <div className="relative bg-slate-800 border border-slate-700 rounded-3xl p-10 w-96 text-center">
+            <p className="text-3xl font-light text-white mb-2">
+              Done for today!
+            </p>
+            <p className="text-slate-400 mb-8">
+              Come back tomorrow for more practice
+            </p>
+            <button
+              onClick={checkForNewCards}
+              className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors"
+            >
+              Check for new cards
+            </button>
+          </div>
+        </div>
+      ) : currentSessionCard ? (
+        <Flashcard
+          key={`${currentSessionCard.card.id}-${currentIndex}-${learningQueue.length}`}
+          card={currentSessionCard.card}
+          intervals={intervals}
+          onRate={handleRate}
+        />
+      ) : null}
+    </div>
+  );
+}
