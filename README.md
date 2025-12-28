@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# Polish Declension Flashcards
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A spaced repetition flashcard app for learning Polish noun declensions. Built with React 19, TypeScript, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **FSRS Spaced Repetition** — Uses the Free Spaced Repetition Scheduler algorithm (same as Anki) to optimize review timing
+- **285 Flashcards** — Covering all 7 Polish cases across masculine, feminine, neuter nouns and pronouns
+- **Smart Filtering** — Filter by case (Nominative, Genitive, etc.), gender, and number (singular/plural)
+- **Practice Mode** — Drill cards without affecting your SRS progress
+- **Offline-First** — All progress saved to localStorage
+- **Configurable** — Set your own daily new card limit
 
-## React Compiler
+## How It Works
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### SRS Mode (Default)
+1. Each day, you'll see due reviews plus new cards (default: 10/day)
+2. After revealing the answer, rate your recall:
+   - **Again** — Forgot completely (card repeats in session)
+   - **Hard** — Struggled to remember
+   - **Good** — Remembered with effort
+   - **Easy** — Instantly recalled
+3. The algorithm schedules your next review based on your rating
+4. Filters only affect new cards — reviews always appear regardless of filter
 
-## Expanding the ESLint configuration
+### Practice Mode
+- Toggle "Practice" in the header to drill cards without affecting SRS
+- Cards are shuffled and loop infinitely
+- Respects your current filters
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start development server
+npm start
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **React 19** + TypeScript
+- **Vite** — Build tool
+- **Tailwind CSS** — Styling
+- **ts-fsrs** — Spaced repetition algorithm
+- **localStorage** — Data persistence
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+
 ```
+src/
+├── components/
+│   └── Flashcard.tsx    # Card display with rating buttons
+├── data/
+│   └── cards.json       # 285 flashcards
+├── lib/
+│   ├── scheduler.ts     # FSRS logic and session building
+│   └── storage.ts       # localStorage persistence
+├── types.ts             # TypeScript interfaces
+└── App.tsx              # Main application
+```
+
+## Adding Cards
+
+Edit `src/data/cards.json`. Each card has:
+
+```json
+{
+  "id": 1,
+  "front": "To jest ___ (nauczyciel).",
+  "back": "To jest nauczyciel",
+  "declined": "nauczyciel",
+  "case": "Nominative",
+  "gender": "Masculine",
+  "number": "Singular",
+  "hint": null
+}
+```
+
+- `front` — Question with blank
+- `back` — Complete answer
+- `declined` — The declined word (highlighted in answer)
+- `case` — One of: Nominative, Genitive, Dative, Accusative, Instrumental, Locative, Vocative
+- `gender` — One of: Masculine, Feminine, Neuter, Pronoun
+- `number` — Singular or Plural
+- `hint` — Optional hint text
