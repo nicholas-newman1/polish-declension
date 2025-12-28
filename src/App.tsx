@@ -38,12 +38,22 @@ const CASES: Case[] = [
 const GENDERS: Gender[] = ['Masculine', 'Feminine', 'Neuter', 'Pronoun'];
 const NUMBERS: Number[] = ['Singular', 'Plural'];
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export default function App() {
   const [reviewStore, setReviewStore] = useState<ReviewDataStore>(() =>
     loadReviewData()
   );
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
   const [showSettings, setShowSettings] = useState(false);
+  const [practiceMode, setPracticeMode] = useState(false);
 
   const [caseFilter, setCaseFilter] = useState<Case | 'All'>('All');
   const [genderFilter, setGenderFilter] = useState<Gender | 'All'>('All');
@@ -51,6 +61,17 @@ export default function App() {
 
   const [learningQueue, setLearningQueue] = useState<SessionCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [practiceIndex, setPracticeIndex] = useState(0);
+  const [practiceCards, setPracticeCards] = useState<Card[]>([]);
+
+  const filteredCards = useMemo(() => {
+    return allCards.filter((card) => {
+      if (caseFilter !== 'All' && card.case !== caseFilter) return false;
+      if (genderFilter !== 'All' && card.gender !== genderFilter) return false;
+      if (numberFilter !== 'All' && card.number !== numberFilter) return false;
+      return true;
+    });
+  }, [caseFilter, genderFilter, numberFilter]);
 
   const { sessionQueue, reviewCount, newCount } = useMemo(() => {
     const filters = {
@@ -81,6 +102,18 @@ export default function App() {
     setLearningQueue([]);
     setCurrentIndex(0);
   }, []);
+
+  const togglePracticeMode = useCallback(() => {
+    if (!practiceMode) {
+      setPracticeCards(shuffleArray(filteredCards));
+      setPracticeIndex(0);
+    }
+    setPracticeMode(!practiceMode);
+  }, [practiceMode, filteredCards]);
+
+  const handlePracticeNext = useCallback(() => {
+    setPracticeIndex((prev) => (prev + 1) % practiceCards.length);
+  }, [practiceCards.length]);
 
   const currentSessionCard = sessionQueue[currentIndex] ?? learningQueue[0];
   const isFinished =
@@ -167,12 +200,24 @@ export default function App() {
   const totalRemaining =
     sessionQueue.length - currentIndex + learningQueue.length;
 
+  const currentPracticeCard = practiceCards[practiceIndex];
+
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
       <div className="flex items-center gap-4 mb-6">
         <h1 className="text-4xl font-light text-white tracking-tight">
           Polish Declension
         </h1>
+        <button
+          onClick={togglePracticeMode}
+          className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+            practiceMode
+              ? 'bg-emerald-500 text-white'
+              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+          }`}
+        >
+          Practice {practiceMode ? 'ON' : 'OFF'}
+        </button>
         <button
           onClick={() => setShowSettings(!showSettings)}
           className="text-slate-400 hover:text-white transition-colors"
@@ -195,7 +240,7 @@ export default function App() {
         </button>
       </div>
 
-      {showSettings && (
+      {showSettings && !practiceMode && (
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6 w-96">
           <div className="flex items-center justify-between">
             <label className="text-slate-300 text-sm">New cards per day:</label>
@@ -219,6 +264,25 @@ export default function App() {
           onChange={(e) => {
             setCaseFilter(e.target.value as Case | 'All');
             resetSession();
+            if (practiceMode) {
+              setPracticeCards(
+                shuffleArray(
+                  allCards.filter((card) => {
+                    if (
+                      e.target.value !== 'All' &&
+                      card.case !== e.target.value
+                    )
+                      return false;
+                    if (genderFilter !== 'All' && card.gender !== genderFilter)
+                      return false;
+                    if (numberFilter !== 'All' && card.number !== numberFilter)
+                      return false;
+                    return true;
+                  })
+                )
+              );
+              setPracticeIndex(0);
+            }
           }}
           className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
         >
@@ -235,6 +299,25 @@ export default function App() {
           onChange={(e) => {
             setGenderFilter(e.target.value as Gender | 'All');
             resetSession();
+            if (practiceMode) {
+              setPracticeCards(
+                shuffleArray(
+                  allCards.filter((card) => {
+                    if (caseFilter !== 'All' && card.case !== caseFilter)
+                      return false;
+                    if (
+                      e.target.value !== 'All' &&
+                      card.gender !== e.target.value
+                    )
+                      return false;
+                    if (numberFilter !== 'All' && card.number !== numberFilter)
+                      return false;
+                    return true;
+                  })
+                )
+              );
+              setPracticeIndex(0);
+            }
           }}
           className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
         >
@@ -251,6 +334,25 @@ export default function App() {
           onChange={(e) => {
             setNumberFilter(e.target.value as Number | 'All');
             resetSession();
+            if (practiceMode) {
+              setPracticeCards(
+                shuffleArray(
+                  allCards.filter((card) => {
+                    if (caseFilter !== 'All' && card.case !== caseFilter)
+                      return false;
+                    if (genderFilter !== 'All' && card.gender !== genderFilter)
+                      return false;
+                    if (
+                      e.target.value !== 'All' &&
+                      card.number !== e.target.value
+                    )
+                      return false;
+                    return true;
+                  })
+                )
+              );
+              setPracticeIndex(0);
+            }
           }}
           className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
         >
@@ -264,12 +366,32 @@ export default function App() {
       </div>
 
       <p className="text-slate-500 mb-8">
-        {isFinished
+        {practiceMode
+          ? `Practice Mode · ${practiceCards.length} cards`
+          : isFinished
           ? ''
           : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
       </p>
 
-      {isFinished ? (
+      {practiceMode ? (
+        currentPracticeCard ? (
+          <Flashcard
+            key={`practice-${currentPracticeCard.id}-${practiceIndex}`}
+            card={currentPracticeCard}
+            practiceMode
+            onNext={handlePracticeNext}
+          />
+        ) : (
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 via-white to-rose-500 rounded-3xl blur opacity-30" />
+            <div className="relative bg-slate-800 border border-slate-700 rounded-3xl p-10 w-96 text-center">
+              <p className="text-xl text-slate-400">
+                No cards match your filters
+              </p>
+            </div>
+          </div>
+        )
+      ) : isFinished ? (
         <div className="relative">
           <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 via-white to-rose-500 rounded-3xl blur opacity-30" />
           <div className="relative bg-slate-800 border border-slate-700 rounded-3xl p-10 w-96 text-center">

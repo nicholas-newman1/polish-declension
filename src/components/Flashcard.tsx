@@ -11,8 +11,10 @@ export interface RatingIntervals {
 
 interface FlashcardProps {
   card: Card;
-  intervals: RatingIntervals;
-  onRate: (rating: Rating) => void;
+  practiceMode?: boolean;
+  intervals?: RatingIntervals;
+  onRate?: (rating: Rating) => void;
+  onNext?: () => void;
 }
 
 function highlightWord(text: string, word: string) {
@@ -32,7 +34,13 @@ function highlightWord(text: string, word: string) {
   );
 }
 
-export function Flashcard({ card, intervals, onRate }: FlashcardProps) {
+export function Flashcard({
+  card,
+  practiceMode = false,
+  intervals,
+  onRate,
+  onNext,
+}: FlashcardProps) {
   const [revealed, setRevealed] = useState(false);
 
   return (
@@ -61,44 +69,53 @@ export function Flashcard({ card, intervals, onRate }: FlashcardProps) {
             {card.hint && (
               <p className="text-sm text-slate-400 mb-4">{card.hint}</p>
             )}
-            <div className="grid grid-cols-4 gap-2 mt-auto">
+            {practiceMode ? (
               <button
-                onClick={() => onRate(Rating.Again)}
-                className="flex flex-col items-center py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                onClick={onNext}
+                className="w-full py-4 bg-white hover:bg-slate-100 text-slate-900 font-semibold rounded-xl transition-colors mt-auto"
               >
-                <span className="text-sm font-semibold">Again</span>
-                <span className="text-xs opacity-80">
-                  {intervals[Rating.Again]}
-                </span>
+                Next →
               </button>
-              <button
-                onClick={() => onRate(Rating.Hard)}
-                className="flex flex-col items-center py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
-              >
-                <span className="text-sm font-semibold">Hard</span>
-                <span className="text-xs opacity-80">
-                  {intervals[Rating.Hard]}
-                </span>
-              </button>
-              <button
-                onClick={() => onRate(Rating.Good)}
-                className="flex flex-col items-center py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
-              >
-                <span className="text-sm font-semibold">Good</span>
-                <span className="text-xs opacity-80">
-                  {intervals[Rating.Good]}
-                </span>
-              </button>
-              <button
-                onClick={() => onRate(Rating.Easy)}
-                className="flex flex-col items-center py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors"
-              >
-                <span className="text-sm font-semibold">Easy</span>
-                <span className="text-xs opacity-80">
-                  {intervals[Rating.Easy]}
-                </span>
-              </button>
-            </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-2 mt-auto">
+                <button
+                  onClick={() => onRate?.(Rating.Again)}
+                  className="flex flex-col items-center py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                >
+                  <span className="text-sm font-semibold">Again</span>
+                  <span className="text-xs opacity-80">
+                    {intervals?.[Rating.Again]}
+                  </span>
+                </button>
+                <button
+                  onClick={() => onRate?.(Rating.Hard)}
+                  className="flex flex-col items-center py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                >
+                  <span className="text-sm font-semibold">Hard</span>
+                  <span className="text-xs opacity-80">
+                    {intervals?.[Rating.Hard]}
+                  </span>
+                </button>
+                <button
+                  onClick={() => onRate?.(Rating.Good)}
+                  className="flex flex-col items-center py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+                >
+                  <span className="text-sm font-semibold">Good</span>
+                  <span className="text-xs opacity-80">
+                    {intervals?.[Rating.Good]}
+                  </span>
+                </button>
+                <button
+                  onClick={() => onRate?.(Rating.Easy)}
+                  className="flex flex-col items-center py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors"
+                >
+                  <span className="text-sm font-semibold">Easy</span>
+                  <span className="text-xs opacity-80">
+                    {intervals?.[Rating.Easy]}
+                  </span>
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <button
