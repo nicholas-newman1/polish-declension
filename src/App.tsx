@@ -67,6 +67,7 @@ export default function App() {
   const [sessionQueue, setSessionQueue] = useState<SessionCard[]>([]);
   const [reviewCount, setReviewCount] = useState(0);
   const [newCount, setNewCount] = useState(0);
+  const [ratingCounter, setRatingCounter] = useState(0);
 
   const filteredCards = useMemo(() => {
     return allCards.filter((card) => {
@@ -179,6 +180,7 @@ export default function App() {
 
     setReviewStore(newStore);
     saveReviewData(newStore);
+    setRatingCounter((c) => c + 1);
   };
 
   const handleSettingsChange = (newCardsPerDay: number) => {
@@ -445,7 +447,7 @@ export default function App() {
         </div>
       ) : currentSessionCard ? (
         <Flashcard
-          key={`${currentSessionCard.card.id}-${currentIndex}-${learningQueue.length}`}
+          key={`${currentSessionCard.card.id}-${ratingCounter}`}
           card={currentSessionCard.card}
           intervals={intervals}
           onRate={handleRate}
