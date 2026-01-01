@@ -1,8 +1,7 @@
 import { createEmptyCard } from 'ts-fsrs';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { db, auth } from './firebase';
 import type { Settings, ReviewDataStore, CardReviewData } from '../types';
-
-const REVIEW_DATA_KEY = 'polish-declension-review-data';
-const SETTINGS_KEY = 'polish-declension-settings';
 
 const DEFAULT_SETTINGS: Settings = {
   newCardsPerDay: 10,
@@ -12,11 +11,28 @@ function getTodayString(): string {
   return new Date().toISOString().split('T')[0];
 }
 
-export function loadSettings(): Settings {
+function getDefaultReviewStore(): ReviewDataStore {
+  return {
+    cards: {},
+    reviewedToday: [],
+    newCardsToday: [],
+    lastReviewDate: getTodayString(),
+  };
+}
+
+function getUserId(): string | null {
+  return auth.currentUser?.uid ?? null;
+}
+
+export async function loadSettings(): Promise<Settings> {
+  const userId = getUserId();
+  if (!userId) return DEFAULT_SETTINGS;
+
   try {
-    const data = localStorage.getItem(SETTINGS_KEY);
-    if (data) {
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(data) };
+    const docRef = doc(db, 'users', userId, 'data', 'settings');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return { ...DEFAULT_SETTINGS, ...(docSnap.data() as Settings) };
     }
   } catch (e) {
     console.error('Failed to load settings:', e);
@@ -24,19 +40,27 @@ export function loadSettings(): Settings {
   return DEFAULT_SETTINGS;
 }
 
-export function saveSettings(settings: Settings): void {
+export async function saveSettings(settings: Settings): Promise<void> {
+  const userId = getUserId();
+  if (!userId) return;
+
   try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    const docRef = doc(db, 'users', userId, 'data', 'settings');
+    await setDoc(docRef, settings);
   } catch (e) {
     console.error('Failed to save settings:', e);
   }
 }
 
-export function loadReviewData(): ReviewDataStore {
+export async function loadReviewData(): Promise<ReviewDataStore> {
+  const userId = getUserId();
+  if (!userId) return getDefaultReviewStore();
+
   try {
-    const data = localStorage.getItem(REVIEW_DATA_KEY);
-    if (data) {
-      const parsed = JSON.parse(data);
+    const docRef = doc(db, 'users', userId, 'data', 'reviewData');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const parsed = docSnap.data() as ReviewDataStore;
       const today = getTodayString();
       if (parsed.lastReviewDate !== today) {
         parsed.reviewedToday = [];
@@ -44,7 +68,7 @@ export function loadReviewData(): ReviewDataStore {
         parsed.lastReviewDate = today;
       }
       Object.keys(parsed.cards).forEach((key) => {
-        const card = parsed.cards[key];
+        const card = parsed.cards[parseInt(key)];
         if (card.fsrsCard.due) {
           card.fsrsCard.due = new Date(card.fsrsCard.due);
         }
@@ -57,17 +81,38 @@ export function loadReviewData(): ReviewDataStore {
   } catch (e) {
     console.error('Failed to load review data:', e);
   }
-  return {
-    cards: {},
-    reviewedToday: [],
-    newCardsToday: [],
-    lastReviewDate: getTodayString(),
-  };
+  return getDefaultReviewStore();
 }
 
-export function saveReviewData(data: ReviewDataStore): void {
+export async function saveReviewData(data: ReviewDataStore): Promise<void> {
+  const userId = getUserId();
+  if (!userId) return;
+
   try {
-    localStorage.setItem(REVIEW_DATA_KEY, JSON.stringify(data));
+    const docRef = doc(db, 'users', userId, 'data', 'reviewData');
+    const serializable = {
+      ...data,
+      cards: Object.fromEntries(
+        Object.entries(data.cards).map(([key, card]) => [
+          key,
+          {
+            ...card,
+            fsrsCard: {
+              ...card.fsrsCard,
+              due:
+                card.fsrsCard.due instanceof Date
+                  ? card.fsrsCard.due.toISOString()
+                  : card.fsrsCard.due,
+              last_review:
+                card.fsrsCard.last_review instanceof Date
+                  ? card.fsrsCard.last_review.toISOString()
+                  : card.fsrsCard.last_review,
+            },
+          },
+        ])
+      ),
+    };
+    await setDoc(docRef, serializable);
   } catch (e) {
     console.error('Failed to save review data:', e);
   }
@@ -86,7 +131,14 @@ export function getOrCreateCardReviewData(
   };
 }
 
-export function clearAllData(): void {
-  localStorage.removeItem(REVIEW_DATA_KEY);
-  localStorage.removeItem(SETTINGS_KEY);
+export async function clearAllData(): Promise<void> {
+  const userId = getUserId();
+  if (!userId) return;
+
+  try {
+    await deleteDoc(doc(db, 'users', userId, 'data', 'reviewData'));
+    await deleteDoc(doc(db, 'users', userId, 'data', 'settings'));
+  } catch (e) {
+    console.error('Failed to clear data:', e);
+  }
 }

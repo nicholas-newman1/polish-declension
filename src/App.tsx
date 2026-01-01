@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Rating } from 'ts-fsrs';
 import { Flashcard, type RatingIntervals } from './components/Flashcard';
 import cardsData from './data/cards.json';
@@ -24,6 +25,7 @@ import {
   getNextIntervals,
   type SessionCard,
 } from './lib/scheduler';
+import { useAuth } from './lib/useAuth';
 
 const allCards: Card[] = cardsData as Card[];
 
@@ -39,6 +41,17 @@ const CASES: Case[] = [
 const GENDERS: Gender[] = ['Masculine', 'Feminine', 'Neuter', 'Pronoun'];
 const NUMBERS: Number[] = ['Singular', 'Plural'];
 
+const DEFAULT_SETTINGS: Settings = { newCardsPerDay: 10 };
+
+function getDefaultReviewStore(): ReviewDataStore {
+  return {
+    cards: {},
+    reviewedToday: [],
+    newCardsToday: [],
+    lastReviewDate: new Date().toISOString().split('T')[0],
+  };
+}
+
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -49,10 +62,13 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default function App() {
-  const [reviewStore, setReviewStore] = useState<ReviewDataStore>(() =>
-    loadReviewData()
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [reviewStore, setReviewStore] = useState<ReviewDataStore>(
+    getDefaultReviewStore
   );
-  const [settings, setSettings] = useState<Settings>(() => loadSettings());
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [isLoading, setIsLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
 
@@ -79,7 +95,7 @@ export default function App() {
   }, [caseFilter, genderFilter, numberFilter]);
 
   const buildSession = useCallback(
-    (store: ReviewDataStore) => {
+    (store: ReviewDataStore, currentSettings: Settings) => {
       const filters = {
         case: caseFilter,
         gender: genderFilter,
@@ -89,7 +105,7 @@ export default function App() {
         allCards,
         store,
         filters,
-        settings
+        currentSettings
       );
       setSessionQueue([...reviewCards, ...newCards]);
       setReviewCount(reviewCards.length);
@@ -97,23 +113,34 @@ export default function App() {
       setLearningQueue([]);
       setCurrentIndex(0);
     },
-    [caseFilter, genderFilter, numberFilter, settings]
+    [caseFilter, genderFilter, numberFilter]
   );
 
   useEffect(() => {
-    buildSession(reviewStore);
+    const loadData = async () => {
+      setIsLoading(true);
+      const [loadedSettings, loadedReviewData] = await Promise.all([
+        loadSettings(),
+        loadReviewData(),
+      ]);
+      setSettings(loadedSettings);
+      setReviewStore(loadedReviewData);
+      buildSession(loadedReviewData, loadedSettings);
+      setIsLoading(false);
+    };
+    loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const resetSession = useCallback(() => {
-    buildSession(reviewStore);
-  }, [buildSession, reviewStore]);
+    buildSession(reviewStore, settings);
+  }, [buildSession, reviewStore, settings]);
 
-  const checkForNewCards = useCallback(() => {
-    const freshStore = loadReviewData();
+  const checkForNewCards = useCallback(async () => {
+    const freshStore = await loadReviewData();
     setReviewStore(freshStore);
-    buildSession(freshStore);
-  }, [buildSession]);
+    buildSession(freshStore, settings);
+  }, [buildSession, settings]);
 
   const togglePracticeMode = useCallback(() => {
     if (!practiceMode) {
@@ -131,7 +158,7 @@ export default function App() {
   const isFinished =
     currentIndex >= sessionQueue.length && learningQueue.length === 0;
 
-  const handleRate = (rating: Rating) => {
+  const handleRate = async (rating: Rating) => {
     if (!currentSessionCard) return;
 
     const updatedReviewData = rateCard(currentSessionCard.reviewData, rating);
@@ -179,29 +206,34 @@ export default function App() {
     }
 
     setReviewStore(newStore);
-    saveReviewData(newStore);
+    await saveReviewData(newStore);
     setRatingCounter((c) => c + 1);
   };
 
-  const handleSettingsChange = (newCardsPerDay: number) => {
+  const handleSettingsChange = async (newCardsPerDay: number) => {
     const newSettings = { ...settings, newCardsPerDay };
     setSettings(newSettings);
-    saveSettings(newSettings);
+    await saveSettings(newSettings);
   };
 
-  const handleResetAllData = () => {
+  const handleResetAllData = async () => {
     if (
       window.confirm(
         'Are you sure? This will erase all your progress and cannot be undone.'
       )
     ) {
-      clearAllData();
-      const freshStore = loadReviewData();
+      await clearAllData();
+      const freshStore = await loadReviewData();
       setReviewStore(freshStore);
-      setSettings(loadSettings());
-      buildSession(freshStore);
+      setSettings(await loadSettings());
+      buildSession(freshStore, settings);
       setShowSettings(false);
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   const intervals: RatingIntervals = useMemo(() => {
@@ -230,8 +262,36 @@ export default function App() {
 
   const currentPracticeCard = practiceCards[practiceIndex];
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400 text-lg">Loading your progress...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
+      <div className="absolute top-4 right-4 flex items-center gap-3">
+        {user ? (
+          <>
+            <span className="text-slate-400 text-sm">
+              {user.displayName || user.email}
+            </span>
+            <button
+              onClick={handleSignOut}
+              className="text-slate-500 hover:text-white text-sm transition-colors"
+            >
+              Sign out
+            </button>
+          </>
+        ) : (
+          <span className="text-amber-500/80 text-sm">
+            Guest mode · Progress not saved
+          </span>
+        )}
+      </div>
+
       <div className="flex items-center gap-4 mb-6">
         <h1 className="text-4xl font-light text-white tracking-tight">
           Polish Declension
@@ -283,14 +343,16 @@ export default function App() {
               className="w-20 bg-slate-700 text-white border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-rose-500"
             />
           </div>
-          <div className="border-t border-slate-700 pt-4">
-            <button
-              onClick={handleResetAllData}
-              className="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium rounded-lg transition-colors"
-            >
-              Reset All Progress
-            </button>
-          </div>
+          {user && (
+            <div className="border-t border-slate-700 pt-4">
+              <button
+                onClick={handleResetAllData}
+                className="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium rounded-lg transition-colors"
+              >
+                Reset All Progress
+              </button>
+            </div>
+          )}
         </div>
       )}
 
