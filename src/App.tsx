@@ -1,10 +1,30 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Chip,
+  CircularProgress,
+  Divider,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+  styled,
+} from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Flashcard, type RatingIntervals } from './components/Flashcard';
 import cardsData from './data/cards.json';
 import type {
-  Card,
+  Card as CardType,
   Case,
   Gender,
   Number,
@@ -29,7 +49,7 @@ import {
 } from './lib/scheduler';
 import { useAuth } from './lib/useAuth';
 
-const allCards: Card[] = cardsData as Card[];
+const allCards: CardType[] = cardsData as CardType[];
 
 const CASES: Case[] = [
   'Nominative',
@@ -44,6 +64,231 @@ const GENDERS: Gender[] = ['Masculine', 'Feminine', 'Neuter', 'Pronoun'];
 const NUMBERS: Number[] = ['Singular', 'Plural'];
 
 const DEFAULT_SETTINGS: Settings = { newCardsPerDay: 10 };
+
+// Styled components
+const PageContainer = styled(Box)(({ theme }) => ({
+  minHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  padding: theme.spacing(2),
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(3),
+  },
+}));
+
+const LoadingContainer = styled(Box)({
+  minHeight: '100vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const HeaderTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 500,
+  display: 'none',
+  [theme.breakpoints.up('sm')]: {
+    display: 'block',
+  },
+}));
+
+function getFirstName(
+  displayName: string | null,
+  email: string | null
+): string {
+  if (displayName) {
+    return displayName.split(' ')[0];
+  }
+  if (email) {
+    return email.split('@')[0];
+  }
+  return '';
+}
+
+const UserEmail = styled(Typography)(({ theme }) => ({
+  maxWidth: 100,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  [theme.breakpoints.up('sm')]: {
+    maxWidth: 150,
+  },
+}));
+
+const SignOutButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.text.disabled,
+  textDecoration: 'underline',
+}));
+
+const GuestChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: 'rgba(202, 138, 4, 0.1)',
+  color: theme.palette.warning.main,
+  fontWeight: 500,
+}));
+
+const FilterFormControl = styled(FormControl)(({ theme }) => ({
+  minWidth: 120,
+  flex: 1,
+  [theme.breakpoints.up('sm')]: {
+    flex: 'none',
+  },
+}));
+
+const FilterSelect = styled(Select)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+}));
+
+interface PracticeButtonProps {
+  active: boolean;
+}
+
+const PracticeButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<PracticeButtonProps>(({ theme, active }) => ({
+  minWidth: 100,
+  ...(active
+    ? {
+        backgroundColor: theme.palette.success.main,
+        '&:hover': { backgroundColor: theme.palette.success.dark },
+      }
+    : {
+        borderColor: theme.palette.divider,
+        color: theme.palette.text.secondary,
+        backgroundColor: theme.palette.background.paper,
+      }),
+}));
+
+interface SettingsButtonProps {
+  active: boolean;
+}
+
+const SettingsButton = styled(IconButton, {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<SettingsButtonProps>(({ theme, active }) => ({
+  width: 40,
+  height: 40,
+  backgroundColor: active
+    ? theme.palette.text.primary
+    : theme.palette.background.paper,
+  color: active ? theme.palette.background.paper : theme.palette.text.disabled,
+  border: '1px solid',
+  borderColor: active ? theme.palette.text.primary : theme.palette.divider,
+  '&:hover': {
+    backgroundColor: active
+      ? theme.palette.text.secondary
+      : theme.palette.background.default,
+  },
+}));
+
+const SettingsCard = styled(Card)(({ theme }) => ({
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  maxWidth: 420,
+  margin: '0 auto',
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+  },
+}));
+
+const NumberInput = styled(TextField)({
+  width: 80,
+  '& input': {
+    fontFamily: '"JetBrains Mono", monospace',
+    textAlign: 'center',
+  },
+});
+
+const SmallNumberInput = styled(TextField)({
+  width: 60,
+  '& input': {
+    fontFamily: '"JetBrains Mono", monospace',
+    textAlign: 'center',
+  },
+});
+
+const ResetButton = styled(Button)(({ theme }) => ({
+  backgroundColor: 'rgba(194, 58, 34, 0.1)',
+  color: theme.palette.primary.main,
+  '&:hover': {
+    backgroundColor: 'rgba(194, 58, 34, 0.2)',
+  },
+}));
+
+const MainContent = styled(Box)({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const CardWrapper = styled(Box)({
+  width: '100%',
+  maxWidth: 420,
+  margin: '0 auto',
+});
+
+const CardGlow = styled(Box)({
+  position: 'absolute',
+  inset: -12,
+  borderRadius: 16,
+  filter: 'blur(24px)',
+  opacity: 0.2,
+});
+
+const PrimaryCardGlow = styled(CardGlow)({
+  background: 'linear-gradient(135deg, #c23a22, #c9a227, #c23a22)',
+});
+
+const SuccessCardGlow = styled(CardGlow)({
+  background: 'linear-gradient(135deg, #2d6a4f, #c9a227, #2d6a4f)',
+});
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  position: 'relative',
+  padding: theme.spacing(3),
+  backgroundColor: 'rgba(255,255,255,0.95)',
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(4),
+  },
+}));
+
+const CelebrationAvatar = styled(Avatar)(({ theme }) => ({
+  width: 64,
+  height: 64,
+  margin: '0 auto',
+  marginBottom: theme.spacing(2),
+  background: 'linear-gradient(135deg, #2d6a4f, #1b4332)',
+  fontSize: '2rem',
+  boxShadow: theme.shadows[3],
+}));
+
+const PrimaryButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.text.primary,
+  '&:hover': {
+    backgroundColor: theme.palette.text.secondary,
+  },
+}));
+
+const SuccessButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.success.main,
+  '&:hover': {
+    backgroundColor: theme.palette.success.dark,
+  },
+}));
+
+const WarningButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.warning.main,
+  '&:hover': {
+    backgroundColor: theme.palette.warning.dark,
+  },
+}));
+
+const OptionPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: theme.palette.background.default,
+}));
 
 function getDefaultReviewStore(): ReviewDataStore {
   return {
@@ -81,7 +326,7 @@ export default function App() {
   const [learningQueue, setLearningQueue] = useState<SessionCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [practiceIndex, setPracticeIndex] = useState(0);
-  const [practiceCards, setPracticeCards] = useState<Card[]>([]);
+  const [practiceCards, setPracticeCards] = useState<CardType[]>([]);
   const [sessionQueue, setSessionQueue] = useState<SessionCard[]>([]);
   const [reviewCount, setReviewCount] = useState(0);
   const [newCount, setNewCount] = useState(0);
@@ -310,309 +555,434 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-400 text-lg">Loading your progress...</div>
-      </div>
+      <LoadingContainer>
+        <CircularProgress sx={{ color: 'text.disabled' }} />
+      </LoadingContainer>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
-      <div className="absolute top-4 right-4 flex items-center gap-3">
-        {user ? (
-          <>
-            <span className="text-slate-400 text-sm">
-              {user.displayName || user.email}
-            </span>
-            <button
-              onClick={handleSignOut}
-              className="text-slate-500 hover:text-white text-sm transition-colors"
+    <PageContainer>
+      {/* Header */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ mb: { xs: 2, sm: 3 } }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Typography variant="h6">🇵🇱</Typography>
+          <HeaderTitle variant="h6" color="text.primary">
+            Polish Declension
+          </HeaderTitle>
+        </Stack>
+
+        <Stack direction="row" alignItems="center" spacing={1}>
+          {user ? (
+            <>
+              <UserEmail variant="body2" color="text.disabled">
+                {getFirstName(user.displayName, user.email)}
+              </UserEmail>
+              <SignOutButton size="small" onClick={handleSignOut}>
+                Sign out
+              </SignOutButton>
+            </>
+          ) : (
+            <GuestChip label="Guest mode" size="small" />
+          )}
+        </Stack>
+      </Stack>
+
+      {/* Controls */}
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        alignItems={{ sm: 'center' }}
+        sx={{ mb: { xs: 2, sm: 3 } }}
+      >
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          <FilterFormControl size="small">
+            <InputLabel>Case</InputLabel>
+            <FilterSelect
+              value={caseFilter}
+              label="Case"
+              onChange={(e) => {
+                setCaseFilter(e.target.value as Case | 'All');
+                resetSession();
+                if (practiceMode) {
+                  setPracticeCards(
+                    shuffleArray(
+                      allCards.filter((card) => {
+                        if (
+                          e.target.value !== 'All' &&
+                          card.case !== e.target.value
+                        )
+                          return false;
+                        if (
+                          genderFilter !== 'All' &&
+                          card.gender !== genderFilter
+                        )
+                          return false;
+                        if (
+                          numberFilter !== 'All' &&
+                          card.number !== numberFilter
+                        )
+                          return false;
+                        return true;
+                      })
+                    )
+                  );
+                  setPracticeIndex(0);
+                }
+              }}
             >
-              Sign out
-            </button>
-          </>
-        ) : (
-          <span className="text-amber-500/80 text-sm">
-            Guest mode · Progress not saved
-          </span>
-        )}
-      </div>
+              <MenuItem value="All">All Cases</MenuItem>
+              {CASES.map((c) => (
+                <MenuItem key={c} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
+            </FilterSelect>
+          </FilterFormControl>
 
-      <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-4xl font-light text-white tracking-tight">
-          Polish Declension
-        </h1>
-        <button
-          onClick={togglePracticeMode}
-          className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-            practiceMode
-              ? 'bg-emerald-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-          }`}
-        >
-          Practice {practiceMode ? 'ON' : 'OFF'}
-        </button>
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="text-slate-400 hover:text-white transition-colors"
-          title="Settings"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <FilterFormControl size="small">
+            <InputLabel>Gender</InputLabel>
+            <FilterSelect
+              value={genderFilter}
+              label="Gender"
+              onChange={(e) => {
+                setGenderFilter(e.target.value as Gender | 'All');
+                resetSession();
+                if (practiceMode) {
+                  setPracticeCards(
+                    shuffleArray(
+                      allCards.filter((card) => {
+                        if (caseFilter !== 'All' && card.case !== caseFilter)
+                          return false;
+                        if (
+                          e.target.value !== 'All' &&
+                          card.gender !== e.target.value
+                        )
+                          return false;
+                        if (
+                          numberFilter !== 'All' &&
+                          card.number !== numberFilter
+                        )
+                          return false;
+                        return true;
+                      })
+                    )
+                  );
+                  setPracticeIndex(0);
+                }
+              }}
+            >
+              <MenuItem value="All">All Genders</MenuItem>
+              {GENDERS.map((g) => (
+                <MenuItem key={g} value={g}>
+                  {g}
+                </MenuItem>
+              ))}
+            </FilterSelect>
+          </FilterFormControl>
+
+          <FilterFormControl size="small" sx={{ minWidth: 130 }}>
+            <InputLabel>Number</InputLabel>
+            <FilterSelect
+              value={numberFilter}
+              label="Number"
+              onChange={(e) => {
+                setNumberFilter(e.target.value as Number | 'All');
+                resetSession();
+                if (practiceMode) {
+                  setPracticeCards(
+                    shuffleArray(
+                      allCards.filter((card) => {
+                        if (caseFilter !== 'All' && card.case !== caseFilter)
+                          return false;
+                        if (
+                          genderFilter !== 'All' &&
+                          card.gender !== genderFilter
+                        )
+                          return false;
+                        if (
+                          e.target.value !== 'All' &&
+                          card.number !== e.target.value
+                        )
+                          return false;
+                        return true;
+                      })
+                    )
+                  );
+                  setPracticeIndex(0);
+                }
+              }}
+            >
+              <MenuItem value="All">Sing./Plural</MenuItem>
+              {NUMBERS.map((n) => (
+                <MenuItem key={n} value={n}>
+                  {n}
+                </MenuItem>
+              ))}
+            </FilterSelect>
+          </FilterFormControl>
+        </Box>
+
+        <Stack direction="row" spacing={1}>
+          <PracticeButton
+            variant={practiceMode ? 'contained' : 'outlined'}
+            onClick={togglePracticeMode}
+            active={practiceMode}
           >
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
-      </div>
+            {practiceMode ? '✓ Practice' : 'Practice'}
+          </PracticeButton>
 
+          <SettingsButton
+            onClick={() => setShowSettings(!showSettings)}
+            size="small"
+            active={showSettings}
+          >
+            <SettingsIcon fontSize="small" />
+          </SettingsButton>
+        </Stack>
+      </Stack>
+
+      {/* Settings panel */}
       {showSettings && !practiceMode && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6 w-96 space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="text-slate-300 text-sm">New cards per day:</label>
-            <input
+        <SettingsCard className="animate-fade-up">
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Settings
+          </Typography>
+
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ mb: 2 }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              New cards per day
+            </Typography>
+            <NumberInput
               type="number"
-              min="1"
-              max="100"
+              size="small"
               value={settings.newCardsPerDay}
               onChange={(e) =>
                 handleSettingsChange(Math.max(1, parseInt(e.target.value) || 1))
               }
-              className="w-20 bg-slate-700 text-white border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-rose-500"
+              inputProps={{ min: 1, max: 100 }}
             />
-          </div>
+          </Stack>
+
           {user && (
-            <div className="border-t border-slate-700 pt-4">
-              <button
+            <>
+              <Divider sx={{ my: 2 }} />
+              <ResetButton
+                fullWidth
+                variant="contained"
                 onClick={handleResetAllData}
-                className="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium rounded-lg transition-colors"
               >
                 Reset All Progress
-              </button>
-            </div>
+              </ResetButton>
+            </>
           )}
-        </div>
+        </SettingsCard>
       )}
 
-      <div className="flex flex-wrap gap-3 mb-6 justify-center">
-        <select
-          value={caseFilter}
-          onChange={(e) => {
-            setCaseFilter(e.target.value as Case | 'All');
-            resetSession();
-            if (practiceMode) {
-              setPracticeCards(
-                shuffleArray(
-                  allCards.filter((card) => {
-                    if (
-                      e.target.value !== 'All' &&
-                      card.case !== e.target.value
-                    )
-                      return false;
-                    if (genderFilter !== 'All' && card.gender !== genderFilter)
-                      return false;
-                    if (numberFilter !== 'All' && card.number !== numberFilter)
-                      return false;
-                    return true;
-                  })
-                )
-              );
-              setPracticeIndex(0);
-            }
-          }}
-          className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+      {/* Main content */}
+      <MainContent>
+        <Typography
+          variant="body2"
+          color="text.disabled"
+          sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}
         >
-          <option value="All">All Cases</option>
-          {CASES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+          {practiceMode
+            ? `Practice Mode · ${practiceCards.length} cards`
+            : isFinished
+            ? ''
+            : isPracticeAhead
+            ? `Practice Ahead · ${totalRemaining} remaining`
+            : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
+        </Typography>
 
-        <select
-          value={genderFilter}
-          onChange={(e) => {
-            setGenderFilter(e.target.value as Gender | 'All');
-            resetSession();
-            if (practiceMode) {
-              setPracticeCards(
-                shuffleArray(
-                  allCards.filter((card) => {
-                    if (caseFilter !== 'All' && card.case !== caseFilter)
-                      return false;
-                    if (
-                      e.target.value !== 'All' &&
-                      card.gender !== e.target.value
-                    )
-                      return false;
-                    if (numberFilter !== 'All' && card.number !== numberFilter)
-                      return false;
-                    return true;
-                  })
-                )
-              );
-              setPracticeIndex(0);
-            }
-          }}
-          className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
-        >
-          <option value="All">All Genders</option>
-          {GENDERS.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={numberFilter}
-          onChange={(e) => {
-            setNumberFilter(e.target.value as Number | 'All');
-            resetSession();
-            if (practiceMode) {
-              setPracticeCards(
-                shuffleArray(
-                  allCards.filter((card) => {
-                    if (caseFilter !== 'All' && card.case !== caseFilter)
-                      return false;
-                    if (genderFilter !== 'All' && card.gender !== genderFilter)
-                      return false;
-                    if (
-                      e.target.value !== 'All' &&
-                      card.number !== e.target.value
-                    )
-                      return false;
-                    return true;
-                  })
-                )
-              );
-              setPracticeIndex(0);
-            }
-          }}
-          className="bg-slate-800 text-slate-300 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
-        >
-          <option value="All">All Numbers</option>
-          {NUMBERS.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <p className="text-slate-500 mb-8">
-        {practiceMode
-          ? `Practice Mode · ${practiceCards.length} cards`
-          : isFinished
-          ? ''
-          : isPracticeAhead
-          ? `Practice Ahead · ${totalRemaining} remaining`
-          : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
-      </p>
-
-      {practiceMode ? (
-        currentPracticeCard ? (
-          <Flashcard
-            key={`practice-${currentPracticeCard.id}-${practiceIndex}`}
-            card={currentPracticeCard}
-            practiceMode
-            onNext={handlePracticeNext}
+        {practiceMode ? (
+          currentPracticeCard ? (
+            <Flashcard
+              key={`practice-${currentPracticeCard.id}-${practiceIndex}`}
+              card={currentPracticeCard}
+              practiceMode
+              onNext={handlePracticeNext}
+            />
+          ) : (
+            <EmptyState message="No cards match your filters" />
+          )
+        ) : isFinished ? (
+          <FinishedState
+            practiceAheadCount={practiceAheadCount}
+            setPracticeAheadCount={setPracticeAheadCount}
+            extraNewCardsCount={extraNewCardsCount}
+            setExtraNewCardsCount={setExtraNewCardsCount}
+            onCheckNewCards={checkForNewCards}
+            onPracticeAhead={startPracticeAhead}
+            onLearnExtra={startExtraNewCards}
           />
-        ) : (
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 via-white to-rose-500 rounded-3xl blur opacity-30" />
-            <div className="relative bg-slate-800 border border-slate-700 rounded-3xl p-10 w-96 text-center">
-              <p className="text-xl text-slate-400">
-                No cards match your filters
-              </p>
-            </div>
-          </div>
-        )
-      ) : isFinished ? (
-        <div className="relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 via-white to-rose-500 rounded-3xl blur opacity-30" />
-          <div className="relative bg-slate-800 border border-slate-700 rounded-3xl p-10 w-96 text-center">
-            <p className="text-3xl font-light text-white mb-2">
+        ) : currentSessionCard ? (
+          <Flashcard
+            key={`${currentSessionCard.card.id}-${ratingCounter}`}
+            card={currentSessionCard.card}
+            intervals={intervals}
+            onRate={handleRate}
+          />
+        ) : null}
+      </MainContent>
+    </PageContainer>
+  );
+}
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <CardWrapper className="animate-fade-up">
+      <Box sx={{ position: 'relative' }}>
+        <PrimaryCardGlow />
+        <StyledCard sx={{ p: { xs: 4, sm: 5 }, textAlign: 'center' }}>
+          <Typography variant="h6" color="text.disabled">
+            {message}
+          </Typography>
+        </StyledCard>
+      </Box>
+    </CardWrapper>
+  );
+}
+
+interface FinishedStateProps {
+  practiceAheadCount: number;
+  setPracticeAheadCount: (count: number) => void;
+  extraNewCardsCount: number;
+  setExtraNewCardsCount: (count: number) => void;
+  onCheckNewCards: () => void;
+  onPracticeAhead: () => void;
+  onLearnExtra: () => void;
+}
+
+function FinishedState({
+  practiceAheadCount,
+  setPracticeAheadCount,
+  extraNewCardsCount,
+  setExtraNewCardsCount,
+  onCheckNewCards,
+  onPracticeAhead,
+  onLearnExtra,
+}: FinishedStateProps) {
+  return (
+    <CardWrapper className="animate-fade-up">
+      <Box sx={{ position: 'relative' }}>
+        <SuccessCardGlow className="card-glow" />
+        <StyledCard>
+          <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+            <CelebrationAvatar>🎉</CelebrationAvatar>
+            <Typography variant="h4" sx={{ fontWeight: 300, mb: 1 }}>
               Done for today!
-            </p>
-            <p className="text-slate-400 mb-8">
+            </Typography>
+            <Typography variant="body1" color="text.disabled">
               Come back tomorrow for more practice
-            </p>
-            <button
-              onClick={checkForNewCards}
-              className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors mb-4"
-            >
-              Check for new cards
-            </button>
-            <div className="border-t border-slate-700 pt-4">
-              <div className="flex items-center gap-3 mb-3">
-                <label className="text-slate-400 text-sm">
-                  Practice ahead:
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={practiceAheadCount}
-                  onChange={(e) =>
-                    setPracticeAheadCount(
-                      Math.max(1, parseInt(e.target.value) || 1)
-                    )
-                  }
-                  className="w-20 bg-slate-700 text-white border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-rose-500"
-                />
-                <span className="text-slate-400 text-sm">cards</span>
-              </div>
-              <button
-                onClick={startPracticeAhead}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-colors"
+            </Typography>
+          </Box>
+
+          <PrimaryButton
+            fullWidth
+            size="large"
+            variant="contained"
+            onClick={onCheckNewCards}
+            sx={{ mb: 3 }}
+          >
+            Check for new cards
+          </PrimaryButton>
+
+          <Stack spacing={2}>
+            <OptionPaper elevation={0}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ mb: 1.5 }}
               >
-                Practice ahead
-              </button>
-            </div>
-            <div className="border-t border-slate-700 pt-4 mt-4">
-              <div className="flex items-center gap-3 mb-3">
-                <label className="text-slate-400 text-sm">Learn extra:</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={extraNewCardsCount}
-                  onChange={(e) =>
-                    setExtraNewCardsCount(
-                      Math.max(1, parseInt(e.target.value) || 1)
-                    )
-                  }
-                  className="w-20 bg-slate-700 text-white border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-rose-500"
-                />
-                <span className="text-slate-400 text-sm">new cards</span>
-              </div>
-              <button
-                onClick={startExtraNewCards}
-                className="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl transition-colors"
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  color="text.secondary"
+                >
+                  Practice ahead
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <SmallNumberInput
+                    type="number"
+                    size="small"
+                    value={practiceAheadCount}
+                    onChange={(e) =>
+                      setPracticeAheadCount(
+                        Math.max(1, parseInt(e.target.value) || 1)
+                      )
+                    }
+                    inputProps={{ min: 1, max: 100 }}
+                  />
+                  <Typography variant="body2" color="text.disabled">
+                    cards
+                  </Typography>
+                </Stack>
+              </Stack>
+              <SuccessButton
+                fullWidth
+                size="large"
+                variant="contained"
+                onClick={onPracticeAhead}
               >
-                Learn new cards
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : currentSessionCard ? (
-        <Flashcard
-          key={`${currentSessionCard.card.id}-${ratingCounter}`}
-          card={currentSessionCard.card}
-          intervals={intervals}
-          onRate={handleRate}
-        />
-      ) : null}
-    </div>
+                Start Practice Ahead
+              </SuccessButton>
+            </OptionPaper>
+
+            <OptionPaper elevation={0}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ mb: 1.5 }}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  color="text.secondary"
+                >
+                  Learn extra new
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <SmallNumberInput
+                    type="number"
+                    size="small"
+                    value={extraNewCardsCount}
+                    onChange={(e) =>
+                      setExtraNewCardsCount(
+                        Math.max(1, parseInt(e.target.value) || 1)
+                      )
+                    }
+                    inputProps={{ min: 1, max: 50 }}
+                  />
+                  <Typography variant="body2" color="text.disabled">
+                    cards
+                  </Typography>
+                </Stack>
+              </Stack>
+              <WarningButton
+                fullWidth
+                size="large"
+                variant="contained"
+                onClick={onLearnExtra}
+              >
+                Learn New Cards
+              </WarningButton>
+            </OptionPaper>
+          </Stack>
+        </StyledCard>
+      </Box>
+    </CardWrapper>
   );
 }

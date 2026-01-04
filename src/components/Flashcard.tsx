@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { Rating, type Grade } from 'ts-fsrs';
-import type { Card } from '../types';
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+  styled,
+} from '@mui/material';
+import type { Card as FlashCard } from '../types';
 
 export interface RatingIntervals {
   [Rating.Again]: string;
@@ -10,12 +20,106 @@ export interface RatingIntervals {
 }
 
 interface FlashcardProps {
-  card: Card;
+  card: FlashCard;
   practiceMode?: boolean;
   intervals?: RatingIntervals;
   onRate?: (rating: Grade) => void;
   onNext?: () => void;
 }
+
+const CardWrapper = styled(Box)({
+  width: '100%',
+  maxWidth: 420,
+  margin: '0 auto',
+});
+
+const CardGlow = styled(Box)({
+  position: 'absolute',
+  inset: -12,
+  background: 'linear-gradient(135deg, #c23a22, #c9a227, #c23a22)',
+  borderRadius: 16,
+  filter: 'blur(24px)',
+  opacity: 0.2,
+});
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  position: 'relative',
+  padding: theme.spacing(3),
+  minHeight: 420,
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: 'rgba(255,255,255,0.95)',
+  backdropFilter: 'blur(8px)',
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(4),
+    minHeight: 460,
+  },
+}));
+
+const QuestionText = styled(Typography)({
+  fontWeight: 300,
+  lineHeight: 1.5,
+  flex: 1,
+});
+
+const AnswerText = styled(Typography)({
+  fontWeight: 500,
+});
+
+const HighlightSpan = styled('span')(({ theme }) => ({
+  color: theme.palette.primary.main,
+  fontWeight: 600,
+}));
+
+const MetaChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
+  color: theme.palette.text.secondary,
+}));
+
+const HintText = styled(Typography)({
+  fontStyle: 'italic',
+});
+
+const NextButton = styled(Button)(({ theme }) => ({
+  marginTop: 'auto',
+  backgroundColor: theme.palette.text.primary,
+  '&:hover': {
+    backgroundColor: theme.palette.text.secondary,
+  },
+}));
+
+const RevealButton = styled(Button)({
+  marginTop: 'auto',
+  background: 'linear-gradient(90deg, #c23a22, #a03018)',
+  boxShadow: '0 4px 14px rgba(194, 58, 34, 0.3)',
+  '&:hover': {
+    background: 'linear-gradient(90deg, #a03018, #c23a22)',
+  },
+});
+
+interface RatingButtonProps {
+  ratingColor: 'primary' | 'warning' | 'success' | 'info';
+}
+
+const RatingButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'ratingColor',
+})<RatingButtonProps>(({ theme, ratingColor }) => ({
+  flexDirection: 'column',
+  padding: theme.spacing(1.5, 1),
+  borderRadius: theme.spacing(1),
+  backgroundColor: theme.palette[ratingColor].main,
+  '&:hover': {
+    backgroundColor: theme.palette[ratingColor].dark,
+  },
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(2, 1),
+  },
+}));
+
+const IntervalText = styled(Typography)({
+  opacity: 0.8,
+  fontFamily: '"JetBrains Mono", monospace',
+});
 
 function highlightWord(text: string, word: string) {
   const index = text.toLowerCase().indexOf(word.toLowerCase());
@@ -28,7 +132,7 @@ function highlightWord(text: string, word: string) {
   return (
     <>
       {before}
-      <span className="text-rose-400 font-bold">{match}</span>
+      <HighlightSpan>{match}</HighlightSpan>
       {after}
     </>
   );
@@ -44,88 +148,124 @@ export function Flashcard({
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <div className="relative">
-      <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 via-white to-rose-500 rounded-3xl blur opacity-30" />
-      <div className="relative bg-slate-800 border border-slate-700 rounded-3xl p-10 w-96 h-[28rem] flex flex-col">
-        <p className="text-2xl text-white font-light flex-1">{card.front}</p>
+    <CardWrapper className="animate-fade-up">
+      <Box sx={{ position: 'relative' }}>
+        <CardGlow className="card-glow" />
+        <StyledCard>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <QuestionText variant="h5" color="text.primary">
+              {card.front}
+            </QuestionText>
 
-        {revealed ? (
-          <>
-            <div className="border-t border-slate-700 my-6" />
-            <p className="text-3xl text-white mb-3">
-              {highlightWord(card.back, card.declined)}
-            </p>
-            <div className="flex gap-2 mb-3">
-              <span className="text-xs px-2 py-1 bg-slate-700 text-slate-300 rounded">
-                {card.case}
-              </span>
-              <span className="text-xs px-2 py-1 bg-slate-700 text-slate-300 rounded">
-                {card.gender}
-              </span>
-              <span className="text-xs px-2 py-1 bg-slate-700 text-slate-300 rounded">
-                {card.number}
-              </span>
-            </div>
-            {card.hint && (
-              <p className="text-sm text-slate-400 mb-4">{card.hint}</p>
+            {revealed && (
+              <Box className="animate-fade-up">
+                <Divider sx={{ my: { xs: 2.5, sm: 3 } }} />
+
+                <AnswerText variant="h4" color="text.primary" sx={{ mb: 2 }}>
+                  {highlightWord(card.back, card.declined)}
+                </AnswerText>
+
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}
+                >
+                  <MetaChip label={card.case} size="small" />
+                  <MetaChip label={card.gender} size="small" />
+                  <MetaChip label={card.number} size="small" />
+                </Stack>
+
+                {card.hint && (
+                  <HintText
+                    variant="body2"
+                    color="text.disabled"
+                    sx={{ mb: 2 }}
+                  >
+                    💡 {card.hint}
+                  </HintText>
+                )}
+              </Box>
             )}
-            {practiceMode ? (
-              <button
+          </Box>
+
+          {revealed ? (
+            practiceMode ? (
+              <NextButton
+                fullWidth
+                size="large"
+                variant="contained"
                 onClick={onNext}
-                className="w-full py-4 bg-white hover:bg-slate-100 text-slate-900 font-semibold rounded-xl transition-colors mt-auto"
               >
-                Next →
-              </button>
+                Next Card →
+              </NextButton>
             ) : (
-              <div className="grid grid-cols-4 gap-2 mt-auto">
-                <button
+              <Stack direction="row" spacing={0.5} sx={{ mt: 'auto' }}>
+                <RatingButton
+                  fullWidth
+                  variant="contained"
+                  ratingColor="primary"
                   onClick={() => onRate?.(Rating.Again)}
-                  className="flex flex-col items-center py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                 >
-                  <span className="text-sm font-semibold">Again</span>
-                  <span className="text-xs opacity-80">
+                  <Typography variant="body2" fontWeight={600}>
+                    Again
+                  </Typography>
+                  <IntervalText variant="caption">
                     {intervals?.[Rating.Again]}
-                  </span>
-                </button>
-                <button
+                  </IntervalText>
+                </RatingButton>
+                <RatingButton
+                  fullWidth
+                  variant="contained"
+                  ratingColor="warning"
                   onClick={() => onRate?.(Rating.Hard)}
-                  className="flex flex-col items-center py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
                 >
-                  <span className="text-sm font-semibold">Hard</span>
-                  <span className="text-xs opacity-80">
+                  <Typography variant="body2" fontWeight={600}>
+                    Hard
+                  </Typography>
+                  <IntervalText variant="caption">
                     {intervals?.[Rating.Hard]}
-                  </span>
-                </button>
-                <button
+                  </IntervalText>
+                </RatingButton>
+                <RatingButton
+                  fullWidth
+                  variant="contained"
+                  ratingColor="success"
                   onClick={() => onRate?.(Rating.Good)}
-                  className="flex flex-col items-center py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
                 >
-                  <span className="text-sm font-semibold">Good</span>
-                  <span className="text-xs opacity-80">
+                  <Typography variant="body2" fontWeight={600}>
+                    Good
+                  </Typography>
+                  <IntervalText variant="caption">
                     {intervals?.[Rating.Good]}
-                  </span>
-                </button>
-                <button
+                  </IntervalText>
+                </RatingButton>
+                <RatingButton
+                  fullWidth
+                  variant="contained"
+                  ratingColor="info"
                   onClick={() => onRate?.(Rating.Easy)}
-                  className="flex flex-col items-center py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors"
                 >
-                  <span className="text-sm font-semibold">Easy</span>
-                  <span className="text-xs opacity-80">
+                  <Typography variant="body2" fontWeight={600}>
+                    Easy
+                  </Typography>
+                  <IntervalText variant="caption">
                     {intervals?.[Rating.Easy]}
-                  </span>
-                </button>
-              </div>
-            )}
-          </>
-        ) : (
-          <button
-            onClick={() => setRevealed(true)}
-            className="mt-auto w-full py-4 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-xl transition-colors"
-          >
-            Reveal Answer
-          </button>
-        )}
-      </div>
-    </div>
+                  </IntervalText>
+                </RatingButton>
+              </Stack>
+            )
+          ) : (
+            <RevealButton
+              fullWidth
+              size="large"
+              variant="contained"
+              onClick={() => setRevealed(true)}
+            >
+              Reveal Answer
+            </RevealButton>
+          )}
+        </StyledCard>
+      </Box>
+    </CardWrapper>
   );
 }
