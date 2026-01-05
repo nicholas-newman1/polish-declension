@@ -53,9 +53,8 @@ const LogoAvatar = styled(Avatar)(({ theme }) => ({
   height: 64,
   margin: '0 auto',
   marginBottom: theme.spacing(2),
-  background: 'linear-gradient(135deg, #c23a22, #a03018)',
+  background: 'transparent',
   fontSize: '2rem',
-  boxShadow: theme.shadows[3],
   [theme.breakpoints.up('sm')]: {
     width: 80,
     height: 80,
@@ -82,12 +81,6 @@ const GoogleButton = styled(Button)(({ theme }) => ({
     marginBottom: theme.spacing(3),
   },
 }));
-
-const FooterText = styled(Typography)({
-  display: 'block',
-  textAlign: 'center',
-  opacity: 0.6,
-});
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24">
@@ -198,10 +191,6 @@ export function SignIn() {
             </Typography>
           </StyledCard>
         </Box>
-
-        <FooterText variant="caption" color="text.disabled" sx={{ mt: 3 }}>
-          7 cases × 4 genders × 2 numbers = endless practice
-        </FooterText>
       </ContentWrapper>
     </PageContainer>
   );
