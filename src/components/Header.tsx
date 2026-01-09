@@ -7,6 +7,7 @@ import {
   styled,
 } from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import TranslateIcon from '@mui/icons-material/Translate';
 import { Link } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { getFirstName } from '../lib/utils';
@@ -52,9 +53,10 @@ interface HeaderProps {
   user: User | null;
   onSignOut: () => void;
   onOpenCheatSheet: () => void;
+  onOpenTranslator: () => void;
 }
 
-export function Header({ user, onSignOut, onOpenCheatSheet }: HeaderProps) {
+export function Header({ user, onSignOut, onOpenCheatSheet, onOpenTranslator }: HeaderProps) {
   return (
     <Stack
       direction="row"
@@ -70,6 +72,15 @@ export function Header({ user, onSignOut, onOpenCheatSheet }: HeaderProps) {
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={1}>
+        {user && (
+          <CheatSheetButton
+            size="small"
+            onClick={onOpenTranslator}
+            aria-label="Open translator"
+          >
+            <TranslateIcon fontSize="small" />
+          </CheatSheetButton>
+        )}
         <CheatSheetButton
           size="small"
           onClick={onOpenCheatSheet}

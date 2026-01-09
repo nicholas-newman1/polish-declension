@@ -9,6 +9,9 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { FinishedState } from './components/FinishedState';
 import { EmptyState } from './components/EmptyState';
 import { CheatSheetDrawer } from './components/CheatSheetDrawer';
+import { TranslatorModal } from './components/TranslatorModal';
+import { LimitReachedDialog } from './components/LimitReachedDialog';
+import type { TranslationResult } from './lib/translate';
 import cardsData from './data/cards.json';
 import type {
   Card as CardType,
@@ -75,6 +78,24 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showCheatSheet, setShowCheatSheet] = useState(false);
+  const [showTranslator, setShowTranslator] = useState(false);
+  const [showLimitReached, setShowLimitReached] = useState(false);
+  const [limitResetTime, setLimitResetTime] = useState('');
+  const [translationUsage, setTranslationUsage] = useState<{
+    charsUsed: number;
+    date: string;
+    resetTime: string;
+  } | null>(() => {
+    const stored = localStorage.getItem('translationUsage');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      const today = new Date().toISOString().split('T')[0];
+      if (parsed.date === today) {
+        return parsed;
+      }
+    }
+    return null;
+  });
   const [practiceMode, setPracticeMode] = useState(false);
 
   const [caseFilter, setCaseFilter] = useState<Case | 'All'>('All');
@@ -338,6 +359,50 @@ export default function App() {
     navigate('/');
   };
 
+  const MAX_CHARS_PER_DAY = 1500;
+
+  const handleOpenTranslator = useCallback(() => {
+    const today = new Date().toISOString().split('T')[0];
+    if (
+      translationUsage &&
+      translationUsage.date === today &&
+      translationUsage.charsUsed >= MAX_CHARS_PER_DAY
+    ) {
+      setLimitResetTime(translationUsage.resetTime);
+      setShowLimitReached(true);
+    } else {
+      setShowTranslator(true);
+    }
+  }, [translationUsage]);
+
+  const handleCloseTranslator = useCallback(() => {
+    setShowTranslator(false);
+  }, []);
+
+  const handleDailyLimitReached = useCallback((resetTime: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    const newUsage = {
+      charsUsed: MAX_CHARS_PER_DAY,
+      date: today,
+      resetTime,
+    };
+    setTranslationUsage(newUsage);
+    localStorage.setItem('translationUsage', JSON.stringify(newUsage));
+    setLimitResetTime(resetTime);
+    setShowLimitReached(true);
+  }, []);
+
+  const handleTranslationSuccess = useCallback((result: TranslationResult) => {
+    const today = new Date().toISOString().split('T')[0];
+    const newUsage = {
+      charsUsed: result.charsUsedToday,
+      date: today,
+      resetTime: result.resetTime,
+    };
+    setTranslationUsage(newUsage);
+    localStorage.setItem('translationUsage', JSON.stringify(newUsage));
+  }, []);
+
   const intervals: RatingIntervals = useMemo(() => {
     if (!currentSessionCard) {
       return {
@@ -378,6 +443,7 @@ export default function App() {
         user={user}
         onSignOut={handleSignOut}
         onOpenCheatSheet={() => setShowCheatSheet(true)}
+        onOpenTranslator={handleOpenTranslator}
       />
 
       <FilterControls
@@ -451,6 +517,19 @@ export default function App() {
       <CheatSheetDrawer
         open={showCheatSheet}
         onClose={() => setShowCheatSheet(false)}
+      />
+
+      <TranslatorModal
+        open={showTranslator}
+        onClose={handleCloseTranslator}
+        onDailyLimitReached={handleDailyLimitReached}
+        onTranslationSuccess={handleTranslationSuccess}
+      />
+
+      <LimitReachedDialog
+        open={showLimitReached}
+        onClose={() => setShowLimitReached(false)}
+        resetTime={limitResetTime}
       />
     </PageContainer>
   );
