@@ -165,13 +165,6 @@ export default function App() {
     buildSession(reviewStore, settings);
   }, [buildSession, reviewStore, settings]);
 
-  const checkForNewCards = useCallback(async () => {
-    const freshStore = await loadReviewData();
-    setReviewStore(freshStore);
-    buildSession(freshStore, settings);
-    setIsPracticeAhead(false);
-  }, [buildSession, settings]);
-
   const startPracticeAhead = useCallback(() => {
     const filters = {
       case: caseFilter,
@@ -501,7 +494,6 @@ export default function App() {
             setPracticeAheadCount={setPracticeAheadCount}
             extraNewCardsCount={extraNewCardsCount}
             setExtraNewCardsCount={setExtraNewCardsCount}
-            onCheckNewCards={checkForNewCards}
             onPracticeAhead={startPracticeAhead}
             onLearnExtra={startExtraNewCards}
           />

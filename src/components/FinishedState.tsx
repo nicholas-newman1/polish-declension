@@ -47,13 +47,6 @@ const CelebrationAvatar = styled(Avatar)(({ theme }) => ({
   boxShadow: theme.shadows[3],
 }));
 
-const PrimaryButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.text.primary,
-  '&:hover': {
-    backgroundColor: theme.palette.text.secondary,
-  },
-}));
-
 const SuccessButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.success.main,
   '&:hover': {
@@ -86,7 +79,6 @@ interface FinishedStateProps {
   setPracticeAheadCount: (count: number) => void;
   extraNewCardsCount: number;
   setExtraNewCardsCount: (count: number) => void;
-  onCheckNewCards: () => void;
   onPracticeAhead: () => void;
   onLearnExtra: () => void;
 }
@@ -96,7 +88,6 @@ export function FinishedState({
   setPracticeAheadCount,
   extraNewCardsCount,
   setExtraNewCardsCount,
-  onCheckNewCards,
   onPracticeAhead,
   onLearnExtra,
 }: FinishedStateProps) {
@@ -115,58 +106,7 @@ export function FinishedState({
             </Typography>
           </Box>
 
-          <PrimaryButton
-            fullWidth
-            size="large"
-            variant="contained"
-            onClick={onCheckNewCards}
-            sx={{ mb: 3 }}
-          >
-            Check for new cards
-          </PrimaryButton>
-
           <Stack spacing={2}>
-            <OptionPaper elevation={0}>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ mb: 1.5 }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={500}
-                  color="text.secondary"
-                >
-                  Practice ahead
-                </Typography>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <SmallNumberInput
-                    type="number"
-                    size="small"
-                    value={practiceAheadCount}
-                    onChange={(e) =>
-                      setPracticeAheadCount(
-                        Math.max(1, parseInt(e.target.value) || 1)
-                      )
-                    }
-                    inputProps={{ min: 1, max: 100 }}
-                  />
-                  <Typography variant="body2" color="text.disabled">
-                    cards
-                  </Typography>
-                </Stack>
-              </Stack>
-              <SuccessButton
-                fullWidth
-                size="large"
-                variant="contained"
-                onClick={onPracticeAhead}
-              >
-                Start Practice Ahead
-              </SuccessButton>
-            </OptionPaper>
-
             <OptionPaper elevation={0}>
               <Stack
                 direction="row"
@@ -206,6 +146,47 @@ export function FinishedState({
               >
                 Learn New Cards
               </WarningButton>
+            </OptionPaper>
+
+            <OptionPaper elevation={0}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ mb: 1.5 }}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  color="text.secondary"
+                >
+                  Practice ahead
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <SmallNumberInput
+                    type="number"
+                    size="small"
+                    value={practiceAheadCount}
+                    onChange={(e) =>
+                      setPracticeAheadCount(
+                        Math.max(1, parseInt(e.target.value) || 1)
+                      )
+                    }
+                    inputProps={{ min: 1, max: 100 }}
+                  />
+                  <Typography variant="body2" color="text.disabled">
+                    cards
+                  </Typography>
+                </Stack>
+              </Stack>
+              <SuccessButton
+                fullWidth
+                size="large"
+                variant="contained"
+                onClick={onPracticeAhead}
+              >
+                Start Practice Ahead
+              </SuccessButton>
             </OptionPaper>
           </Stack>
         </StyledCard>
