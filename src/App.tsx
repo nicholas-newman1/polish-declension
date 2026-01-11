@@ -8,7 +8,8 @@ import { FilterControls } from './components/FilterControls';
 import { SettingsPanel } from './components/SettingsPanel';
 import { FinishedState } from './components/FinishedState';
 import { EmptyState } from './components/EmptyState';
-import { CheatSheetDrawer } from './components/CheatSheetDrawer';
+import { DeclensionCheatSheetDrawer } from './components/DeclensionCheatSheetDrawer';
+import { ConsonantsCheatSheetDrawer } from './components/ConsonantsCheatSheetDrawer';
 import { TranslatorModal } from './components/TranslatorModal';
 import { LimitReachedDialog } from './components/LimitReachedDialog';
 import { BottomMenuBar } from './components/BottomMenuBar';
@@ -80,7 +81,10 @@ export default function App() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
-  const [showCheatSheet, setShowCheatSheet] = useState(false);
+  const [showDeclensionCheatSheet, setShowDeclensionCheatSheet] =
+    useState(false);
+  const [showConsonantsCheatSheet, setShowConsonantsCheatSheet] =
+    useState(false);
   const [showTranslator, setShowTranslator] = useState(false);
   const [showLimitReached, setShowLimitReached] = useState(false);
   const [limitResetTime, setLimitResetTime] = useState('');
@@ -506,9 +510,14 @@ export default function App() {
         ) : null}
       </MainContent>
 
-      <CheatSheetDrawer
-        open={showCheatSheet}
-        onClose={() => setShowCheatSheet(false)}
+      <DeclensionCheatSheetDrawer
+        open={showDeclensionCheatSheet}
+        onClose={() => setShowDeclensionCheatSheet(false)}
+      />
+
+      <ConsonantsCheatSheetDrawer
+        open={showConsonantsCheatSheet}
+        onClose={() => setShowConsonantsCheatSheet(false)}
       />
 
       <TranslatorModal
@@ -525,7 +534,8 @@ export default function App() {
       />
 
       <BottomMenuBar
-        onOpenCheatSheet={() => setShowCheatSheet(true)}
+        onOpenDeclensionCheatSheet={() => setShowDeclensionCheatSheet(true)}
+        onOpenConsonantsCheatSheet={() => setShowConsonantsCheatSheet(true)}
         onOpenTranslator={handleOpenTranslator}
         showTranslator={!!user}
       />

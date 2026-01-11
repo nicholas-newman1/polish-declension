@@ -1,5 +1,6 @@
 import { Box, ButtonBase, Typography, styled } from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import AbcIcon from '@mui/icons-material/Abc';
 import TranslateIcon from '@mui/icons-material/Translate';
 
 const MenuBarContainer = styled(Box)(({ theme }) => ({
@@ -45,13 +46,15 @@ const Label = styled(Typography)({
 });
 
 interface BottomMenuBarProps {
-  onOpenCheatSheet: () => void;
+  onOpenDeclensionCheatSheet: () => void;
+  onOpenConsonantsCheatSheet: () => void;
   onOpenTranslator: () => void;
   showTranslator?: boolean;
 }
 
 export function BottomMenuBar({
-  onOpenCheatSheet,
+  onOpenDeclensionCheatSheet,
+  onOpenConsonantsCheatSheet,
   onOpenTranslator,
   showTranslator = true,
 }: BottomMenuBarProps) {
@@ -65,11 +68,23 @@ export function BottomMenuBar({
           <Label>Translate</Label>
         </MenuButton>
       )}
-      <MenuButton onClick={onOpenCheatSheet} aria-label="Open noun cheat sheet">
+      <MenuButton
+        onClick={onOpenDeclensionCheatSheet}
+        aria-label="Open declension cheat sheet"
+      >
         <IconWrapper>
           <MenuBookIcon fontSize="small" />
         </IconWrapper>
-        <Label>Noun Rules</Label>
+        <Label>Declensions</Label>
+      </MenuButton>
+      <MenuButton
+        onClick={onOpenConsonantsCheatSheet}
+        aria-label="Open consonants cheat sheet"
+      >
+        <IconWrapper>
+          <AbcIcon fontSize="small" />
+        </IconWrapper>
+        <Label>Consonants</Label>
       </MenuButton>
     </MenuBarContainer>
   );

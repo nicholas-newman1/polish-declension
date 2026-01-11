@@ -289,7 +289,7 @@ interface CheatSheetTableProps {
   table: DeclensionTable;
 }
 
-export function CheatSheetTable({ table }: CheatSheetTableProps) {
+export function DeclensionCheatSheetTable({ table }: CheatSheetTableProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -329,11 +329,11 @@ export function CheatSheetTable({ table }: CheatSheetTableProps) {
   );
 }
 
-interface CheatSheetProps {
+interface DeclensionCheatSheetProps {
   tables: DeclensionTable[];
 }
 
-export function CheatSheet({ tables }: CheatSheetProps) {
+export function DeclensionCheatSheet({ tables }: DeclensionCheatSheetProps) {
   const singularTables = tables.filter((t) => t.number === 'singular');
   const pluralTables = tables.filter((t) => t.number === 'plural');
 
@@ -360,7 +360,7 @@ export function CheatSheet({ tables }: CheatSheetProps) {
             }}
           >
             {singularTables.map((table) => (
-              <CheatSheetTable
+              <DeclensionCheatSheetTable
                 key={`${table.gender}-${table.number}`}
                 table={table}
               />
@@ -390,7 +390,7 @@ export function CheatSheet({ tables }: CheatSheetProps) {
             }}
           >
             {pluralTables.map((table) => (
-              <CheatSheetTable
+              <DeclensionCheatSheetTable
                 key={`${table.gender}-${table.number}`}
                 table={table}
               />

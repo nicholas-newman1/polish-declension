@@ -1,13 +1,6 @@
-import {
-  Drawer,
-  Box,
-  Typography,
-  IconButton,
-  styled,
-} from '@mui/material';
+import type { ReactNode } from 'react';
+import { Drawer, Box, Typography, IconButton, styled } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { CheatSheet } from './CheatSheet';
-import { allTables } from '../data/declensionPatterns';
 
 const DrawerHeader = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -29,9 +22,16 @@ const DrawerContent = styled(Box)(({ theme }) => ({
 interface CheatSheetDrawerProps {
   open: boolean;
   onClose: () => void;
+  title: string;
+  children: ReactNode;
 }
 
-export function CheatSheetDrawer({ open, onClose }: CheatSheetDrawerProps) {
+export function CheatSheetDrawer({
+  open,
+  onClose,
+  title,
+  children,
+}: CheatSheetDrawerProps) {
   return (
     <Drawer
       anchor="bottom"
@@ -46,16 +46,13 @@ export function CheatSheetDrawer({ open, onClose }: CheatSheetDrawerProps) {
     >
       <DrawerHeader>
         <Typography variant="h6" fontWeight={500}>
-          Declension Cheat Sheet
+          {title}
         </Typography>
         <IconButton onClick={onClose} size="small" aria-label="close">
           <CloseIcon />
         </IconButton>
       </DrawerHeader>
-      <DrawerContent>
-        <CheatSheet tables={allTables} />
-      </DrawerContent>
+      <DrawerContent>{children}</DrawerContent>
     </Drawer>
   );
 }
-
