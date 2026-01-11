@@ -6,9 +6,11 @@ import {
   Paper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
   styled,
 } from '@mui/material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const CardWrapper = styled(Box)({
   width: '100%',
@@ -114,13 +116,28 @@ export function FinishedState({
                 justifyContent="space-between"
                 sx={{ mb: 1.5 }}
               >
-                <Typography
-                  variant="body2"
-                  fontWeight={500}
-                  color="text.secondary"
-                >
-                  Learn extra new
-                </Typography>
+                <Stack direction="row" alignItems="center" spacing={0.5}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={500}
+                    color="text.secondary"
+                  >
+                    Add new cards
+                  </Typography>
+                  <Tooltip
+                    title="Learn cards you haven't seen yet. These will be added to your daily reviews."
+                    arrow
+                    placement="top"
+                  >
+                    <HelpOutlineIcon
+                      sx={{
+                        fontSize: 16,
+                        color: 'text.disabled',
+                        cursor: 'help',
+                      }}
+                    />
+                  </Tooltip>
+                </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <SmallNumberInput
                     type="number"
@@ -139,14 +156,14 @@ export function FinishedState({
                   </Typography>
                 </Stack>
               </Stack>
-              <WarningButton
+              <SuccessButton
                 fullWidth
                 size="large"
                 variant="contained"
                 onClick={onLearnExtra}
               >
-                Learn New Cards
-              </WarningButton>
+                Start New Cards
+              </SuccessButton>
             </OptionPaper>
 
             <OptionPaper elevation={0}>
@@ -156,13 +173,28 @@ export function FinishedState({
                 justifyContent="space-between"
                 sx={{ mb: 1.5 }}
               >
-                <Typography
-                  variant="body2"
-                  fontWeight={500}
-                  color="text.secondary"
-                >
-                  Practice ahead
-                </Typography>
+                <Stack direction="row" alignItems="center" spacing={0.5}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={500}
+                    color="text.secondary"
+                  >
+                    Review early
+                  </Typography>
+                  <Tooltip
+                    title="Review cards before they're due. Great for extra practice or if you'll be away."
+                    arrow
+                    placement="top"
+                  >
+                    <HelpOutlineIcon
+                      sx={{
+                        fontSize: 16,
+                        color: 'text.disabled',
+                        cursor: 'help',
+                      }}
+                    />
+                  </Tooltip>
+                </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <SmallNumberInput
                     type="number"
@@ -181,14 +213,14 @@ export function FinishedState({
                   </Typography>
                 </Stack>
               </Stack>
-              <SuccessButton
+              <WarningButton
                 fullWidth
                 size="large"
                 variant="contained"
                 onClick={onPracticeAhead}
               >
-                Start Practice Ahead
-              </SuccessButton>
+                Start Early Review
+              </WarningButton>
             </OptionPaper>
           </Stack>
         </StyledCard>
