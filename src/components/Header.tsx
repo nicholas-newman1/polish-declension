@@ -1,7 +1,16 @@
-import { Stack, Typography, Chip, Button, styled } from '@mui/material';
+import { Box, Stack, Typography, Chip, Button, styled } from '@mui/material';
 import { Link } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { getFirstName } from '../lib/utils';
+
+const BrandingSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  [theme.breakpoints.up('md')]: {
+    display: 'none',
+  },
+}));
 
 const HeaderTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
@@ -43,14 +52,13 @@ export function Header({ user, onSignOut }: HeaderProps) {
       direction="row"
       alignItems="center"
       justifyContent="space-between"
-      sx={{ mb: { xs: 2, sm: 3 } }}
     >
-      <Stack direction="row" alignItems="center" spacing={1}>
+      <BrandingSection>
         <Typography variant="h6">🇵🇱</Typography>
         <HeaderTitle variant="h6" color="text.primary">
-          Polish Declension
+          Polish
         </HeaderTitle>
-      </Stack>
+      </BrandingSection>
 
       <Stack direction="row" alignItems="center" spacing={1}>
         {user ? (

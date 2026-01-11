@@ -1,20 +1,12 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography, styled } from '@mui/material';
-import { Flashcard, type RatingIntervals } from './components/Flashcard';
-import { Header } from './components/Header';
-import { FilterControls } from './components/FilterControls';
-import { SettingsPanel } from './components/SettingsPanel';
-import { FinishedState } from './components/FinishedState';
-import { EmptyState } from './components/EmptyState';
-import { DeclensionCheatSheetDrawer } from './components/DeclensionCheatSheetDrawer';
-import { ConsonantsCheatSheetDrawer } from './components/ConsonantsCheatSheetDrawer';
-import { YiRuleCheatSheetDrawer } from './components/YiRuleCheatSheetDrawer';
-import { TranslatorModal } from './components/TranslatorModal';
-import { LimitReachedDialog } from './components/LimitReachedDialog';
-import { BottomMenuBar } from './components/BottomMenuBar';
-import cardsData from './data/cards.json';
+import { Flashcard, type RatingIntervals } from '../components/Flashcard';
+import { FilterControls } from '../components/FilterControls';
+import { SettingsPanel } from '../components/SettingsPanel';
+import { FinishedState } from '../components/FinishedState';
+import { EmptyState } from '../components/EmptyState';
+import cardsData from '../data/cards.json';
 import type {
   Card as CardType,
   Case,
@@ -22,7 +14,7 @@ import type {
   Number,
   ReviewDataStore,
   Settings,
-} from './types';
+} from '../types';
 import {
   loadReviewData,
   saveReviewData,
@@ -30,7 +22,7 @@ import {
   saveSettings,
   getOrCreateCardReviewData,
   clearAllData,
-} from './lib/storage';
+} from '../lib/storage';
 import {
   getSessionCards,
   getPracticeAheadCards,
@@ -38,27 +30,15 @@ import {
   rateCard,
   getNextIntervals,
   type SessionCard,
-} from './lib/scheduler';
-import { useAuthContext } from './hooks/useAuthContext';
-import { DEFAULT_SETTINGS } from './constants';
-import { getDefaultReviewStore, shuffleArray } from './lib/utils';
+} from '../lib/scheduler';
+import { useAuthContext } from '../hooks/useAuthContext';
+import { DEFAULT_SETTINGS } from '../constants';
+import { getDefaultReviewStore, shuffleArray } from '../lib/utils';
 
 const allCards: CardType[] = cardsData as CardType[];
 
-const PageContainer = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  padding: theme.spacing(2),
-  paddingBottom: theme.spacing(10),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(3),
-    paddingBottom: theme.spacing(10),
-  },
-}));
-
 const LoadingContainer = styled(Box)({
-  minHeight: '100vh',
+  flex: 1,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -72,9 +52,8 @@ const MainContent = styled(Box)({
   justifyContent: 'center',
 });
 
-export default function App() {
-  const { user, signOut } = useAuthContext();
-  const navigate = useNavigate();
+export function DeclensionPage() {
+  const { user } = useAuthContext();
   const [reviewStore, setReviewStore] = useState<ReviewDataStore>(
     getDefaultReviewStore
   );
@@ -332,11 +311,6 @@ export default function App() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   const intervals: RatingIntervals = useMemo(() => {
     if (!currentSessionCard) {
       return {
@@ -372,9 +346,7 @@ export default function App() {
   }
 
   return (
-    <PageContainer>
-      <Header user={user} onSignOut={handleSignOut} />
-
+    <>
       <FilterControls
         caseFilter={caseFilter}
         genderFilter={genderFilter}
@@ -441,14 +413,7 @@ export default function App() {
           />
         ) : null}
       </MainContent>
-
-      <DeclensionCheatSheetDrawer />
-      <ConsonantsCheatSheetDrawer />
-      <YiRuleCheatSheetDrawer />
-      <TranslatorModal />
-      <LimitReachedDialog />
-
-      <BottomMenuBar showTranslator={!!user} />
-    </PageContainer>
+    </>
   );
 }
+

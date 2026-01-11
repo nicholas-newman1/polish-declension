@@ -9,7 +9,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import { TranslationProvider } from './contexts/TranslationContext';
 import { CheatSheetProvider } from './contexts/CheatSheetContext';
 import { SignIn } from './components/SignIn';
-import App from './App';
+import { Layout } from './components/Layout';
+import { DeclensionPage } from './pages/DeclensionPage';
+import { SentencesPage } from './pages/SentencesPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,7 +23,10 @@ createRoot(document.getElementById('root')!).render(
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<SignIn />} />
-                <Route path="/app" element={<App />} />
+                <Route path="/app" element={<Layout />}>
+                  <Route index element={<DeclensionPage />} />
+                  <Route path="sentences" element={<SentencesPage />} />
+                </Route>
               </Routes>
             </BrowserRouter>
           </CheatSheetProvider>

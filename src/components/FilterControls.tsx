@@ -25,13 +25,13 @@ const FilterSelect = styled(Select)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-interface PracticeButtonProps {
+interface ModeButtonProps {
   active: boolean;
 }
 
-const PracticeButton = styled(Button, {
+const ModeButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== 'active',
-})<PracticeButtonProps>(({ theme, active }) => ({
+})<ModeButtonProps>(({ theme, active }) => ({
   minWidth: 100,
   ...(active
     ? {
@@ -150,13 +150,13 @@ export function FilterControls({
       </Box>
 
       <Stack direction="row" spacing={1}>
-        <PracticeButton
+        <ModeButton
           variant={practiceMode ? 'contained' : 'outlined'}
           onClick={onTogglePractice}
           active={practiceMode}
         >
           {practiceMode ? '✓ Practice' : 'Practice'}
-        </PracticeButton>
+        </ModeButton>
 
         <SettingsButton
           onClick={onToggleSettings}
