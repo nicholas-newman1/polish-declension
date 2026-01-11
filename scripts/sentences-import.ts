@@ -1,6 +1,6 @@
 import { db } from './firebase-admin.js';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'fs';
+import { resolve, basename } from 'path';
 import type { Sentence, SentenceIndex } from './types.js';
 import { validateSentence } from './types.js';
 
@@ -117,6 +117,16 @@ async function importSentences(filePath: string) {
 
   writeFileSync(INDEX_PATH, JSON.stringify(newIndex, null, 2));
   console.log('✓ Updated sentenceIndex.json');
+
+  unlinkSync(filePath);
+  console.log(`✓ Deleted ${basename(filePath)}`);
+
+  const reviewFileName = basename(filePath, '.json') + '-review.json';
+  const reviewFilePath = resolve(process.cwd(), reviewFileName);
+  if (existsSync(reviewFilePath)) {
+    unlinkSync(reviewFilePath);
+    console.log(`✓ Deleted ${reviewFileName}`);
+  }
 
   console.log('\n✅ Import complete!');
 }

@@ -68,6 +68,9 @@ When generating new sentences, check `sentenceIndex.json` for the highest existi
 ## CLI Commands
 
 ```bash
+# Review sentences in a readable format (for manual review before import)
+npm run sentences:review <file.json>
+
 # Import new sentences from a JSON file
 npm run sentences:import <file.json>
 
@@ -76,9 +79,6 @@ npm run sentences:sync
 
 # Export sentences (optionally filtered by level)
 npm run sentences:export [level]
-
-# One-time migration from sentenceBank.json
-npm run sentences:migrate
 ```
 
 ## Generation Workflow
@@ -89,7 +89,8 @@ When requesting new sentences from AI:
 2. Specify the target level and topics/grammar focus
 3. AI generates sentences in the correct JSON format
 4. Save AI output to a file (e.g., `new-sentences.json`)
-5. Run `npm run sentences:import new-sentences.json`
+5. Review with `npm run sentences:review new-sentences.json`
+6. Run `npm run sentences:import new-sentences.json`
 
 ## Grammar Annotation Guidelines
 

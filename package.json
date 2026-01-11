@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "sentences:import": "tsx scripts/sentences-import.ts",
     "sentences:sync": "tsx scripts/sentences-sync.ts",
-    "sentences:export": "tsx scripts/sentences-export.ts"
+    "sentences:export": "tsx scripts/sentences-export.ts",
+    "sentences:review": "tsx scripts/sentences-review.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

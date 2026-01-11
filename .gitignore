@@ -29,3 +29,6 @@ dist-ssr
 # Firebase service account (keep secret!)
 service-account.json
 serviceAccountKey.json
+
+# Sentence index (regenerate with: npm run sentences:sync)
+sentenceIndex.json
