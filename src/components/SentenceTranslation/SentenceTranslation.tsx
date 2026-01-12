@@ -19,6 +19,7 @@ import {
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { AnnotatedWord } from './AnnotatedWord';
+import { DirectionToggle, type TranslationDirection } from '../DirectionToggle';
 import type { Sentence, CEFRLevel, TagCategory } from '../../types/sentences';
 import { TAG_CATEGORIES } from '../../types/sentences';
 
@@ -137,6 +138,7 @@ export function SentenceTranslation() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [shuffleMode, setShuffleMode] = useState(false);
+  const [direction, setDirection] = useState<TranslationDirection>('en-to-pl');
   const [sentences, setSentences] = useState<Sentence[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -371,11 +373,23 @@ export function SentenceTranslation() {
             {showFilters ? <ExpandLess /> : <ExpandMore />}
           </IconButton>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Typography variant="caption" color="text.secondary">
-            Shuffle
-          </Typography>
-          <Switch size="small" checked={shuffleMode} onChange={toggleShuffle} />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <DirectionToggle
+            direction={direction}
+            onToggle={() =>
+              setDirection((d) => (d === 'en-to-pl' ? 'pl-to-en' : 'en-to-pl'))
+            }
+          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography variant="caption" color="text.secondary">
+              Shuffle
+            </Typography>
+            <Switch
+              size="small"
+              checked={shuffleMode}
+              onChange={toggleShuffle}
+            />
+          </Box>
         </Box>
       </Box>
 
@@ -418,7 +432,9 @@ export function SentenceTranslation() {
           </Box>
 
           <SentenceText>
-            {renderSentenceWithTappableWords(currentSentence)}
+            {direction === 'en-to-pl'
+              ? currentSentence.english
+              : renderSentenceWithTappableWords(currentSentence)}
           </SentenceText>
 
           {showAnswer && (
@@ -437,9 +453,15 @@ export function SentenceTranslation() {
                 backgroundColor: 'action.hover',
               }}
             >
-              <Typography variant="body1" fontWeight={500}>
-                {currentSentence.english}
-              </Typography>
+              {direction === 'en-to-pl' ? (
+                <Typography variant="body1" fontWeight={500}>
+                  {renderSentenceWithTappableWords(currentSentence)}
+                </Typography>
+              ) : (
+                <Typography variant="body1" fontWeight={500}>
+                  {currentSentence.english}
+                </Typography>
+              )}
             </Box>
           )}
         </Box>

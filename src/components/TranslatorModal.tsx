@@ -7,18 +7,17 @@ import {
   TextField,
   Box,
   Typography,
-  Button,
   CircularProgress,
   styled,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import {
   translate,
   RateLimitMinuteError,
   RateLimitDailyError,
 } from '../lib/translate';
 import { useTranslationContext } from '../hooks/useTranslationContext';
+import { DirectionToggle, type TranslationDirection } from './DirectionToggle';
 
 const MAX_TEXT_LENGTH = 500;
 
@@ -55,15 +54,6 @@ const ResultBox = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
 }));
 
-const DirectionButton = styled(Button)(({ theme }) => ({
-  alignSelf: 'center',
-  textTransform: 'none',
-  fontWeight: 500,
-  gap: theme.spacing(1),
-}));
-
-type Direction = 'EN_TO_PL' | 'PL_TO_EN';
-
 export function TranslatorModal() {
   const {
     showTranslator: open,
@@ -73,7 +63,7 @@ export function TranslatorModal() {
   } = useTranslationContext();
   const [text, setText] = useState('');
   const [result, setResult] = useState('');
-  const [direction, setDirection] = useState<Direction>('EN_TO_PL');
+  const [direction, setDirection] = useState<TranslationDirection>('en-to-pl');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -100,7 +90,7 @@ export function TranslatorModal() {
       setError(null);
 
       try {
-        const targetLang = direction === 'EN_TO_PL' ? 'PL' : 'EN';
+        const targetLang = direction === 'en-to-pl' ? 'PL' : 'EN';
         const translationResult = await translate(text, targetLang);
         setResult(translationResult.translatedText);
         onTranslationSuccess?.(translationResult);
@@ -131,7 +121,7 @@ export function TranslatorModal() {
   }, [text, direction, handleClose, onDailyLimitReached, onTranslationSuccess]);
 
   const toggleDirection = () => {
-    setDirection((prev) => (prev === 'EN_TO_PL' ? 'PL_TO_EN' : 'EN_TO_PL'));
+    setDirection((prev) => (prev === 'en-to-pl' ? 'pl-to-en' : 'en-to-pl'));
     if (result) setText(result);
     setResult('');
     setError(null);
@@ -150,7 +140,7 @@ export function TranslatorModal() {
           multiline
           rows={3}
           placeholder={
-            direction === 'EN_TO_PL'
+            direction === 'en-to-pl'
               ? 'Enter English text...'
               : 'Wpisz tekst po polsku...'
           }
@@ -162,15 +152,9 @@ export function TranslatorModal() {
           helperText={`${text.length} / ${MAX_TEXT_LENGTH}`}
         />
 
-        <DirectionButton
-          variant="outlined"
-          size="small"
-          onClick={toggleDirection}
-        >
-          {direction === 'EN_TO_PL' ? 'EN' : 'PL'}
-          <SwapHorizIcon sx={{ fontSize: 18 }} />
-          {direction === 'EN_TO_PL' ? 'PL' : 'EN'}
-        </DirectionButton>
+        <Box sx={{ alignSelf: 'center' }}>
+          <DirectionToggle direction={direction} onToggle={toggleDirection} />
+        </Box>
 
         <ResultBox>
           {loading ? (
