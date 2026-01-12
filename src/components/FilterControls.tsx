@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import {
+  Badge,
   Box,
   Button,
+  Collapse,
   FormControl,
   IconButton,
   InputLabel,
@@ -10,6 +13,7 @@ import {
   styled,
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import type { Case, Gender, Number } from '../types';
 import { CASES, GENDERS, NUMBERS } from '../constants';
 
@@ -45,13 +49,13 @@ const ModeButton = styled(Button, {
       }),
 }));
 
-interface SettingsButtonProps {
+interface IconButtonStyledProps {
   active: boolean;
 }
 
-const SettingsButton = styled(IconButton, {
+const IconButtonStyled = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'active',
-})<SettingsButtonProps>(({ theme, active }) => ({
+})<IconButtonStyledProps>(({ theme, active }) => ({
   width: 40,
   height: 40,
   backgroundColor: active
@@ -92,64 +96,30 @@ export function FilterControls({
   onTogglePractice,
   onToggleSettings,
 }: FilterControlsProps) {
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = [caseFilter, genderFilter, numberFilter].filter(
+    (f) => f !== 'All'
+  ).length;
+
   return (
-    <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      spacing={2}
-      alignItems={{ sm: 'center' }}
-      sx={{ mb: { xs: 2, sm: 3 } }}
-    >
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-        <FilterFormControl size="small">
-          <InputLabel>Case</InputLabel>
-          <FilterSelect
-            value={caseFilter}
-            label="Case"
-            onChange={(e) => onCaseChange(e.target.value as Case | 'All')}
+    <Box sx={{ mb: { xs: 2, sm: 3 } }}>
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Badge
+          badgeContent={activeFilterCount}
+          color="primary"
+          invisible={activeFilterCount === 0}
+        >
+          <ModeButton
+            variant={showFilters ? 'contained' : 'outlined'}
+            onClick={() => setShowFilters(!showFilters)}
+            active={showFilters}
+            startIcon={<FilterListIcon />}
           >
-            <MenuItem value="All">All Cases</MenuItem>
-            {CASES.map((c) => (
-              <MenuItem key={c} value={c}>
-                {c}
-              </MenuItem>
-            ))}
-          </FilterSelect>
-        </FilterFormControl>
+            Filters
+          </ModeButton>
+        </Badge>
 
-        <FilterFormControl size="small">
-          <InputLabel>Gender</InputLabel>
-          <FilterSelect
-            value={genderFilter}
-            label="Gender"
-            onChange={(e) => onGenderChange(e.target.value as Gender | 'All')}
-          >
-            <MenuItem value="All">All Genders</MenuItem>
-            {GENDERS.map((g) => (
-              <MenuItem key={g} value={g}>
-                {g}
-              </MenuItem>
-            ))}
-          </FilterSelect>
-        </FilterFormControl>
-
-        <FilterFormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel>Number</InputLabel>
-          <FilterSelect
-            value={numberFilter}
-            label="Number"
-            onChange={(e) => onNumberChange(e.target.value as Number | 'All')}
-          >
-            <MenuItem value="All">Sing./Plural</MenuItem>
-            {NUMBERS.map((n) => (
-              <MenuItem key={n} value={n}>
-                {n}
-              </MenuItem>
-            ))}
-          </FilterSelect>
-        </FilterFormControl>
-      </Box>
-
-      <Stack direction="row" spacing={1}>
         <ModeButton
           variant={practiceMode ? 'contained' : 'outlined'}
           onClick={onTogglePractice}
@@ -158,14 +128,66 @@ export function FilterControls({
           {practiceMode ? '✓ Practice' : 'Practice'}
         </ModeButton>
 
-        <SettingsButton
+        <IconButtonStyled
           onClick={onToggleSettings}
           size="small"
           active={showSettings}
         >
           <SettingsIcon fontSize="small" />
-        </SettingsButton>
+        </IconButtonStyled>
       </Stack>
-    </Stack>
+
+      <Collapse in={showFilters}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+          <FilterFormControl size="small">
+            <InputLabel>Case</InputLabel>
+            <FilterSelect
+              value={caseFilter}
+              label="Case"
+              onChange={(e) => onCaseChange(e.target.value as Case | 'All')}
+            >
+              <MenuItem value="All">All Cases</MenuItem>
+              {CASES.map((c) => (
+                <MenuItem key={c} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
+            </FilterSelect>
+          </FilterFormControl>
+
+          <FilterFormControl size="small">
+            <InputLabel>Gender</InputLabel>
+            <FilterSelect
+              value={genderFilter}
+              label="Gender"
+              onChange={(e) => onGenderChange(e.target.value as Gender | 'All')}
+            >
+              <MenuItem value="All">All Genders</MenuItem>
+              {GENDERS.map((g) => (
+                <MenuItem key={g} value={g}>
+                  {g}
+                </MenuItem>
+              ))}
+            </FilterSelect>
+          </FilterFormControl>
+
+          <FilterFormControl size="small" sx={{ minWidth: 130 }}>
+            <InputLabel>Number</InputLabel>
+            <FilterSelect
+              value={numberFilter}
+              label="Number"
+              onChange={(e) => onNumberChange(e.target.value as Number | 'All')}
+            >
+              <MenuItem value="All">Sing./Plural</MenuItem>
+              {NUMBERS.map((n) => (
+                <MenuItem key={n} value={n}>
+                  {n}
+                </MenuItem>
+              ))}
+            </FilterSelect>
+          </FilterFormControl>
+        </Box>
+      </Collapse>
+    </Box>
   );
 }

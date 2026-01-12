@@ -1,4 +1,17 @@
-import { Box, Stack, Typography, Chip, Button, styled } from '@mui/material';
+import { useState } from 'react';
+import {
+  Box,
+  Stack,
+  Typography,
+  Chip,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Divider,
+  styled,
+} from '@mui/material';
+import { Person } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { getFirstName } from '../lib/utils';
@@ -20,25 +33,17 @@ const HeaderTitle = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const UserEmail = styled(Typography)(({ theme }) => ({
-  maxWidth: 100,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: 150,
-  },
-}));
-
-const SignOutButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.text.disabled,
-  textDecoration: 'underline',
-}));
-
 const GuestChip = styled(Chip)(({ theme }) => ({
   backgroundColor: 'rgba(202, 138, 4, 0.1)',
   color: theme.palette.warning.main,
   fontWeight: 500,
+}));
+
+const UserIconButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: theme.palette.action.hover,
+  '&:hover': {
+    backgroundColor: theme.palette.action.selected,
+  },
 }));
 
 interface HeaderProps {
@@ -47,6 +52,22 @@ interface HeaderProps {
 }
 
 export function Header({ user, onSignOut }: HeaderProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = () => {
+    handleMenuClose();
+    onSignOut();
+  };
+
   return (
     <Stack
       direction="row"
@@ -63,12 +84,32 @@ export function Header({ user, onSignOut }: HeaderProps) {
       <Stack direction="row" alignItems="center" spacing={1}>
         {user ? (
           <>
-            <UserEmail variant="body2" color="text.disabled">
-              {getFirstName(user.displayName, user.email)}
-            </UserEmail>
-            <SignOutButton size="small" onClick={onSignOut}>
-              Sign out
-            </SignOutButton>
+            <UserIconButton size="small" onClick={handleMenuOpen}>
+              <Person />
+            </UserIconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{
+                paper: {
+                  sx: { minWidth: 200, mt: 1 },
+                },
+              }}
+            >
+              <Box sx={{ px: 2, py: 1.5 }}>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  {getFirstName(user.displayName, user.email)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {user.email}
+                </Typography>
+              </Box>
+              <Divider />
+              <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
+            </Menu>
           </>
         ) : (
           <>
