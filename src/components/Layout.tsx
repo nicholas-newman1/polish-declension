@@ -10,10 +10,10 @@ import {
   ListItemText,
   IconButton,
   Typography,
-  styled,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import { Menu, School, Translate, Close, Abc } from '@mui/icons-material';
 import { Header } from './Header';
 import { DeclensionCheatSheetDrawer } from './DeclensionCheatSheetDrawer';
@@ -88,14 +88,13 @@ const DrawerHeader = styled(Box)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-const StyledNavItem = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<{ active?: boolean }>(({ theme, active }) => ({
+const StyledNavItem = styled(ListItemButton)<{ $active?: boolean }>(
+  ({ theme, $active }) => ({
     borderRadius: theme.spacing(1),
     margin: theme.spacing(0.5, 1),
-    backgroundColor: active ? theme.palette.action.selected : 'transparent',
+    backgroundColor: $active ? theme.palette.action.selected : 'transparent',
     '&:hover': {
-      backgroundColor: active
+      backgroundColor: $active
         ? theme.palette.action.selected
         : theme.palette.action.hover,
     },
@@ -121,7 +120,7 @@ function NavItem({
 }: NavItemProps) {
   return (
     <ListItem disablePadding>
-      <StyledNavItem active={active} onClick={() => onNavigate(path)}>
+      <StyledNavItem $active={active} onClick={() => onNavigate(path)}>
         <ListItemIcon sx={{ minWidth: 40 }}>{icon}</ListItemIcon>
         <ListItemText
           primary={label}

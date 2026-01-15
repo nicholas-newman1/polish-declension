@@ -10,8 +10,8 @@ import {
   MenuItem,
   Select,
   Stack,
-  styled,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import SettingsIcon from '@mui/icons-material/Settings';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import type { Case, Gender, Number } from '../types';
@@ -30,14 +30,12 @@ const FilterSelect = styled(Select)(({ theme }) => ({
 }));
 
 interface ModeButtonProps {
-  active: boolean;
+  $active: boolean;
 }
 
-const ModeButton = styled(Button, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<ModeButtonProps>(({ theme, active }) => ({
+const ModeButton = styled(Button)<ModeButtonProps>(({ theme, $active }) => ({
   minWidth: 100,
-  ...(active
+  ...($active
     ? {
         backgroundColor: theme.palette.success.main,
         '&:hover': { backgroundColor: theme.palette.success.dark },
@@ -50,26 +48,28 @@ const ModeButton = styled(Button, {
 }));
 
 interface IconButtonStyledProps {
-  active: boolean;
+  $active: boolean;
 }
 
-const IconButtonStyled = styled(IconButton, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<IconButtonStyledProps>(({ theme, active }) => ({
-  width: 40,
-  height: 40,
-  backgroundColor: active
-    ? theme.palette.text.primary
-    : theme.palette.background.paper,
-  color: active ? theme.palette.background.paper : theme.palette.text.disabled,
-  border: '1px solid',
-  borderColor: active ? theme.palette.text.primary : theme.palette.divider,
-  '&:hover': {
-    backgroundColor: active
-      ? theme.palette.text.secondary
-      : theme.palette.background.default,
-  },
-}));
+const IconButtonStyled = styled(IconButton)<IconButtonStyledProps>(
+  ({ theme, $active }) => ({
+    width: 40,
+    height: 40,
+    backgroundColor: $active
+      ? theme.palette.text.primary
+      : theme.palette.background.paper,
+    color: $active
+      ? theme.palette.background.paper
+      : theme.palette.text.disabled,
+    border: '1px solid',
+    borderColor: $active ? theme.palette.text.primary : theme.palette.divider,
+    '&:hover': {
+      backgroundColor: $active
+        ? theme.palette.text.secondary
+        : theme.palette.background.default,
+    },
+  })
+);
 
 interface FilterControlsProps {
   caseFilter: Case | 'All';
@@ -113,7 +113,7 @@ export function FilterControls({
           <ModeButton
             variant={showFilters ? 'contained' : 'outlined'}
             onClick={() => setShowFilters(!showFilters)}
-            active={showFilters}
+            $active={showFilters}
             startIcon={<FilterListIcon />}
           >
             Filters
@@ -123,7 +123,7 @@ export function FilterControls({
         <ModeButton
           variant={practiceMode ? 'contained' : 'outlined'}
           onClick={onTogglePractice}
-          active={practiceMode}
+          $active={practiceMode}
         >
           {practiceMode ? '✓ Practice' : 'Practice'}
         </ModeButton>
@@ -131,7 +131,7 @@ export function FilterControls({
         <IconButtonStyled
           onClick={onToggleSettings}
           size="small"
-          active={showSettings}
+          $active={showSettings}
         >
           <SettingsIcon fontSize="small" />
         </IconButtonStyled>

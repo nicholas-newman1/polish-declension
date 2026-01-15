@@ -4,12 +4,12 @@ import {
   Typography,
   Button,
   Chip,
-  styled,
   IconButton,
   Collapse,
   CircularProgress,
   Switch,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
@@ -46,19 +46,17 @@ const Card = styled(Box)(({ theme }) => ({
   },
 }));
 
-const LevelChip = styled(Chip, {
-  shouldForwardProp: (prop) => prop !== 'level' && prop !== 'active',
-})<{ level: CEFRLevel; active?: boolean }>(
-  ({ theme, level, active = true }) => ({
-    backgroundColor: active
-      ? theme.palette.levels[level]
+const LevelChip = styled(Chip)<{ $level: CEFRLevel; $active?: boolean }>(
+  ({ theme, $level, $active = true }) => ({
+    backgroundColor: $active
+      ? theme.palette.levels[$level]
       : theme.palette.neutral.main,
     color: theme.palette.common.white,
     fontWeight: 600,
     fontSize: '0.75rem',
     '&:hover': {
-      backgroundColor: active
-        ? theme.palette.levels[level]
+      backgroundColor: $active
+        ? theme.palette.levels[$level]
         : theme.palette.neutral.dark,
     },
   })
@@ -80,21 +78,21 @@ const NavigationBox = styled(Box)({
   gap: 8,
 });
 
-const TagChip = styled(Chip, {
-  shouldForwardProp: (prop) => prop !== 'selected',
-})<{ selected?: boolean }>(({ theme, selected }) => ({
-  height: 24,
-  fontSize: '0.7rem',
-  backgroundColor: selected
-    ? theme.palette.primary.main
-    : theme.palette.action.hover,
-  color: selected ? theme.palette.common.white : theme.palette.text.primary,
-  '&:hover': {
-    backgroundColor: selected
-      ? theme.palette.primary.dark
-      : theme.palette.action.selected,
-  },
-}));
+const TagChip = styled(Chip)<{ $selected?: boolean }>(
+  ({ theme, $selected }) => ({
+    height: 24,
+    fontSize: '0.7rem',
+    backgroundColor: $selected
+      ? theme.palette.primary.main
+      : theme.palette.action.hover,
+    color: $selected ? theme.palette.common.white : theme.palette.text.primary,
+    '&:hover': {
+      backgroundColor: $selected
+        ? theme.palette.primary.dark
+        : theme.palette.action.selected,
+    },
+  })
+);
 
 const CategorySection = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(1.5),
@@ -307,9 +305,9 @@ export function SentenceTranslation() {
           {ALL_LEVELS.map((level) => (
             <LevelChip
               key={level}
-              level={level}
+              $level={level}
               label={level}
-              active={selectedLevels.includes(level)}
+              $active={selectedLevels.includes(level)}
               onClick={() => toggleLevel(level)}
               sx={{ cursor: 'pointer' }}
             />
@@ -338,9 +336,9 @@ export function SentenceTranslation() {
           {ALL_LEVELS.map((level) => (
             <LevelChip
               key={level}
-              level={level}
+              $level={level}
               label={level}
-              active={selectedLevels.includes(level)}
+              $active={selectedLevels.includes(level)}
               onClick={() => toggleLevel(level)}
               sx={{ cursor: 'pointer' }}
             />
@@ -364,7 +362,7 @@ export function SentenceTranslation() {
                     <TagChip
                       key={tag}
                       label={tag}
-                      selected={selectedTags.includes(tag)}
+                      $selected={selectedTags.includes(tag)}
                       onClick={() => toggleTag(tag)}
                       sx={{ cursor: 'pointer' }}
                     />
@@ -407,9 +405,9 @@ export function SentenceTranslation() {
           {ALL_LEVELS.map((level) => (
             <LevelChip
               key={level}
-              level={level}
+              $level={level}
               label={level}
-              active={selectedLevels.includes(level)}
+              $active={selectedLevels.includes(level)}
               onClick={() => toggleLevel(level)}
               sx={{ cursor: 'pointer' }}
             />
@@ -452,7 +450,7 @@ export function SentenceTranslation() {
                   <TagChip
                     key={tag}
                     label={tag}
-                    selected={selectedTags.includes(tag)}
+                    $selected={selectedTags.includes(tag)}
                     onClick={() => toggleTag(tag)}
                     sx={{ cursor: 'pointer' }}
                   />
@@ -467,7 +465,7 @@ export function SentenceTranslation() {
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
             <LevelChip
-              level={currentSentence.level}
+              $level={currentSentence.level}
               label={currentSentence.level}
               size="small"
             />

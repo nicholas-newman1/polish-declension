@@ -8,8 +8,8 @@ import {
   Divider,
   Stack,
   Typography,
-  styled,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import type { VocabularyWord, VocabularyDirection } from '../types/vocabulary';
 import { alpha } from '../lib/theme';
 
@@ -93,23 +93,23 @@ const RevealButton = styled(Button)(({ theme }) => ({
 }));
 
 interface RatingButtonProps {
-  ratingColor: 'primary' | 'warning' | 'success' | 'info';
+  $ratingColor: 'primary' | 'warning' | 'success' | 'info';
 }
 
-const RatingButton = styled(Button, {
-  shouldForwardProp: (prop) => prop !== 'ratingColor',
-})<RatingButtonProps>(({ theme, ratingColor }) => ({
-  flexDirection: 'column',
-  padding: theme.spacing(1.5, 1),
-  borderRadius: theme.spacing(1),
-  backgroundColor: theme.palette[ratingColor].main,
-  '&:hover': {
-    backgroundColor: theme.palette[ratingColor].dark,
-  },
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(2, 1),
-  },
-}));
+const RatingButton = styled(Button)<RatingButtonProps>(
+  ({ theme, $ratingColor }) => ({
+    flexDirection: 'column',
+    padding: theme.spacing(1.5, 1),
+    borderRadius: theme.spacing(1),
+    backgroundColor: theme.palette[$ratingColor].main,
+    '&:hover': {
+      backgroundColor: theme.palette[$ratingColor].dark,
+    },
+    [theme.breakpoints.up('sm')]: {
+      padding: theme.spacing(2, 1),
+    },
+  })
+);
 
 const IntervalText = styled(Typography)({
   opacity: 0.8,
@@ -189,7 +189,7 @@ export function VocabularyFlashcard({
               <RatingButton
                 fullWidth
                 variant="contained"
-                ratingColor="primary"
+                $ratingColor="primary"
                 onClick={() => onRate?.(Rating.Again)}
               >
                 <Typography variant="body2" fontWeight={600}>
@@ -202,7 +202,7 @@ export function VocabularyFlashcard({
               <RatingButton
                 fullWidth
                 variant="contained"
-                ratingColor="warning"
+                $ratingColor="warning"
                 onClick={() => onRate?.(Rating.Hard)}
               >
                 <Typography variant="body2" fontWeight={600}>
@@ -215,7 +215,7 @@ export function VocabularyFlashcard({
               <RatingButton
                 fullWidth
                 variant="contained"
-                ratingColor="success"
+                $ratingColor="success"
                 onClick={() => onRate?.(Rating.Good)}
               >
                 <Typography variant="body2" fontWeight={600}>
@@ -228,7 +228,7 @@ export function VocabularyFlashcard({
               <RatingButton
                 fullWidth
                 variant="contained"
-                ratingColor="info"
+                $ratingColor="info"
                 onClick={() => onRate?.(Rating.Easy)}
               >
                 <Typography variant="body2" fontWeight={600}>

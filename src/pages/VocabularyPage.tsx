@@ -4,13 +4,13 @@ import {
   Box,
   CircularProgress,
   Typography,
-  styled,
   ToggleButton,
   ToggleButtonGroup,
   Stack,
   Button,
   IconButton,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import { Settings as SettingsIcon } from '@mui/icons-material';
 import {
   VocabularyFlashcard,
@@ -93,19 +93,18 @@ const DirectionToggle = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-const PracticeModeButton = styled(Button, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<{ active?: boolean }>(({ theme, active }) => ({
+const PracticeModeButton = styled(Button)<{ $active?: boolean }>(
+  ({ theme, $active }) => ({
     textTransform: 'none',
-    backgroundColor: active ? theme.palette.warning.main : 'transparent',
-    color: active
+    backgroundColor: $active ? theme.palette.warning.main : 'transparent',
+    color: $active
       ? theme.palette.warning.contrastText
       : theme.palette.text.secondary,
     border: `1px solid ${
-      active ? theme.palette.warning.main : theme.palette.divider
+      $active ? theme.palette.warning.main : theme.palette.divider
     }`,
     '&:hover': {
-      backgroundColor: active
+      backgroundColor: $active
         ? theme.palette.warning.dark
         : theme.palette.action.hover,
     },
@@ -367,7 +366,7 @@ export function VocabularyPage() {
           </DirectionToggle>
 
           <PracticeModeButton
-            active={practiceMode}
+            $active={practiceMode}
             onClick={togglePracticeMode}
             size="small"
           >

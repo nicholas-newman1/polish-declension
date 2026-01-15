@@ -1,4 +1,5 @@
-import { Box, Typography, styled } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
 
 const CONSONANT_PAIRS: { hard: string; soft: string }[] = [

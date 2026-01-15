@@ -4,10 +4,10 @@ import {
   Typography,
   Tooltip,
   Popover,
-  styled,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import type {
   DeclensionTable,
@@ -64,8 +64,7 @@ const EndingsContainer = styled(Box)({
   flexWrap: 'wrap',
 });
 
-const EndingWrapper = styled(Box)<{ $clickable?: boolean }>(
-  ({ $clickable }) => ({
+const EndingWrapper = styled(Box)<{ $clickable?: boolean }>(({ $clickable }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -95,8 +94,7 @@ const EndingText = styled(Typography)(({ theme }) => ({
   fontFamily: '"JetBrains Mono", monospace',
 }));
 
-const FootnoteBadge = styled(Box)<{ $clickable?: boolean }>(
-  ({ theme, $clickable }) => ({
+const FootnoteBadge = styled(Box)<{ $clickable?: boolean }>(({ theme, $clickable }) => ({
     position: 'absolute',
     top: -2,
     right: -14,

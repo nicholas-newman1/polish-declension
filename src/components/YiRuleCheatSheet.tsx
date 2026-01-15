@@ -1,4 +1,5 @@
-import { Box, Typography, Tooltip, styled } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
+import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
 
 interface Example {

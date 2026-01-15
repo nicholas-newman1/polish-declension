@@ -1,4 +1,5 @@
-import { Box, ButtonBase, Typography, styled } from '@mui/material';
+import { Box, ButtonBase, Typography } from '@mui/material';
+import { styled } from '../lib/styled';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import AbcIcon from '@mui/icons-material/Abc';
 import TranslateIcon from '@mui/icons-material/Translate';
@@ -36,19 +37,19 @@ const MenuButton = styled(ButtonBase)(({ theme }) => ({
   },
 }));
 
-const IconWrapper = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isActive',
-})<{ isActive?: boolean }>(({ theme, isActive }) => ({
-  backgroundColor: isActive
-    ? alpha(theme.palette.primary.main, 0.12)
-    : theme.palette.grey[100],
-  borderRadius: theme.spacing(1),
-  padding: theme.spacing(1),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: isActive ? theme.palette.primary.main : 'inherit',
-}));
+const IconWrapper = styled(Box)<{ $isActive?: boolean }>(
+  ({ theme, $isActive }) => ({
+    backgroundColor: $isActive
+      ? alpha(theme.palette.primary.main, 0.12)
+      : theme.palette.grey[100],
+    borderRadius: theme.spacing(1),
+    padding: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: $isActive ? theme.palette.primary.main : 'inherit',
+  })
+);
 
 const Label = styled(Typography)({
   fontSize: '0.65rem',
@@ -68,7 +69,7 @@ export function BottomMenuBar({ showTranslator = true }: BottomMenuBarProps) {
     <MenuBarContainer>
       {showTranslator && (
         <MenuButton onClick={openTranslator} aria-label="Open translator">
-          <IconWrapper isActive={isTranslatorOpen}>
+          <IconWrapper $isActive={isTranslatorOpen}>
             <TranslateIcon fontSize="small" />
           </IconWrapper>
           <Label>Translate</Label>
@@ -78,7 +79,7 @@ export function BottomMenuBar({ showTranslator = true }: BottomMenuBarProps) {
         onClick={() => openSheet('declension')}
         aria-label="Open declension cheat sheet"
       >
-        <IconWrapper isActive={activeSheet === 'declension'}>
+        <IconWrapper $isActive={activeSheet === 'declension'}>
           <MenuBookIcon fontSize="small" />
         </IconWrapper>
         <Label>Declensions</Label>
@@ -87,7 +88,7 @@ export function BottomMenuBar({ showTranslator = true }: BottomMenuBarProps) {
         onClick={() => openSheet('consonants')}
         aria-label="Open consonants cheat sheet"
       >
-        <IconWrapper isActive={activeSheet === 'consonants'}>
+        <IconWrapper $isActive={activeSheet === 'consonants'}>
           <AbcIcon fontSize="small" />
         </IconWrapper>
         <Label>Consonants</Label>
@@ -96,7 +97,7 @@ export function BottomMenuBar({ showTranslator = true }: BottomMenuBarProps) {
         onClick={() => openSheet('yi-rule')}
         aria-label="Open y/i rule cheat sheet"
       >
-        <IconWrapper isActive={activeSheet === 'yi-rule'}>
+        <IconWrapper $isActive={activeSheet === 'yi-rule'}>
           <SpellcheckIcon fontSize="small" />
         </IconWrapper>
         <Label>-y/-i Rule</Label>
