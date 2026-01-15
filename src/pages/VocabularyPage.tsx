@@ -93,8 +93,9 @@ const DirectionToggle = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-const PracticeModeButton = styled(Button)<{ active?: boolean }>(
-  ({ theme, active }) => ({
+const PracticeModeButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<{ active?: boolean }>(({ theme, active }) => ({
     textTransform: 'none',
     backgroundColor: active ? theme.palette.warning.main : 'transparent',
     color: active

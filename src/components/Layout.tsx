@@ -88,8 +88,9 @@ const DrawerHeader = styled(Box)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-const StyledNavItem = styled(ListItemButton)<{ active?: boolean }>(
-  ({ theme, active }) => ({
+const StyledNavItem = styled(ListItemButton, {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<{ active?: boolean }>(({ theme, active }) => ({
     borderRadius: theme.spacing(1),
     margin: theme.spacing(0.5, 1),
     backgroundColor: active ? theme.palette.action.selected : 'transparent',
