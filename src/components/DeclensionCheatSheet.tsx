@@ -13,71 +13,49 @@ import type {
   DeclensionTable,
   DeclensionEnding,
 } from '../data/declensionPatterns';
+import { alpha } from '../lib/theme';
 
 const TableContainer = styled(Box)<{
   $gender: 'masculine' | 'feminine' | 'neuter';
-}>(({ $gender }) => {
-  let background, boxShadow;
-  if ($gender === 'feminine') {
-    background = 'linear-gradient(180deg, #d45a42 0%, #c23a22 100%)';
-    boxShadow = '0 4px 20px rgba(194, 58, 34, 0.3)';
-  } else if ($gender === 'neuter') {
-    background = 'linear-gradient(180deg, #52b883 0%, #40916c 100%)';
-    boxShadow = '0 4px 20px rgba(64, 145, 108, 0.3)';
-  } else {
-    background = 'linear-gradient(180deg, #4a9ede 0%, #3b82c4 100%)';
-    boxShadow = '0 4px 20px rgba(59, 130, 196, 0.3)';
-  }
-  return {
-    background,
-    borderRadius: 16,
-    overflow: 'hidden',
-    boxShadow,
-  };
-});
+}>(({ theme, $gender }) => ({
+  background: theme.palette.gender[$gender].gradient,
+  borderRadius: 16,
+  overflow: 'hidden',
+  boxShadow: `0 4px 20px ${alpha(theme.palette.gender[$gender].main, 0.3)}`,
+}));
 
 const TableHeader = styled(Box)<{
   $gender: 'masculine' | 'feminine' | 'neuter';
-}>(({ $gender, theme }) => {
-  let background;
-  if ($gender === 'feminine') {
-    background = 'linear-gradient(180deg, #a03018 0%, #8b2815 100%)';
-  } else if ($gender === 'neuter') {
-    background = 'linear-gradient(180deg, #40916c 0%, #2d6a4f 100%)';
-  } else {
-    background = 'linear-gradient(180deg, #2d6aa0 0%, #245a88 100%)';
-  }
-  return {
-    background,
-    padding: theme.spacing(1.5, 2),
-    textAlign: 'center',
-  };
-});
+}>(({ theme, $gender }) => ({
+  background: `linear-gradient(180deg, ${theme.palette.gender[$gender].dark} 0%, ${alpha(theme.palette.gender[$gender].dark, 0.85)} 100%)`,
+  padding: theme.spacing(1.5, 2),
+  textAlign: 'center',
+}));
 
-const TableTitle = styled(Typography)({
-  color: '#ffffff',
+const TableTitle = styled(Typography)(({ theme }) => ({
+  color: theme.palette.common.white,
   fontWeight: 500,
   letterSpacing: '0.15em',
   textTransform: 'uppercase',
-});
+}));
 
 const TableBody = styled(Box)({});
 
-const TableRow = styled(Box)<{ $isLast?: boolean }>(({ $isLast }) => ({
+const TableRow = styled(Box)<{ $isLast?: boolean }>(({ theme, $isLast }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '10px 12px',
-  borderBottom: $isLast ? 'none' : '2px dashed rgba(255, 255, 255, 0.25)',
+  borderBottom: $isLast ? 'none' : `2px dashed ${alpha(theme.palette.common.white, 0.25)}`,
   minHeight: 48,
 }));
 
-const CaseName = styled(Typography)({
-  color: '#ffffff',
+const CaseName = styled(Typography)(({ theme }) => ({
+  color: theme.palette.common.white,
   fontWeight: 400,
   width: 95,
   flexShrink: 0,
   fontSize: '0.85rem',
-});
+}));
 
 const EndingsContainer = styled(Box)({
   display: 'flex',
@@ -110,26 +88,26 @@ const EndingInner = styled(Box)({
   whiteSpace: 'nowrap',
 });
 
-const EndingText = styled(Typography)({
-  color: '#ffffff',
+const EndingText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.common.white,
   fontWeight: 600,
   fontSize: '1rem',
   fontFamily: '"JetBrains Mono", monospace',
-});
+}));
 
 const FootnoteBadge = styled(Box)<{ $clickable?: boolean }>(
-  ({ $clickable }) => ({
+  ({ theme, $clickable }) => ({
     position: 'absolute',
     top: -2,
     right: -14,
     width: 16,
     height: 16,
     borderRadius: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#ffffff',
+    color: theme.palette.common.white,
     cursor: $clickable ? 'pointer' : 'default',
     '& svg': {
       fontSize: 12,
@@ -137,12 +115,12 @@ const FootnoteBadge = styled(Box)<{ $clickable?: boolean }>(
   })
 );
 
-const OrDivider = styled(Typography)({
-  color: 'rgba(255, 255, 255, 0.7)',
+const OrDivider = styled(Typography)(({ theme }) => ({
+  color: alpha(theme.palette.common.white, 0.7),
   fontSize: '0.85rem',
   fontStyle: 'italic',
   flexShrink: 0,
-});
+}));
 
 const TooltipContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1),
@@ -179,12 +157,8 @@ function EndingItem({
     ? ending.footnotes!.map((id) => tableFootnotes[id]).filter(Boolean)
     : [];
 
-  const tooltipBgColor =
-    gender === 'feminine'
-      ? 'rgba(194, 58, 34, 0.95)'
-      : gender === 'neuter'
-      ? 'rgba(64, 145, 108, 0.95)'
-      : 'rgba(45, 106, 160, 0.95)';
+  const theme = useTheme();
+  const tooltipBgColor = alpha(theme.palette.gender[gender].main, 0.95);
 
   const content = (
     <EndingWrapper onClick={handleClick} $clickable={hasFootnotes}>
@@ -266,7 +240,7 @@ function EndingItem({
         tooltip: {
           sx: {
             backgroundColor: tooltipBgColor,
-            color: '#ffffff',
+            color: theme.palette.common.white,
             fontSize: '0.85rem',
             padding: '8px 12px',
             maxWidth: 280,

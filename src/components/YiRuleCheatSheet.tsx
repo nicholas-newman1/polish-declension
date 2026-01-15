@@ -1,4 +1,5 @@
 import { Box, Typography, Tooltip, styled } from '@mui/material';
+import { alpha } from '../lib/theme';
 
 interface Example {
   singular: string;
@@ -104,18 +105,12 @@ const Container = styled(Box)({
   margin: '0 auto',
 });
 
-const RuleCard = styled(Box)<{ $variant: 'i' | 'y' }>(({ $variant }) => ({
-  background:
-    $variant === 'i'
-      ? 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)'
-      : 'linear-gradient(135deg, #c62828 0%, #b71c1c 100%)',
+const RuleCard = styled(Box)<{ $variant: 'i' | 'y' }>(({ theme, $variant }) => ({
+  background: theme.palette.yiRule[$variant].gradient,
   borderRadius: 16,
   padding: '20px 24px',
   marginBottom: 16,
-  boxShadow:
-    $variant === 'i'
-      ? '0 4px 20px rgba(46, 125, 50, 0.3)'
-      : '0 4px 20px rgba(198, 40, 40, 0.3)',
+  boxShadow: `0 4px 20px ${alpha(theme.palette.yiRule[$variant].main, 0.3)}`,
 }));
 
 const RuleHeader = styled(Box)({
@@ -125,21 +120,21 @@ const RuleHeader = styled(Box)({
   marginBottom: 16,
 });
 
-const EndingBadge = styled(Typography)({
-  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  color: '#ffffff',
+const EndingBadge = styled(Typography)(({ theme }) => ({
+  backgroundColor: alpha(theme.palette.common.white, 0.2),
+  color: theme.palette.common.white,
   fontWeight: 700,
   fontSize: '1.5rem',
   fontFamily: '"JetBrains Mono", monospace',
   padding: '4px 16px',
   borderRadius: 8,
-});
+}));
 
-const RuleLabel = styled(Typography)({
-  color: 'rgba(255, 255, 255, 0.9)',
+const RuleLabel = styled(Typography)(({ theme }) => ({
+  color: alpha(theme.palette.common.white, 0.9),
   fontWeight: 500,
   fontSize: '0.95rem',
-});
+}));
 
 const TierSection = styled(Box)({
   marginBottom: 14,
@@ -159,17 +154,17 @@ const TierEmoji = styled(Typography)({
   fontSize: '1rem',
 });
 
-const TierLabel = styled(Typography)({
-  color: 'rgba(255, 255, 255, 0.95)',
+const TierLabel = styled(Typography)(({ theme }) => ({
+  color: alpha(theme.palette.common.white, 0.95),
   fontWeight: 600,
   fontSize: '0.8rem',
-});
+}));
 
-const TierDescription = styled(Typography)({
-  color: 'rgba(255, 255, 255, 0.6)',
+const TierDescription = styled(Typography)(({ theme }) => ({
+  color: alpha(theme.palette.common.white, 0.6),
   fontSize: '0.7rem',
   marginLeft: 4,
-});
+}));
 
 const ConsonantGrid = styled(Box)({
   display: 'flex',
@@ -178,16 +173,16 @@ const ConsonantGrid = styled(Box)({
 });
 
 const ConsonantChip = styled(Box)<{ $hasExamples: boolean; $tier: number }>(
-  ({ $hasExamples, $tier }) => ({
+  ({ theme, $hasExamples, $tier }) => ({
     backgroundColor:
       $tier === 1
-        ? 'rgba(255, 255, 255, 0.25)'
+        ? alpha(theme.palette.common.white, 0.25)
         : $tier === 2
-        ? 'rgba(255, 255, 255, 0.18)'
+        ? alpha(theme.palette.common.white, 0.18)
         : $tier === 3
-        ? 'rgba(255, 255, 255, 0.12)'
-        : 'rgba(255, 255, 255, 0.08)',
-    color: $tier <= 2 ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
+        ? alpha(theme.palette.common.white, 0.12)
+        : alpha(theme.palette.common.white, 0.08),
+    color: $tier <= 2 ? theme.palette.common.white : alpha(theme.palette.common.white, 0.7),
     fontFamily: '"JetBrains Mono", monospace',
     fontWeight: $tier === 1 ? 600 : 500,
     fontSize: $tier === 1 ? '1.1rem' : '1rem',
@@ -197,18 +192,18 @@ const ConsonantChip = styled(Box)<{ $hasExamples: boolean; $tier: number }>(
     transition: 'all 0.2s ease',
     ...($hasExamples && {
       '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.35)',
+        backgroundColor: alpha(theme.palette.common.white, 0.35),
         transform: 'scale(1.05)',
       },
     }),
   })
 );
 
-const OtherwiseText = styled(Typography)({
-  color: 'rgba(255, 255, 255, 0.85)',
+const OtherwiseText = styled(Typography)(({ theme }) => ({
+  color: alpha(theme.palette.common.white, 0.85),
   fontStyle: 'italic',
   fontSize: '0.9rem',
-});
+}));
 
 const TooltipContent = styled(Box)({
   padding: 4,
@@ -285,18 +280,18 @@ function ConsonantWithTooltip({
       leaveTouchDelay={3000}
       slotProps={{
         tooltip: {
-          sx: {
-            bgcolor: 'rgba(30, 30, 30, 0.95)',
+          sx: (theme) => ({
+            bgcolor: alpha(theme.palette.tooltip.main, 0.95),
             backdropFilter: 'blur(8px)',
             borderRadius: 2,
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.3)}`,
             p: 1.5,
-          },
+          }),
         },
         arrow: {
-          sx: {
-            color: 'rgba(30, 30, 30, 0.95)',
-          },
+          sx: (theme) => ({
+            color: alpha(theme.palette.tooltip.main, 0.95),
+          }),
         },
       }}
     >

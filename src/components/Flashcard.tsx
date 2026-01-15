@@ -13,6 +13,7 @@ import {
 import type { Card as FlashCard } from '../types';
 import { renderTappableText } from '../lib/renderTappableText';
 import { useTranslationContext } from '../hooks/useTranslationContext';
+import { alpha } from '../lib/theme';
 
 export interface RatingIntervals {
   [Rating.Again]: string;
@@ -40,9 +41,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
   minHeight: 420,
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: 'rgba(255,255,255,0.95)',
+  backgroundColor: alpha(theme.palette.background.paper, 0.95),
   backdropFilter: 'blur(8px)',
-  boxShadow: '0 8px 32px rgba(194, 58, 34, 0.4)',
+  boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.4)}`,
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
     minHeight: 460,
@@ -76,14 +77,14 @@ const NextButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const RevealButton = styled(Button)({
+const RevealButton = styled(Button)(({ theme }) => ({
   marginTop: 'auto',
-  backgroundColor: '#c23a22',
-  boxShadow: '0 4px 14px rgba(194, 58, 34, 0.3)',
+  backgroundColor: theme.palette.primary.main,
+  boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.3)}`,
   '&:hover': {
-    backgroundColor: '#a03018',
+    backgroundColor: theme.palette.primary.dark,
   },
-});
+}));
 
 interface RatingButtonProps {
   ratingColor: 'primary' | 'warning' | 'success' | 'info';

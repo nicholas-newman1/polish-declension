@@ -8,6 +8,7 @@ import {
   styled,
 } from '@mui/material';
 import type { User } from 'firebase/auth';
+import { alpha } from '../lib/theme';
 
 const SettingsCard = styled(Card)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -30,10 +31,10 @@ const NumberInput = styled(TextField)({
 });
 
 const ResetButton = styled(Button)(({ theme }) => ({
-  backgroundColor: 'rgba(194, 58, 34, 0.1)',
+  backgroundColor: alpha(theme.palette.primary.main, 0.1),
   color: theme.palette.primary.main,
   '&:hover': {
-    backgroundColor: 'rgba(194, 58, 34, 0.2)',
+    backgroundColor: alpha(theme.palette.primary.main, 0.2),
   },
 }));
 

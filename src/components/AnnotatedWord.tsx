@@ -12,9 +12,9 @@ const WordSpan = styled('span')(({ theme }) => ({
   },
 }));
 
-const TooltipPaper = styled(Paper)({
+const TooltipPaper = styled(Paper)(({ theme }) => ({
   position: 'relative',
-  backgroundColor: '#1a1a1a',
+  backgroundColor: theme.palette.tooltip.main,
   maxWidth: 280,
   '&::after': {
     content: '""',
@@ -26,13 +26,13 @@ const TooltipPaper = styled(Paper)({
     height: 0,
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
-    borderTop: '6px solid #1a1a1a',
+    borderTop: `6px solid ${theme.palette.tooltip.main}`,
   },
-});
+}));
 
 const PopoverContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1.5),
-  color: '#fff',
+  color: theme.palette.tooltip.text,
 }));
 
 interface AnnotatedWordProps {
@@ -111,7 +111,7 @@ export function AnnotatedWord({
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ color: '#a3a3a3', display: 'block' }}
+                  sx={{ color: 'tooltip.muted', display: 'block' }}
                 >
                   {annotation.lemma !== annotation.word.toLowerCase() && (
                     <span style={{ fontStyle: 'italic' }}>
@@ -131,7 +131,7 @@ export function AnnotatedWord({
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ color: '#a3a3a3', display: 'block' }}
+                  sx={{ color: 'tooltip.muted', display: 'block' }}
                 >
                   {annotation.lemma !== annotation.word.toLowerCase() && (
                     <span style={{ fontStyle: 'italic' }}>
@@ -148,7 +148,7 @@ export function AnnotatedWord({
             {annotation.notes && (
               <Typography
                 variant="caption"
-                sx={{ color: '#60a5fa', display: 'block', mt: 0.5 }}
+                sx={{ color: 'tooltip.accent', display: 'block', mt: 0.5 }}
               >
                 {annotation.notes}
               </Typography>

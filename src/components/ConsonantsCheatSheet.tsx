@@ -1,4 +1,5 @@
 import { Box, Typography, styled } from '@mui/material';
+import { alpha } from '../lib/theme';
 
 const CONSONANT_PAIRS: { hard: string; soft: string }[] = [
   { hard: 'm', soft: 'mi' },
@@ -22,51 +23,51 @@ const CONSONANT_PAIRS: { hard: string; soft: string }[] = [
   { hard: '', soft: 'j' },
 ];
 
-const TableContainer = styled(Box)({
-  background: 'linear-gradient(180deg, #6b4c9a 0%, #553c7d 100%)',
+const TableContainer = styled(Box)(({ theme }) => ({
+  background: theme.palette.consonants.gradient,
   borderRadius: 16,
   overflow: 'hidden',
-  boxShadow: '0 4px 20px rgba(107, 76, 154, 0.3)',
+  boxShadow: `0 4px 20px ${alpha(theme.palette.consonants.main, 0.3)}`,
   maxWidth: 320,
   margin: '0 auto',
-});
+}));
 
 const TableHeader = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(180deg, #4a3570 0%, #3d2b5c 100%)',
+  background: `linear-gradient(180deg, ${theme.palette.consonants.dark} 0%, ${alpha(theme.palette.consonants.dark, 0.85)} 100%)`,
   padding: theme.spacing(1.5, 2),
   display: 'flex',
 }));
 
-const HeaderCell = styled(Typography)({
+const HeaderCell = styled(Typography)(({ theme }) => ({
   flex: 1,
-  color: '#ffffff',
+  color: theme.palette.common.white,
   fontWeight: 600,
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
   textAlign: 'center',
   fontSize: '0.9rem',
-});
+}));
 
 const TableBody = styled(Box)({});
 
-const TableRow = styled(Box)<{ $isLast?: boolean }>(({ $isLast }) => ({
+const TableRow = styled(Box)<{ $isLast?: boolean }>(({ theme, $isLast }) => ({
   display: 'flex',
-  borderBottom: $isLast ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
+  borderBottom: $isLast ? 'none' : `1px solid ${alpha(theme.palette.common.white, 0.15)}`,
 }));
 
-const Cell = styled(Box)<{ $isEmpty?: boolean }>(({ $isEmpty }) => ({
+const Cell = styled(Box)<{ $isEmpty?: boolean }>(({ theme, $isEmpty }) => ({
   flex: 1,
   padding: '12px 16px',
   textAlign: 'center',
-  backgroundColor: $isEmpty ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
+  backgroundColor: $isEmpty ? alpha(theme.palette.common.black, 0.1) : 'transparent',
 }));
 
-const ConsonantText = styled(Typography)({
-  color: '#ffffff',
+const ConsonantText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.common.white,
   fontWeight: 500,
   fontSize: '1.1rem',
   fontFamily: '"JetBrains Mono", monospace',
-});
+}));
 
 export function ConsonantsCheatSheet() {
   return (

@@ -10,6 +10,7 @@ import {
   styled,
 } from '@mui/material';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { alpha } from '../lib/theme';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -28,20 +29,20 @@ const ContentWrapper = styled(Box)({
   maxWidth: 420,
 });
 
-const CardGlow = styled(Box)({
+const CardGlow = styled(Box)(({ theme }) => ({
   position: 'absolute',
   inset: -12,
-  background: 'linear-gradient(135deg, #c23a22, #c9a227, #c23a22)',
+  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
   borderRadius: 16,
   filter: 'blur(24px)',
   opacity: 0.2,
-});
+}));
 
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   padding: theme.spacing(4),
   textAlign: 'center',
-  backgroundColor: 'rgba(255,255,255,0.95)',
+  backgroundColor: alpha(theme.palette.background.paper, 0.95),
   backdropFilter: 'blur(8px)',
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(6),

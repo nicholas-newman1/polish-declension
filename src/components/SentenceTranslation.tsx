@@ -22,15 +22,7 @@ import { AnnotatedWord } from './AnnotatedWord';
 import { DirectionToggle, type TranslationDirection } from './DirectionToggle';
 import type { Sentence, CEFRLevel, TagCategory } from '../types/sentences';
 import { TAG_CATEGORIES } from '../types/sentences';
-
-const LEVEL_COLORS: Record<CEFRLevel, string> = {
-  A1: '#22c55e',
-  A2: '#84cc16',
-  B1: '#eab308',
-  B2: '#f97316',
-  C1: '#ef4444',
-  C2: '#dc2626',
-};
+import { alpha } from '../lib/theme';
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -45,7 +37,7 @@ const Card = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   borderRadius: theme.spacing(2),
   padding: theme.spacing(3),
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+  boxShadow: `0 4px 20px ${alpha(theme.palette.text.primary, 0.15)}`,
   minHeight: 380,
   display: 'flex',
   flexDirection: 'column',
@@ -56,15 +48,21 @@ const Card = styled(Box)(({ theme }) => ({
 
 const LevelChip = styled(Chip, {
   shouldForwardProp: (prop) => prop !== 'level' && prop !== 'active',
-})<{ level: CEFRLevel; active?: boolean }>(({ level, active = true }) => ({
-  backgroundColor: active ? LEVEL_COLORS[level] : '#6b7280',
-  color: '#fff',
-  fontWeight: 600,
-  fontSize: '0.75rem',
-  '&:hover': {
-    backgroundColor: active ? LEVEL_COLORS[level] : '#4b5563',
-  },
-}));
+})<{ level: CEFRLevel; active?: boolean }>(
+  ({ theme, level, active = true }) => ({
+    backgroundColor: active
+      ? theme.palette.levels[level]
+      : theme.palette.neutral.main,
+    color: theme.palette.common.white,
+    fontWeight: 600,
+    fontSize: '0.75rem',
+    '&:hover': {
+      backgroundColor: active
+        ? theme.palette.levels[level]
+        : theme.palette.neutral.dark,
+    },
+  })
+);
 
 const SentenceText = styled(Typography)(({ theme }) => ({
   fontSize: '1.5rem',
@@ -90,7 +88,7 @@ const TagChip = styled(Chip, {
   backgroundColor: selected
     ? theme.palette.primary.main
     : theme.palette.action.hover,
-  color: selected ? '#fff' : theme.palette.text.primary,
+  color: selected ? theme.palette.common.white : theme.palette.text.primary,
   '&:hover': {
     backgroundColor: selected
       ? theme.palette.primary.dark

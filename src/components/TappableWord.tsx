@@ -39,12 +39,12 @@ const PopoverContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1, 1.5),
   minWidth: 60,
   textAlign: 'center',
-  color: '#fff',
+  color: theme.palette.tooltip.text,
 }));
 
-const TooltipPaper = styled(Paper)({
+const TooltipPaper = styled(Paper)(({ theme }) => ({
   position: 'relative',
-  backgroundColor: '#1a1a1a',
+  backgroundColor: theme.palette.tooltip.main,
   '&::after': {
     content: '""',
     position: 'absolute',
@@ -55,9 +55,9 @@ const TooltipPaper = styled(Paper)({
     height: 0,
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
-    borderTop: '6px solid #1a1a1a',
+    borderTop: `6px solid ${theme.palette.tooltip.main}`,
   },
-});
+}));
 
 export interface TappableWordProps {
   word: string;
@@ -179,9 +179,9 @@ export function TappableWord({
         <TooltipPaper ref={popperRef} elevation={8}>
           <PopoverContent>
             {loading ? (
-              <CircularProgress size={16} sx={{ color: '#fff' }} />
+              <CircularProgress size={16} sx={{ color: 'tooltip.text' }} />
             ) : error ? (
-              <Typography variant="caption" sx={{ color: '#f87171' }}>
+              <Typography variant="caption" sx={{ color: 'tooltip.error' }}>
                 {error}
               </Typography>
             ) : (

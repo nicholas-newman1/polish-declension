@@ -11,6 +11,7 @@ import {
   styled,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { alpha } from '../lib/theme';
 
 const CardWrapper = styled(Box)({
   width: '100%',
@@ -26,14 +27,14 @@ const CardGlow = styled(Box)({
   opacity: 0.2,
 });
 
-const SuccessCardGlow = styled(CardGlow)({
-  background: 'linear-gradient(135deg, #2d6a4f, #c9a227, #2d6a4f)',
-});
+const SuccessCardGlow = styled(CardGlow)(({ theme }) => ({
+  background: `linear-gradient(135deg, ${theme.palette.success.main}, ${theme.palette.secondary.main}, ${theme.palette.success.main})`,
+}));
 
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   padding: theme.spacing(3),
-  backgroundColor: 'rgba(255,255,255,0.95)',
+  backgroundColor: alpha(theme.palette.background.paper, 0.95),
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
   },
@@ -44,7 +45,7 @@ const CelebrationAvatar = styled(Avatar)(({ theme }) => ({
   height: 64,
   margin: '0 auto',
   marginBottom: theme.spacing(2),
-  background: 'linear-gradient(135deg, #2d6a4f, #1b4332)',
+  background: `linear-gradient(135deg, ${theme.palette.success.main}, ${theme.palette.success.dark})`,
   fontSize: '2rem',
   boxShadow: theme.shadows[3],
 }));

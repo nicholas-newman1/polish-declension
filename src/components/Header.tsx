@@ -15,6 +15,7 @@ import { Person } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import getFirstName from '../lib/utils/getFirstName';
+import { alpha } from '../lib/theme';
 
 const BrandingSection = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -34,7 +35,7 @@ const HeaderTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const GuestChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: 'rgba(202, 138, 4, 0.1)',
+  backgroundColor: alpha(theme.palette.warning.main, 0.1),
   color: theme.palette.warning.main,
   fontWeight: 500,
 }));
