@@ -8,6 +8,7 @@ import './index.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { TranslationProvider } from './contexts/TranslationContext';
 import { CheatSheetProvider } from './contexts/CheatSheetContext';
+import { AuthGate } from './components/AuthGate';
 import { SignIn } from './components/SignIn';
 import { Layout } from './components/Layout';
 import { DeclensionPage } from './pages/DeclensionPage';
@@ -19,20 +20,22 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <TranslationProvider>
-          <CheatSheetProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<SignIn />} />
-                <Route path="/app" element={<Layout />}>
-                  <Route index element={<DeclensionPage />} />
-                  <Route path="sentences" element={<SentencesPage />} />
-                  <Route path="vocabulary" element={<VocabularyPage />} />
-                </Route>
-              </Routes>
-            </BrowserRouter>
-          </CheatSheetProvider>
-        </TranslationProvider>
+        <AuthGate>
+          <TranslationProvider>
+            <CheatSheetProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<SignIn />} />
+                  <Route path="/app" element={<Layout />}>
+                    <Route index element={<DeclensionPage />} />
+                    <Route path="sentences" element={<SentencesPage />} />
+                    <Route path="vocabulary" element={<VocabularyPage />} />
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+            </CheatSheetProvider>
+          </TranslationProvider>
+        </AuthGate>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>
