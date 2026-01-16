@@ -8,11 +8,13 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  ListItemIcon,
+  ListItemText,
   Divider,
   styled,
 } from '@mui/material';
-import { Person } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Person, LibraryBooks } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import getFirstName from '../lib/utils/getFirstName';
 import { alpha } from '../lib/theme';
@@ -53,6 +55,7 @@ interface HeaderProps {
 }
 
 export function Header({ user, onSignOut }: HeaderProps) {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
 
@@ -67,6 +70,11 @@ export function Header({ user, onSignOut }: HeaderProps) {
   const handleSignOut = () => {
     handleMenuClose();
     onSignOut();
+  };
+
+  const handleMyWords = () => {
+    handleMenuClose();
+    navigate('/my-words');
   };
 
   return (
@@ -108,6 +116,13 @@ export function Header({ user, onSignOut }: HeaderProps) {
                   {user.email}
                 </Typography>
               </Box>
+              <Divider />
+              <MenuItem onClick={handleMyWords}>
+                <ListItemIcon>
+                  <LibraryBooks fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>My Words</ListItemText>
+              </MenuItem>
               <Divider />
               <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
             </Menu>

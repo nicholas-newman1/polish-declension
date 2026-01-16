@@ -17,6 +17,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { DeclensionPage } from './pages/DeclensionPage';
 import { SentencesPage } from './pages/SentencesPage';
 import { VocabularyPage } from './pages/VocabularyPage';
+import { CustomVocabularyPage } from './pages/CustomVocabularyPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
                       <Route path="/declension" element={<DeclensionPage />} />
                       <Route path="/vocabulary" element={<VocabularyPage />} />
                       <Route path="/sentences" element={<SentencesPage />} />
+                      <Route path="/my-words" element={<CustomVocabularyPage />} />
                     </Route>
                     <Route
                       path="*"
