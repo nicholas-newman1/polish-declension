@@ -16,6 +16,11 @@ export type NounGender = 'masculine' | 'feminine' | 'neuter';
 
 export type VocabularyWordId = number | string;
 
+export interface ExampleSentence {
+  polish: string;
+  english: string;
+}
+
 export interface VocabularyWord {
   id: VocabularyWordId;
   polish: string;
@@ -23,6 +28,7 @@ export interface VocabularyWord {
   partOfSpeech?: PartOfSpeech;
   gender?: NounGender;
   notes?: string;
+  examples?: ExampleSentence[];
   isCustom?: boolean;
 }
 
@@ -33,6 +39,7 @@ export interface CustomVocabularyWord {
   partOfSpeech?: PartOfSpeech;
   gender?: NounGender;
   notes?: string;
+  examples?: ExampleSentence[];
   isCustom: true;
   createdAt: number;
 }

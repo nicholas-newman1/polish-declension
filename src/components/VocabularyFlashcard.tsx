@@ -197,6 +197,16 @@ export function VocabularyFlashcard({
             {questionWord}
           </QuestionText>
 
+          {word.examples && word.examples.length > 0 && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              {word.examples.map((example, index) => (
+                <Typography key={index} variant="body2" color="text.secondary">
+                  {isPolishToEnglish ? example.polish : example.english}
+                </Typography>
+              ))}
+            </Box>
+          )}
+
           {revealed && (
             <Box className="animate-fade-up">
               <Divider sx={{ my: { xs: 2.5, sm: 3 } }} />
@@ -204,6 +214,16 @@ export function VocabularyFlashcard({
               <AnswerText variant="h4" color="text.primary" sx={{ mb: 2 }}>
                 {answerWord}
               </AnswerText>
+
+              {word.examples && word.examples.length > 0 && (
+                <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  {word.examples.map((example, index) => (
+                    <Typography key={index} variant="body2" color="text.secondary">
+                      {isPolishToEnglish ? example.english : example.polish}
+                    </Typography>
+                  ))}
+                </Box>
+              )}
 
               <Stack
                 direction="row"
@@ -222,7 +242,7 @@ export function VocabularyFlashcard({
               </Stack>
 
               {word.notes && (
-                <HintText variant="body2" color="text.disabled" sx={{ mb: 2 }}>
+                <HintText variant="body2" color="text.disabled">
                   💡 {word.notes}
                 </HintText>
               )}

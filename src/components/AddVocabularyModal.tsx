@@ -1,4 +1,4 @@
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import {
   Dialog,
   DialogTitle,
@@ -12,14 +12,19 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { styled } from '../lib/styled';
+import { alpha } from '../lib/theme';
 import type {
   CustomVocabularyWord,
   VocabularyWord,
   PartOfSpeech,
   NounGender,
+  ExampleSentence,
 } from '../types/vocabulary';
 
 const PARTS_OF_SPEECH: PartOfSpeech[] = [
@@ -40,7 +45,7 @@ const GENDERS: NounGender[] = ['masculine', 'feminine', 'neuter'];
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     width: '100%',
-    maxWidth: 450,
+    maxWidth: 500,
     margin: theme.spacing(2),
   },
 }));
@@ -65,12 +70,41 @@ const Actions = styled(DialogActions)(({ theme }) => ({
   borderTop: `1px solid ${theme.palette.divider}`,
 }));
 
+const ExamplesSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1.5),
+}));
+
+const ExamplePair = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1),
+  padding: theme.spacing(1.5),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.text.primary, 0.02),
+  border: `1px solid ${theme.palette.divider}`,
+}));
+
+const ExampleHeader = styled(Box)({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
+const AddExampleButton = styled(Button)(({ theme }) => ({
+  alignSelf: 'flex-start',
+  textTransform: 'none',
+  color: theme.palette.text.secondary,
+}));
+
 interface FormData {
   polish: string;
   english: string;
   partOfSpeech: PartOfSpeech | '';
   gender: NounGender | '';
   notes: string;
+  examples: ExampleSentence[];
 }
 
 interface AddVocabularyModalProps {
@@ -90,6 +124,7 @@ const getDefaultValues = (
   partOfSpeech: editWord?.partOfSpeech || '',
   gender: editWord?.gender || '',
   notes: editWord?.notes || '',
+  examples: editWord?.examples || [],
 });
 
 export function AddVocabularyModal({
@@ -110,6 +145,11 @@ export function AddVocabularyModal({
     mode: 'onChange',
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'examples',
+  });
+
   const partOfSpeech = watch('partOfSpeech');
   const showGenderField =
     partOfSpeech === 'noun' || partOfSpeech === 'proper noun';
@@ -120,14 +160,23 @@ export function AddVocabularyModal({
   };
 
   const onSubmit = (data: FormData) => {
+    const validExamples = data.examples.filter(
+      (ex) => ex.polish.trim() && ex.english.trim()
+    );
+
     onSave({
       polish: data.polish.trim(),
       english: data.english.trim(),
       ...(data.partOfSpeech && { partOfSpeech: data.partOfSpeech }),
       ...(showGenderField && data.gender && { gender: data.gender }),
       ...(data.notes.trim() && { notes: data.notes.trim() }),
+      ...(validExamples.length > 0 && { examples: validExamples }),
     });
     handleClose();
+  };
+
+  const handleAddExample = () => {
+    append({ polish: '', english: '' });
   };
 
   return (
@@ -240,6 +289,64 @@ export function AddVocabularyModal({
             />
           )}
         />
+
+        <ExamplesSection>
+          <Typography variant="body2" color="text.secondary">
+            Example Sentences (optional)
+          </Typography>
+
+          {fields.map((field, index) => (
+            <ExamplePair key={field.id}>
+              <ExampleHeader>
+                <Typography variant="caption" color="text.disabled">
+                  Example {index + 1}
+                </Typography>
+                <IconButton
+                  size="small"
+                  onClick={() => remove(index)}
+                  aria-label="remove example"
+                  sx={{ color: 'text.disabled' }}
+                >
+                  <DeleteOutlineIcon fontSize="small" />
+                </IconButton>
+              </ExampleHeader>
+              <Controller
+                name={`examples.${index}.polish`}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Polish"
+                    size="small"
+                    fullWidth
+                    placeholder="e.g., Mam czarnego kota."
+                  />
+                )}
+              />
+              <Controller
+                name={`examples.${index}.english`}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="English"
+                    size="small"
+                    fullWidth
+                    placeholder="e.g., I have a black cat."
+                  />
+                )}
+              />
+            </ExamplePair>
+          ))}
+
+          <AddExampleButton
+            size="small"
+            startIcon={<AddIcon />}
+            onClick={handleAddExample}
+          >
+            Add example sentence
+          </AddExampleButton>
+        </ExamplesSection>
       </Content>
       <Actions>
         <Button onClick={handleClose} color="inherit">
