@@ -17,6 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '../lib/styled';
 import type {
   CustomVocabularyWord,
+  VocabularyWord,
   PartOfSpeech,
   NounGender,
 } from '../types/vocabulary';
@@ -78,11 +79,11 @@ interface AddVocabularyModalProps {
   onSave: (
     word: Omit<CustomVocabularyWord, 'id' | 'isCustom' | 'createdAt'>
   ) => void;
-  editWord?: CustomVocabularyWord | null;
+  editWord?: CustomVocabularyWord | VocabularyWord | null;
 }
 
 const getDefaultValues = (
-  editWord?: CustomVocabularyWord | null
+  editWord?: CustomVocabularyWord | VocabularyWord | null
 ): FormData => ({
   polish: editWord?.polish || '',
   english: editWord?.english || '',

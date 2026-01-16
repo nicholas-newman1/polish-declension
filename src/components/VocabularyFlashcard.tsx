@@ -28,6 +28,7 @@ interface VocabularyFlashcardProps {
   direction: VocabularyDirection;
   practiceMode?: boolean;
   intervals?: RatingIntervals;
+  isAdmin?: boolean;
   onRate?: (rating: Grade) => void;
   onNext?: () => void;
   onEdit?: () => void;
@@ -159,6 +160,7 @@ export function VocabularyFlashcard({
   direction,
   practiceMode = false,
   intervals,
+  isAdmin = false,
   onRate,
   onNext,
   onEdit,
@@ -171,6 +173,7 @@ export function VocabularyFlashcard({
   const answerWord = isPolishToEnglish ? word.english : word.polish;
   const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
   const isCustomWord = word.isCustom === true;
+  const canEditOrDelete = isCustomWord || isAdmin;
 
   return (
     <CardWrapper className="animate-fade-up">
@@ -178,7 +181,7 @@ export function VocabularyFlashcard({
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <CardHeader>
             <DirectionLabel>{directionLabel}</DirectionLabel>
-            {isCustomWord && (
+            {canEditOrDelete && (
               <ActionButtons>
                 <ActionButton onClick={onEdit} size="small" aria-label="edit">
                   <EditIcon fontSize="small" />

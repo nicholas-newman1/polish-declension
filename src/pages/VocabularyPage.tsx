@@ -24,6 +24,7 @@ import { SettingsPanel } from '../components/SettingsPanel';
 import { AddVocabularyModal } from '../components/AddVocabularyModal';
 import type {
   VocabularyWord,
+  VocabularyWordId,
   VocabularyReviewDataStore,
   VocabularySettings,
   VocabularyDirection,
@@ -39,6 +40,10 @@ import {
   loadCustomVocabulary,
   saveCustomVocabulary,
 } from '../lib/storage/customVocabulary';
+import {
+  updateSystemVocabularyWord,
+  deleteSystemVocabularyWord,
+} from '../lib/storage/systemVocabulary';
 import getVocabularySessionCards from '../lib/vocabularyScheduler/getVocabularySessionCards';
 import getVocabularyPracticeAheadCards from '../lib/vocabularyScheduler/getVocabularyPracticeAheadCards';
 import getVocabularyExtraNewCards from '../lib/vocabularyScheduler/getVocabularyExtraNewCards';
@@ -97,9 +102,15 @@ const AddButton = styled(IconButton)(({ theme }) => ({
 }));
 
 export function VocabularyPage() {
-  const { user } = useAuthContext();
+  const { user, isAdmin } = useAuthContext();
   const { showSnackbar } = useSnackbar();
-  const [systemWords, setSystemWords] = useState<VocabularyWord[]>([]);
+  const [systemWordsBase, setSystemWordsBase] = useState<VocabularyWord[]>([]);
+  const [systemWords, applyOptimisticSystemWords] = useOptimistic(
+    systemWordsBase,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
+  );
   const [reviewStore, setReviewStore] = useState<VocabularyReviewDataStore>(
     getDefaultVocabularyReviewStore
   );
@@ -134,9 +145,10 @@ export function VocabularyPage() {
     }
   );
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingWord, setEditingWord] = useState<CustomVocabularyWord | null>(
-    null
-  );
+  const [editingWord, setEditingWord] = useState<
+    CustomVocabularyWord | VocabularyWord | null
+  >(null);
+  const [editingSystemWord, setEditingSystemWord] = useState(false);
 
   const directionRef = useRef(settings.direction);
 
@@ -178,7 +190,7 @@ export function VocabularyPage() {
       const loadedSystemWords = vocabularySnapshot.docs.map(
         (doc) => doc.data() as VocabularyWord
       );
-      setSystemWords(loadedSystemWords);
+      setSystemWordsBase(loadedSystemWords);
       const loadedReviewData = await loadVocabularyReviewData(
         loadedSettings.direction
       );
@@ -337,57 +349,30 @@ export function VocabularyPage() {
     buildSession(mergedWords, reviewStore, settings);
   };
 
-  const handleEditWord = (
-    wordData: Omit<CustomVocabularyWord, 'id' | 'isCustom' | 'createdAt'>
+  const updateWordInQueues = (
+    wordId: VocabularyWordId,
+    updates: Partial<VocabularyWord>
   ) => {
-    if (!editingWord) return;
-    const newCustomWords = customWords.map((w) =>
-      w.id === editingWord.id ? { ...w, ...wordData } : w
-    );
-    const editedWordId = editingWord.id;
-    setEditingWord(null);
-
-    applyOptimisticCustomWords(newCustomWords, async () => {
-      await saveCustomVocabulary(newCustomWords);
-      setCustomWordsBase(newCustomWords);
-    });
-
     setSessionQueue((prev) =>
       prev.map((card) =>
-        card.word.id === editedWordId
-          ? { ...card, word: { ...card.word, ...wordData } }
+        card.word.id === wordId
+          ? { ...card, word: { ...card.word, ...updates } }
           : card
       )
     );
     setLearningQueue((prev) =>
       prev.map((card) =>
-        card.word.id === editedWordId
-          ? { ...card, word: { ...card.word, ...wordData } }
+        card.word.id === wordId
+          ? { ...card, word: { ...card.word, ...updates } }
           : card
       )
     );
     setPracticeCards((prev) =>
-      prev.map((word) =>
-        word.id === editedWordId ? { ...word, ...wordData } : word
-      )
+      prev.map((word) => (word.id === wordId ? { ...word, ...updates } : word))
     );
   };
 
-  const handleDeleteWord = () => {
-    if (!currentSessionCard?.word.isCustom) return;
-    const wordId = currentSessionCard.word.id as string;
-
-    if (!window.confirm('Are you sure you want to delete this custom word?')) {
-      return;
-    }
-
-    const newCustomWords = customWords.filter((w) => w.id !== wordId);
-
-    applyOptimisticCustomWords(newCustomWords, async () => {
-      await saveCustomVocabulary(newCustomWords);
-      setCustomWordsBase(newCustomWords);
-    });
-
+  const removeWordFromQueues = (wordId: VocabularyWordId) => {
     if (currentIndex < sessionQueue.length) {
       setSessionQueue((prev) => prev.filter((card) => card.word.id !== wordId));
     } else {
@@ -398,9 +383,91 @@ export function VocabularyPage() {
     setPracticeCards((prev) => prev.filter((word) => word.id !== wordId));
   };
 
+  const handleEditWord = (
+    wordData: Omit<CustomVocabularyWord, 'id' | 'isCustom' | 'createdAt'>
+  ) => {
+    if (!editingWord) return;
+
+    const wordId = editingWord.id;
+
+    if (editingSystemWord) {
+      const newSystemWords = systemWords.map((w) =>
+        w.id === wordId ? { ...w, ...wordData } : w
+      );
+      setEditingWord(null);
+      setEditingSystemWord(false);
+
+      applyOptimisticSystemWords(newSystemWords, async () => {
+        await updateSystemVocabularyWord(wordId as number, wordData);
+        setSystemWordsBase(newSystemWords);
+      });
+    } else {
+      const newCustomWords = customWords.map((w) =>
+        w.id === wordId ? { ...w, ...wordData } : w
+      );
+      setEditingWord(null);
+
+      applyOptimisticCustomWords(newCustomWords, async () => {
+        await saveCustomVocabulary(newCustomWords);
+        setCustomWordsBase(newCustomWords);
+      });
+    }
+
+    updateWordInQueues(wordId, wordData);
+  };
+
+  const handleDeleteWord = () => {
+    if (!currentSessionCard) return;
+
+    const word = currentSessionCard.word;
+    const isCustomWord = word.isCustom === true;
+    const isSystemWord = !isCustomWord && isAdmin;
+
+    if (!isCustomWord && !isSystemWord) return;
+
+    const confirmMessage = isCustomWord
+      ? 'Are you sure you want to delete this custom word?'
+      : 'Are you sure you want to delete this system vocabulary word? This will affect all users.';
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    const wordId = word.id;
+
+    if (isCustomWord) {
+      const newCustomWords = customWords.filter((w) => w.id !== wordId);
+
+      applyOptimisticCustomWords(newCustomWords, async () => {
+        await saveCustomVocabulary(newCustomWords);
+        setCustomWordsBase(newCustomWords);
+      });
+    } else {
+      const newSystemWords = systemWords.filter((w) => w.id !== wordId);
+
+      applyOptimisticSystemWords(newSystemWords, async () => {
+        await deleteSystemVocabularyWord(wordId as number);
+        setSystemWordsBase(newSystemWords);
+      });
+    }
+
+    removeWordFromQueues(wordId);
+  };
+
   const handleOpenEditModal = () => {
-    if (currentSessionCard?.word.isCustom) {
-      setEditingWord(currentSessionCard.word as CustomVocabularyWord);
+    if (!currentSessionCard) return;
+
+    const word = currentSessionCard.word;
+    const isCustomWord = word.isCustom === true;
+    const isSystemWord = !isCustomWord && isAdmin;
+
+    if (isCustomWord) {
+      setEditingWord(word as CustomVocabularyWord);
+      setEditingSystemWord(false);
+      setShowAddModal(true);
+    } else if (isSystemWord) {
+      setEditingWord(word);
+      setEditingSystemWord(true);
       setShowAddModal(true);
     }
   };
@@ -537,6 +604,7 @@ export function VocabularyPage() {
             word={currentSessionCard.word}
             direction={settings.direction}
             intervals={intervals}
+            isAdmin={isAdmin}
             onRate={handleRate}
             onEdit={handleOpenEditModal}
             onDelete={handleDeleteWord}
@@ -549,6 +617,7 @@ export function VocabularyPage() {
         onClose={() => {
           setShowAddModal(false);
           setEditingWord(null);
+          setEditingSystemWord(false);
         }}
         onSave={editingWord ? handleEditWord : handleAddWord}
         editWord={editingWord}
