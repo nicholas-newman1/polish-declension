@@ -1,6 +1,12 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Rating, type Grade } from 'ts-fsrs';
-import { Box, CircularProgress, Typography, Stack, IconButton } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Typography,
+  Stack,
+  IconButton,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { styled } from '../lib/styled';
 import { PracticeModeButton } from '../components/PracticeModeButton';
@@ -30,9 +36,7 @@ import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocab
 import clearVocabularyData from '../lib/storage/clearVocabularyData';
 import {
   loadCustomVocabulary,
-  addCustomWord,
-  updateCustomWord,
-  deleteCustomWord,
+  saveCustomVocabulary,
 } from '../lib/storage/customVocabulary';
 import getVocabularySessionCards from '../lib/vocabularyScheduler/getVocabularySessionCards';
 import getVocabularyPracticeAheadCards from '../lib/vocabularyScheduler/getVocabularyPracticeAheadCards';
@@ -41,6 +45,8 @@ import rateVocabularyCard from '../lib/vocabularyScheduler/rateVocabularyCard';
 import getVocabularyNextIntervals from '../lib/fsrsUtils/getNextIntervals';
 import type { VocabularySessionCard } from '../lib/vocabularyScheduler/types';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useOptimistic } from '../hooks/useOptimistic';
+import { useSnackbar } from '../hooks/useSnackbar';
 import shuffleArray from '../lib/utils/shuffleArray';
 import { includesWordId } from '../lib/storage/helpers';
 
@@ -91,9 +97,9 @@ const AddButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-
 export function VocabularyPage() {
   const { user } = useAuthContext();
+  const { showSnackbar } = useSnackbar();
   const [reviewStore, setReviewStore] = useState<VocabularyReviewDataStore>(
     getDefaultVocabularyReviewStore
   );
@@ -118,9 +124,19 @@ export function VocabularyPage() {
   const [isPracticeAhead, setIsPracticeAhead] = useState(false);
   const [extraNewCardsCount, setExtraNewCardsCount] = useState(5);
 
-  const [customWords, setCustomWords] = useState<CustomVocabularyWord[]>([]);
+  const [customWordsBase, setCustomWordsBase] = useState<
+    CustomVocabularyWord[]
+  >([]);
+  const [customWords, applyOptimisticCustomWords] = useOptimistic(
+    customWordsBase,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
+  );
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingWord, setEditingWord] = useState<CustomVocabularyWord | null>(null);
+  const [editingWord, setEditingWord] = useState<CustomVocabularyWord | null>(
+    null
+  );
 
   const directionRef = useRef(settings.direction);
 
@@ -162,7 +178,7 @@ export function VocabularyPage() {
       );
       directionRef.current = loadedSettings.direction;
       setSettings(loadedSettings);
-      setCustomWords(loadedCustomWords);
+      setCustomWordsBase(loadedCustomWords);
       setReviewStore(loadedReviewData);
       const mergedWords = [...loadedCustomWords, ...systemWords];
       buildSession(mergedWords, loadedReviewData, loadedSettings);
@@ -251,7 +267,10 @@ export function VocabularyPage() {
     newStore.cards = { ...newStore.cards };
     newStore.cards[wordIdKey] = updatedReviewData;
 
-    if (currentSessionCard.isNew && !includesWordId(newStore.newCardsToday, wordId)) {
+    if (
+      currentSessionCard.isNew &&
+      !includesWordId(newStore.newCardsToday, wordId)
+    ) {
       newStore.newCardsToday = [...newStore.newCardsToday, wordId];
     }
 
@@ -292,64 +311,83 @@ export function VocabularyPage() {
     buildSession(allWords, reviewStore, newSettings);
   };
 
-  const handleAddWord = async (
+  const handleAddWord = (
     wordData: Omit<CustomVocabularyWord, 'id' | 'isCustom' | 'createdAt'>
   ) => {
-    const newWord = await addCustomWord(wordData);
+    const newWord: CustomVocabularyWord = {
+      ...wordData,
+      id: `custom_${Date.now()}`,
+      isCustom: true,
+      createdAt: Date.now(),
+    };
     const newCustomWords = [...customWords, newWord];
-    setCustomWords(newCustomWords);
+
+    applyOptimisticCustomWords(newCustomWords, async () => {
+      await saveCustomVocabulary(newCustomWords);
+      setCustomWordsBase(newCustomWords);
+    });
+
     const mergedWords = [...newCustomWords, ...systemWords];
     buildSession(mergedWords, reviewStore, settings);
   };
 
-  const handleEditWord = async (
+  const handleEditWord = (
     wordData: Omit<CustomVocabularyWord, 'id' | 'isCustom' | 'createdAt'>
   ) => {
     if (!editingWord) return;
-    await updateCustomWord(editingWord.id, wordData);
     const newCustomWords = customWords.map((w) =>
       w.id === editingWord.id ? { ...w, ...wordData } : w
     );
-    setCustomWords(newCustomWords);
+    const editedWordId = editingWord.id;
     setEditingWord(null);
+
+    applyOptimisticCustomWords(newCustomWords, async () => {
+      await saveCustomVocabulary(newCustomWords);
+      setCustomWordsBase(newCustomWords);
+    });
 
     setSessionQueue((prev) =>
       prev.map((card) =>
-        card.word.id === editingWord.id
+        card.word.id === editedWordId
           ? { ...card, word: { ...card.word, ...wordData } }
           : card
       )
     );
     setLearningQueue((prev) =>
       prev.map((card) =>
-        card.word.id === editingWord.id
+        card.word.id === editedWordId
           ? { ...card, word: { ...card.word, ...wordData } }
           : card
       )
     );
     setPracticeCards((prev) =>
       prev.map((word) =>
-        word.id === editingWord.id ? { ...word, ...wordData } : word
+        word.id === editedWordId ? { ...word, ...wordData } : word
       )
     );
   };
 
-  const handleDeleteWord = async () => {
+  const handleDeleteWord = () => {
     if (!currentSessionCard?.word.isCustom) return;
     const wordId = currentSessionCard.word.id as string;
-    
+
     if (!window.confirm('Are you sure you want to delete this custom word?')) {
       return;
     }
 
-    await deleteCustomWord(wordId);
     const newCustomWords = customWords.filter((w) => w.id !== wordId);
-    setCustomWords(newCustomWords);
+
+    applyOptimisticCustomWords(newCustomWords, async () => {
+      await saveCustomVocabulary(newCustomWords);
+      setCustomWordsBase(newCustomWords);
+    });
 
     if (currentIndex < sessionQueue.length) {
       setSessionQueue((prev) => prev.filter((card) => card.word.id !== wordId));
     } else {
-      setLearningQueue((prev) => prev.filter((card) => card.word.id !== wordId));
+      setLearningQueue((prev) =>
+        prev.filter((card) => card.word.id !== wordId)
+      );
     }
     setPracticeCards((prev) => prev.filter((word) => word.id !== wordId));
   };
@@ -419,7 +457,10 @@ export function VocabularyPage() {
           onToggle={handleDirectionToggle}
         />
 
-        <PracticeModeButton active={practiceMode} onClick={togglePracticeMode} />
+        <PracticeModeButton
+          active={practiceMode}
+          onClick={togglePracticeMode}
+        />
 
         <SettingsButton
           active={showSettings}
@@ -427,7 +468,10 @@ export function VocabularyPage() {
         />
 
         {user && (
-          <AddButton onClick={() => setShowAddModal(true)} aria-label="add word">
+          <AddButton
+            onClick={() => setShowAddModal(true)}
+            aria-label="add word"
+          >
             <AddIcon />
           </AddButton>
         )}

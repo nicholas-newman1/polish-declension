@@ -8,9 +8,11 @@ import './index.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { TranslationProvider } from './contexts/TranslationContext';
 import { CheatSheetProvider } from './contexts/CheatSheetContext';
+import { SnackbarProvider } from './contexts/SnackbarContext';
 import { AuthGate } from './components/AuthGate';
 import { SignIn } from './components/SignIn';
 import { Layout } from './components/Layout';
+import { AppSnackbar } from './components/AppSnackbar';
 import { DashboardPage } from './pages/DashboardPage';
 import { DeclensionPage } from './pages/DeclensionPage';
 import { SentencesPage } from './pages/SentencesPage';
@@ -20,29 +22,32 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <AuthGate>
-          <TranslationProvider>
-            <CheatSheetProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/login" element={<SignIn />} />
-                  <Route element={<Layout />}>
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/declension" element={<DeclensionPage />} />
-                    <Route path="/vocabulary" element={<VocabularyPage />} />
-                    <Route path="/sentences" element={<SentencesPage />} />
-                  </Route>
-                  <Route
-                    path="*"
-                    element={<Navigate to="/dashboard" replace />}
-                  />
-                </Routes>
-              </BrowserRouter>
-            </CheatSheetProvider>
-          </TranslationProvider>
-        </AuthGate>
-      </AuthProvider>
+      <SnackbarProvider>
+        <AuthProvider>
+          <AuthGate>
+            <TranslationProvider>
+              <CheatSheetProvider>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/login" element={<SignIn />} />
+                    <Route element={<Layout />}>
+                      <Route path="/dashboard" element={<DashboardPage />} />
+                      <Route path="/declension" element={<DeclensionPage />} />
+                      <Route path="/vocabulary" element={<VocabularyPage />} />
+                      <Route path="/sentences" element={<SentencesPage />} />
+                    </Route>
+                    <Route
+                      path="*"
+                      element={<Navigate to="/dashboard" replace />}
+                    />
+                  </Routes>
+                </BrowserRouter>
+              </CheatSheetProvider>
+            </TranslationProvider>
+          </AuthGate>
+        </AuthProvider>
+        <AppSnackbar />
+      </SnackbarProvider>
     </ThemeProvider>
   </StrictMode>
 );
