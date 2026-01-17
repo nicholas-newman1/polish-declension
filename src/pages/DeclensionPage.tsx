@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography, styled } from '@mui/material';
 import { Flashcard, type RatingIntervals } from '../components/Flashcard';
@@ -15,12 +15,7 @@ import type {
   ReviewDataStore,
   Settings,
 } from '../types';
-import loadReviewData from '../lib/storage/loadReviewData';
-import saveReviewData from '../lib/storage/saveReviewData';
-import loadSettings from '../lib/storage/loadSettings';
-import saveSettings from '../lib/storage/saveSettings';
 import getOrCreateCardReviewData from '../lib/storage/getOrCreateCardReviewData';
-import clearAllData from '../lib/storage/clearAllData';
 import getSessionCards from '../lib/declensionScheduler/getSessionCards';
 import getPracticeAheadCards from '../lib/declensionScheduler/getPracticeAheadCards';
 import getExtraNewCards from '../lib/declensionScheduler/getExtraNewCards';
@@ -28,8 +23,8 @@ import rateCard from '../lib/fsrsUtils/rateCard';
 import getNextIntervals from '../lib/fsrsUtils/getNextIntervals';
 import type { SessionCard } from '../lib/declensionScheduler/types';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useReviewData } from '../hooks/useReviewData';
 import { DEFAULT_SETTINGS } from '../constants';
-import getDefaultReviewStore from '../lib/utils/getDefaultReviewStore';
 import shuffleArray from '../lib/utils/shuffleArray';
 
 const allCards: CardType[] = cardsData as CardType[];
@@ -51,11 +46,15 @@ const MainContent = styled(Box)({
 
 export function DeclensionPage() {
   const { user } = useAuthContext();
-  const [reviewStore, setReviewStore] = useState<ReviewDataStore>(
-    getDefaultReviewStore
-  );
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    loading: contextLoading,
+    declensionReviewStore: reviewStore,
+    declensionSettings: settings,
+    updateDeclensionReviewStore,
+    updateDeclensionSettings,
+    clearDeclensionData,
+  } = useReviewData();
+
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
 
@@ -74,6 +73,7 @@ export function DeclensionPage() {
   const [practiceAheadCount, setPracticeAheadCount] = useState(10);
   const [isPracticeAhead, setIsPracticeAhead] = useState(false);
   const [extraNewCardsCount, setExtraNewCardsCount] = useState(5);
+  const sessionBuiltRef = useRef(false);
 
   const filteredCards = useMemo(() => {
     return allCards.filter((card) => {
@@ -107,20 +107,13 @@ export function DeclensionPage() {
   );
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      const [loadedSettings, loadedReviewData] = await Promise.all([
-        loadSettings(),
-        loadReviewData(),
-      ]);
-      setSettings(loadedSettings);
-      setReviewStore(loadedReviewData);
-      buildSession(loadedReviewData, loadedSettings);
-      setIsLoading(false);
-    };
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+    if (!contextLoading && !sessionBuiltRef.current) {
+      sessionBuiltRef.current = true;
+      queueMicrotask(() => {
+        buildSession(reviewStore, settings);
+      });
+    }
+  }, [contextLoading, buildSession, reviewStore, settings]);
 
   const resetSession = useCallback(() => {
     buildSession(reviewStore, settings);
@@ -282,15 +275,13 @@ export function DeclensionPage() {
       }
     }
 
-    setReviewStore(newStore);
     setRatingCounter((c) => c + 1);
-    saveReviewData(newStore);
+    await updateDeclensionReviewStore(newStore);
   };
 
   const handleSettingsChange = async (newCardsPerDay: number) => {
     const newSettings = { ...settings, newCardsPerDay };
-    setSettings(newSettings);
-    await saveSettings(newSettings);
+    await updateDeclensionSettings(newSettings);
   };
 
   const handleResetAllData = async () => {
@@ -299,11 +290,8 @@ export function DeclensionPage() {
         'Are you sure? This will erase all your progress and cannot be undone.'
       )
     ) {
-      await clearAllData();
-      const freshStore = await loadReviewData();
-      setReviewStore(freshStore);
-      setSettings(await loadSettings());
-      buildSession(freshStore, settings);
+      await clearDeclensionData();
+      buildSession(reviewStore, DEFAULT_SETTINGS);
       setShowSettings(false);
     }
   };
@@ -334,7 +322,7 @@ export function DeclensionPage() {
 
   const currentPracticeCard = practiceCards[practiceIndex];
 
-  if (isLoading) {
+  if (contextLoading) {
     return (
       <LoadingContainer>
         <CircularProgress sx={{ color: 'text.disabled' }} />

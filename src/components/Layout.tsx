@@ -9,12 +9,16 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
+  Skeleton,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
 import { styled } from '../lib/styled';
-import { Menu, School, Translate, Close, Abc, Home } from '@mui/icons-material';
+import { Menu, School, Translate, Close, Abc, Home, Check } from '@mui/icons-material';
+import { useReviewData } from '../hooks/useReviewData';
+import type { ReviewCounts } from '../contexts/ReviewDataContext';
+import { alpha } from '../lib/theme';
 import { Header } from './Header';
 import { DeclensionCheatSheetDrawer } from './DeclensionCheatSheetDrawer';
 import { ConsonantsCheatSheetDrawer } from './ConsonantsCheatSheetDrawer';
@@ -101,12 +105,32 @@ const StyledNavItem = styled(ListItemButton)<{ $active?: boolean }>(
   })
 );
 
+const ReviewBadge = styled(Box)<{ $complete?: boolean }>(
+  ({ theme, $complete }) => ({
+    minWidth: 24,
+    height: 24,
+    borderRadius: 12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    padding: '0 6px',
+    backgroundColor: $complete
+      ? alpha(theme.palette.success.main, 0.15)
+      : alpha(theme.palette.primary.main, 0.1),
+    color: $complete ? theme.palette.success.main : theme.palette.primary.main,
+  })
+);
+
 interface NavItemProps {
   path: string;
   icon: React.ReactNode;
   label: string;
   description: string;
   active: boolean;
+  reviewCount?: number;
+  loading?: boolean;
   onNavigate: (path: string) => void;
 }
 
@@ -116,8 +140,13 @@ function NavItem({
   label,
   description,
   active,
+  reviewCount,
+  loading,
   onNavigate,
 }: NavItemProps) {
+  const hasBadge = reviewCount !== undefined || loading;
+  const isComplete = reviewCount === 0;
+
   return (
     <ListItem disablePadding>
       <StyledNavItem $active={active} onClick={() => onNavigate(path)}>
@@ -127,12 +156,26 @@ function NavItem({
           secondary={description}
           slotProps={{ primary: { fontWeight: active ? 600 : 400 } }}
         />
+        {hasBadge &&
+          (loading ? (
+            <Skeleton variant="rounded" width={24} height={24} sx={{ borderRadius: 12 }} />
+          ) : (
+            <ReviewBadge $complete={isComplete}>
+              {isComplete ? <Check sx={{ fontSize: 16 }} /> : reviewCount}
+            </ReviewBadge>
+          ))}
       </StyledNavItem>
     </ListItem>
   );
 }
 
-const NAV_ITEMS = [
+const NAV_ITEMS: Array<{
+  path: string;
+  icon: typeof Home;
+  label: string;
+  description: string;
+  reviewCountKey?: keyof ReviewCounts;
+}> = [
   {
     path: '/dashboard',
     icon: Home,
@@ -144,12 +187,14 @@ const NAV_ITEMS = [
     icon: School,
     label: 'Declension',
     description: 'Practice noun declensions',
+    reviewCountKey: 'declension',
   },
   {
     path: '/vocabulary',
     icon: Abc,
     label: 'Vocabulary',
     description: 'Top 1000 Polish words',
+    reviewCountKey: 'vocabulary',
   },
   {
     path: '/sentences',
@@ -164,11 +209,15 @@ function DrawerContent({
   onNavigate,
   onClose,
   showCloseButton,
+  reviewCounts,
+  loading,
 }: {
   currentPath: string;
   onNavigate: (path: string) => void;
   onClose: () => void;
   showCloseButton: boolean;
+  reviewCounts: ReviewCounts;
+  loading: boolean;
 }) {
   const isActive = (path: string) => currentPath === path;
 
@@ -191,6 +240,9 @@ function DrawerContent({
       <List sx={{ pt: 2 }}>
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.path);
+          const reviewCount = item.reviewCountKey
+            ? reviewCounts[item.reviewCountKey]
+            : undefined;
           return (
             <NavItem
               key={item.path}
@@ -199,6 +251,8 @@ function DrawerContent({
               label={item.label}
               description={item.description}
               active={active}
+              reviewCount={reviewCount}
+              loading={item.reviewCountKey ? loading : undefined}
               onNavigate={onNavigate}
             />
           );
@@ -210,6 +264,7 @@ function DrawerContent({
 
 export function Layout() {
   const { user, signOut } = useAuthContext();
+  const { counts, loading: countsLoading } = useReviewData();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -245,6 +300,8 @@ export function Layout() {
             onNavigate={handleNavigation}
             onClose={() => {}}
             showCloseButton={false}
+            reviewCounts={counts}
+            loading={countsLoading}
           />
         </Drawer>
       ) : (
@@ -264,6 +321,8 @@ export function Layout() {
             onNavigate={handleNavigation}
             onClose={() => setMobileDrawerOpen(false)}
             showCloseButton={true}
+            reviewCounts={counts}
+            loading={countsLoading}
           />
         </Drawer>
       )}

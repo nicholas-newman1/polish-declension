@@ -1,0 +1,357 @@
+import {
+  createContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import cardsData from '../data/cards.json';
+import type { Card, ReviewDataStore, Settings } from '../types';
+import type {
+  VocabularyWord,
+  VocabularyReviewDataStore,
+  VocabularySettings,
+  VocabularyDirection,
+  CustomVocabularyWord,
+} from '../types/vocabulary';
+import loadReviewData from '../lib/storage/loadReviewData';
+import loadSettings from '../lib/storage/loadSettings';
+import saveReviewData from '../lib/storage/saveReviewData';
+import saveSettings from '../lib/storage/saveSettings';
+import loadVocabularyReviewData from '../lib/storage/loadVocabularyReviewData';
+import loadVocabularySettings from '../lib/storage/loadVocabularySettings';
+import saveVocabularyReviewData from '../lib/storage/saveVocabularyReviewData';
+import saveVocabularySettings from '../lib/storage/saveVocabularySettings';
+import { loadCustomVocabulary } from '../lib/storage/customVocabulary';
+import clearAllData from '../lib/storage/clearAllData';
+import clearVocabularyData from '../lib/storage/clearVocabularyData';
+import getOrCreateCardReviewData from '../lib/storage/getOrCreateCardReviewData';
+import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
+import isDue from '../lib/fsrsUtils/isDue';
+import {
+  getUserId,
+  getDefaultReviewStore,
+  getDefaultVocabularyReviewStore,
+} from '../lib/storage/helpers';
+import { DEFAULT_SETTINGS } from '../constants';
+
+const allDeclensionCards: Card[] = cardsData as Card[];
+
+const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
+  newCardsPerDay: 10,
+  direction: 'pl-to-en',
+};
+
+export interface ReviewCounts {
+  declension: number;
+  vocabulary: number;
+}
+
+export interface ReviewDataContextType {
+  loading: boolean;
+
+  declensionReviewStore: ReviewDataStore;
+  declensionSettings: Settings;
+  updateDeclensionReviewStore: (store: ReviewDataStore) => Promise<void>;
+  updateDeclensionSettings: (settings: Settings) => Promise<void>;
+  clearDeclensionData: () => Promise<void>;
+
+  vocabularyReviewStores: Record<
+    VocabularyDirection,
+    VocabularyReviewDataStore
+  >;
+  vocabularySettings: VocabularySettings;
+  vocabularyWords: VocabularyWord[];
+  customWords: CustomVocabularyWord[];
+  systemWords: VocabularyWord[];
+  updateVocabularyReviewStore: (
+    direction: VocabularyDirection,
+    store: VocabularyReviewDataStore
+  ) => Promise<void>;
+  updateVocabularySettings: (settings: VocabularySettings) => Promise<void>;
+  clearVocabularyReviewData: (direction: VocabularyDirection) => Promise<void>;
+  refreshVocabularyWords: () => Promise<void>;
+  setCustomWords: (words: CustomVocabularyWord[]) => void;
+  setSystemWords: (words: VocabularyWord[]) => void;
+
+  counts: ReviewCounts;
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const ReviewDataContext = createContext<ReviewDataContextType | null>(
+  null
+);
+
+function computeDeclensionDueCount(
+  cards: Card[],
+  reviewStore: ReviewDataStore,
+  settings: Settings
+): number {
+  let dueReviews = 0;
+  let newCards = 0;
+  const remainingNewCardsToday =
+    settings.newCardsPerDay - reviewStore.newCardsToday.length;
+
+  for (const card of cards) {
+    const reviewData = getOrCreateCardReviewData(card.id, reviewStore);
+    const isNew = reviewData.fsrsCard.state === 0;
+
+    if (isNew) {
+      if (
+        !reviewStore.newCardsToday.includes(card.id) &&
+        newCards < remainingNewCardsToday
+      ) {
+        newCards++;
+      }
+    } else if (isDue(reviewData.fsrsCard)) {
+      if (!reviewStore.reviewedToday.includes(card.id)) {
+        dueReviews++;
+      }
+    }
+  }
+
+  return dueReviews + newCards;
+}
+
+function computeVocabularyDueCount(
+  words: VocabularyWord[],
+  reviewStore: VocabularyReviewDataStore,
+  settings: VocabularySettings
+): number {
+  let dueReviews = 0;
+  let newCards = 0;
+  const remainingNewCardsToday =
+    settings.newCardsPerDay - reviewStore.newCardsToday.length;
+
+  for (const word of words) {
+    const reviewData = getOrCreateVocabularyCardReviewData(
+      word.id,
+      reviewStore
+    );
+    const isNew = reviewData.fsrsCard.state === 0;
+
+    if (isNew) {
+      const isAlreadyNew = reviewStore.newCardsToday.some(
+        (id) => String(id) === String(word.id)
+      );
+      if (!isAlreadyNew && newCards < remainingNewCardsToday) {
+        newCards++;
+      }
+    } else if (isDue(reviewData.fsrsCard)) {
+      const isAlreadyReviewed = reviewStore.reviewedToday.some(
+        (id) => String(id) === String(word.id)
+      );
+      if (!isAlreadyReviewed) {
+        dueReviews++;
+      }
+    }
+  }
+
+  return dueReviews + newCards;
+}
+
+export function ReviewDataProvider({ children }: { children: ReactNode }) {
+  const [loading, setLoading] = useState(true);
+
+  const [declensionReviewStore, setDeclensionReviewStore] =
+    useState<ReviewDataStore>(getDefaultReviewStore);
+  const [declensionSettings, setDeclensionSettings] =
+    useState<Settings>(DEFAULT_SETTINGS);
+
+  const [vocabularyReviewStores, setVocabularyReviewStores] = useState<
+    Record<VocabularyDirection, VocabularyReviewDataStore>
+  >({
+    'pl-to-en': getDefaultVocabularyReviewStore(),
+    'en-to-pl': getDefaultVocabularyReviewStore(),
+  });
+  const [vocabularySettings, setVocabularySettings] =
+    useState<VocabularySettings>(DEFAULT_VOCABULARY_SETTINGS);
+  const [customWords, setCustomWords] = useState<CustomVocabularyWord[]>([]);
+  const [systemWords, setSystemWords] = useState<VocabularyWord[]>([]);
+
+  const vocabularyWords = useMemo<VocabularyWord[]>(
+    () => [...customWords, ...systemWords],
+    [customWords, systemWords]
+  );
+
+  const counts = useMemo<ReviewCounts>(() => {
+    const userId = getUserId();
+    if (!userId) {
+      return { declension: 0, vocabulary: 0 };
+    }
+
+    const declensionCount = computeDeclensionDueCount(
+      allDeclensionCards,
+      declensionReviewStore,
+      declensionSettings
+    );
+
+    const plToEnCount = computeVocabularyDueCount(
+      vocabularyWords,
+      vocabularyReviewStores['pl-to-en'],
+      { ...vocabularySettings, direction: 'pl-to-en' }
+    );
+    const enToPlCount = computeVocabularyDueCount(
+      vocabularyWords,
+      vocabularyReviewStores['en-to-pl'],
+      { ...vocabularySettings, direction: 'en-to-pl' }
+    );
+
+    return {
+      declension: declensionCount,
+      vocabulary: plToEnCount + enToPlCount,
+    };
+  }, [
+    declensionReviewStore,
+    declensionSettings,
+    vocabularyWords,
+    vocabularyReviewStores,
+    vocabularySettings,
+  ]);
+
+  const loadAllData = useCallback(async () => {
+    const userId = getUserId();
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    const [
+      loadedDeclensionSettings,
+      loadedDeclensionReviewData,
+      loadedVocabularySettings,
+      loadedCustomWords,
+      vocabularySnapshot,
+    ] = await Promise.all([
+      loadSettings(),
+      loadReviewData(),
+      loadVocabularySettings(),
+      loadCustomVocabulary(),
+      getDocs(collection(db, 'vocabulary')),
+    ]);
+
+    const loadedSystemWords = vocabularySnapshot.docs.map(
+      (doc) => doc.data() as VocabularyWord
+    );
+
+    const [plToEnStore, enToPlStore] = await Promise.all([
+      loadVocabularyReviewData('pl-to-en'),
+      loadVocabularyReviewData('en-to-pl'),
+    ]);
+
+    setDeclensionSettings(loadedDeclensionSettings);
+    setDeclensionReviewStore(loadedDeclensionReviewData);
+    setVocabularySettings(loadedVocabularySettings);
+    setCustomWords(loadedCustomWords);
+    setSystemWords(loadedSystemWords);
+    setVocabularyReviewStores({
+      'pl-to-en': plToEnStore,
+      'en-to-pl': enToPlStore,
+    });
+
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    void loadAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const updateDeclensionReviewStore = useCallback(
+    async (store: ReviewDataStore) => {
+      setDeclensionReviewStore(store);
+      await saveReviewData(store);
+    },
+    []
+  );
+
+  const updateDeclensionSettings = useCallback(async (settings: Settings) => {
+    setDeclensionSettings(settings);
+    await saveSettings(settings);
+  }, []);
+
+  const clearDeclensionDataFn = useCallback(async () => {
+    await clearAllData();
+    const freshStore = getDefaultReviewStore();
+    setDeclensionReviewStore(freshStore);
+    setDeclensionSettings(DEFAULT_SETTINGS);
+  }, []);
+
+  const updateVocabularyReviewStore = useCallback(
+    async (
+      direction: VocabularyDirection,
+      store: VocabularyReviewDataStore
+    ) => {
+      setVocabularyReviewStores((prev) => ({
+        ...prev,
+        [direction]: store,
+      }));
+      await saveVocabularyReviewData(store, direction);
+    },
+    []
+  );
+
+  const updateVocabularySettingsFn = useCallback(
+    async (settings: VocabularySettings) => {
+      setVocabularySettings(settings);
+      await saveVocabularySettings(settings);
+    },
+    []
+  );
+
+  const clearVocabularyReviewDataFn = useCallback(
+    async (direction: VocabularyDirection) => {
+      await clearVocabularyData(direction);
+      const freshStore = getDefaultVocabularyReviewStore();
+      setVocabularyReviewStores((prev) => ({
+        ...prev,
+        [direction]: freshStore,
+      }));
+    },
+    []
+  );
+
+  const refreshVocabularyWords = useCallback(async () => {
+    const [loadedCustomWords, vocabularySnapshot] = await Promise.all([
+      loadCustomVocabulary(),
+      getDocs(collection(db, 'vocabulary')),
+    ]);
+    const loadedSystemWords = vocabularySnapshot.docs.map(
+      (doc) => doc.data() as VocabularyWord
+    );
+    setCustomWords(loadedCustomWords);
+    setSystemWords(loadedSystemWords);
+  }, []);
+
+  return (
+    <ReviewDataContext.Provider
+      value={{
+        loading,
+        declensionReviewStore,
+        declensionSettings,
+        updateDeclensionReviewStore,
+        updateDeclensionSettings,
+        clearDeclensionData: clearDeclensionDataFn,
+        vocabularyReviewStores,
+        vocabularySettings,
+        vocabularyWords,
+        customWords,
+        systemWords,
+        updateVocabularyReviewStore,
+        updateVocabularySettings: updateVocabularySettingsFn,
+        clearVocabularyReviewData: clearVocabularyReviewDataFn,
+        refreshVocabularyWords,
+        setCustomWords,
+        setSystemWords,
+        counts,
+      }}
+    >
+      {children}
+    </ReviewDataContext.Provider>
+  );
+}

@@ -7,10 +7,8 @@ import {
   Stack,
   IconButton,
 } from '@mui/material';
-import { collection, getDocs } from 'firebase/firestore';
 import AddIcon from '@mui/icons-material/Add';
 import { styled } from '../lib/styled';
-import { db } from '../lib/firebase';
 import { PracticeModeButton } from '../components/PracticeModeButton';
 import { SettingsButton } from '../components/SettingsButton';
 import { DirectionToggle } from '../components/DirectionToggle';
@@ -30,16 +28,8 @@ import type {
   VocabularyDirection,
   CustomVocabularyWord,
 } from '../types/vocabulary';
-import loadVocabularyReviewData from '../lib/storage/loadVocabularyReviewData';
-import saveVocabularyReviewData from '../lib/storage/saveVocabularyReviewData';
-import loadVocabularySettings from '../lib/storage/loadVocabularySettings';
-import saveVocabularySettings from '../lib/storage/saveVocabularySettings';
 import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
-import clearVocabularyData from '../lib/storage/clearVocabularyData';
-import {
-  loadCustomVocabulary,
-  saveCustomVocabulary,
-} from '../lib/storage/customVocabulary';
+import { saveCustomVocabulary } from '../lib/storage/customVocabulary';
 import {
   updateSystemVocabularyWord,
   deleteSystemVocabularyWord,
@@ -53,22 +43,9 @@ import type { VocabularySessionCard } from '../lib/vocabularyScheduler/types';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useOptimistic } from '../hooks/useOptimistic';
 import { useSnackbar } from '../hooks/useSnackbar';
+import { useReviewData } from '../hooks/useReviewData';
 import shuffleArray from '../lib/utils/shuffleArray';
 import { includesWordId } from '../lib/storage/helpers';
-
-const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
-  newCardsPerDay: 10,
-  direction: 'pl-to-en',
-};
-
-function getDefaultVocabularyReviewStore(): VocabularyReviewDataStore {
-  return {
-    cards: {},
-    reviewedToday: [],
-    newCardsToday: [],
-    lastReviewDate: new Date().toISOString().split('T')[0],
-  };
-}
 
 const MainContent = styled(Box)({
   flex: 1,
@@ -97,22 +74,36 @@ const AddButton = styled(IconButton)(({ theme }) => ({
 export function VocabularyPage() {
   const { user, isAdmin } = useAuthContext();
   const { showSnackbar } = useSnackbar();
-  const [systemWordsBase, setSystemWordsBase] = useState<VocabularyWord[]>([]);
+  const {
+    loading: contextLoading,
+    vocabularyReviewStores,
+    vocabularySettings: settings,
+    vocabularyWords,
+    customWords: contextCustomWords,
+    systemWords: contextSystemWords,
+    updateVocabularyReviewStore,
+    updateVocabularySettings,
+    clearVocabularyReviewData,
+    setCustomWords: setContextCustomWords,
+    setSystemWords: setContextSystemWords,
+  } = useReviewData();
+
   const [systemWords, applyOptimisticSystemWords] = useOptimistic(
-    systemWordsBase,
+    contextSystemWords,
     {
       onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
     }
   );
-  const [reviewStore, setReviewStore] = useState<VocabularyReviewDataStore>(
-    getDefaultVocabularyReviewStore
+  const [customWords, applyOptimisticCustomWords] = useOptimistic(
+    contextCustomWords,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
   );
-  const [settings, setSettings] = useState<VocabularySettings>(
-    DEFAULT_VOCABULARY_SETTINGS
-  );
-  const [isLoading, setIsLoading] = useState(true);
+
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
+  const [isDirectionChanging, setIsDirectionChanging] = useState(false);
 
   const [learningQueue, setLearningQueue] = useState<VocabularySessionCard[]>(
     []
@@ -128,22 +119,16 @@ export function VocabularyPage() {
   const [isPracticeAhead, setIsPracticeAhead] = useState(false);
   const [extraNewCardsCount, setExtraNewCardsCount] = useState(5);
 
-  const [customWordsBase, setCustomWordsBase] = useState<
-    CustomVocabularyWord[]
-  >([]);
-  const [customWords, applyOptimisticCustomWords] = useOptimistic(
-    customWordsBase,
-    {
-      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
-    }
-  );
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingWord, setEditingWord] = useState<
     CustomVocabularyWord | VocabularyWord | null
   >(null);
   const [editingSystemWord, setEditingSystemWord] = useState(false);
 
+  const sessionBuiltRef = useRef(false);
   const directionRef = useRef(settings.direction);
+
+  const reviewStore = vocabularyReviewStores[settings.direction];
 
   const allWords = useMemo<VocabularyWord[]>(
     () => [...customWords, ...systemWords],
@@ -172,53 +157,40 @@ export function VocabularyPage() {
   );
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      const [loadedSettings, loadedCustomWords, vocabularySnapshot] =
-        await Promise.all([
-          loadVocabularySettings(),
-          loadCustomVocabulary(),
-          getDocs(collection(db, 'vocabulary')),
-        ]);
-      const loadedSystemWords = vocabularySnapshot.docs.map(
-        (doc) => doc.data() as VocabularyWord
-      );
-      setSystemWordsBase(loadedSystemWords);
-      const loadedReviewData = await loadVocabularyReviewData(
-        loadedSettings.direction
-      );
-      directionRef.current = loadedSettings.direction;
-      setSettings(loadedSettings);
-      setCustomWordsBase(loadedCustomWords);
-      setReviewStore(loadedReviewData);
-      const mergedWords = [...loadedCustomWords, ...loadedSystemWords];
-      buildSession(mergedWords, loadedReviewData, loadedSettings);
-      setIsLoading(false);
-    };
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+    if (!contextLoading && !sessionBuiltRef.current) {
+      sessionBuiltRef.current = true;
+      directionRef.current = settings.direction;
+      queueMicrotask(() => {
+        buildSession(vocabularyWords, reviewStore, settings);
+      });
+    }
+  }, [contextLoading, buildSession, vocabularyWords, reviewStore, settings]);
 
   const handleDirectionToggle = useCallback(async () => {
     const newDirection: VocabularyDirection =
       settings.direction === 'pl-to-en' ? 'en-to-pl' : 'pl-to-en';
 
-    setIsLoading(true);
+    setIsDirectionChanging(true);
     const newSettings = { ...settings, direction: newDirection };
     directionRef.current = newDirection;
-    setSettings(newSettings);
-    await saveVocabularySettings(newSettings);
+    await updateVocabularySettings(newSettings);
 
-    const newReviewStore = await loadVocabularyReviewData(newDirection);
-    setReviewStore(newReviewStore);
+    const newReviewStore = vocabularyReviewStores[newDirection];
     buildSession(allWords, newReviewStore, newSettings);
 
     if (practiceMode) {
       setPracticeCards(shuffleArray([...allWords]));
       setPracticeIndex(0);
     }
-    setIsLoading(false);
-  }, [settings, buildSession, practiceMode, allWords]);
+    setIsDirectionChanging(false);
+  }, [
+    settings,
+    buildSession,
+    practiceMode,
+    allWords,
+    updateVocabularySettings,
+    vocabularyReviewStores,
+  ]);
 
   const startPracticeAhead = useCallback(() => {
     const aheadCards = getVocabularyPracticeAheadCards(
@@ -310,15 +282,13 @@ export function VocabularyPage() {
       }
     }
 
-    setReviewStore(newStore);
     setRatingCounter((c) => c + 1);
-    saveVocabularyReviewData(newStore, directionRef.current);
+    await updateVocabularyReviewStore(directionRef.current, newStore);
   };
 
   const handleSettingsChange = async (newCardsPerDay: number) => {
     const newSettings = { ...settings, newCardsPerDay };
-    setSettings(newSettings);
-    await saveVocabularySettings(newSettings);
+    await updateVocabularySettings(newSettings);
     buildSession(allWords, reviewStore, newSettings);
   };
 
@@ -335,7 +305,7 @@ export function VocabularyPage() {
 
     applyOptimisticCustomWords(newCustomWords, async () => {
       await saveCustomVocabulary(newCustomWords);
-      setCustomWordsBase(newCustomWords);
+      setContextCustomWords(newCustomWords);
     });
 
     const mergedWords = [...newCustomWords, ...systemWords];
@@ -402,7 +372,7 @@ export function VocabularyPage() {
 
       applyOptimisticSystemWords(newSystemWords, async () => {
         await updateSystemVocabularyWord(wordId as number, wordData);
-        setSystemWordsBase(newSystemWords);
+        setContextSystemWords(newSystemWords);
       });
     } else {
       const newCustomWords = customWords.map((w) =>
@@ -412,7 +382,7 @@ export function VocabularyPage() {
 
       applyOptimisticCustomWords(newCustomWords, async () => {
         await saveCustomVocabulary(newCustomWords);
-        setCustomWordsBase(newCustomWords);
+        setContextCustomWords(newCustomWords);
       });
     }
 
@@ -443,14 +413,14 @@ export function VocabularyPage() {
 
       applyOptimisticCustomWords(newCustomWords, async () => {
         await saveCustomVocabulary(newCustomWords);
-        setCustomWordsBase(newCustomWords);
+        setContextCustomWords(newCustomWords);
       });
     } else {
       const newSystemWords = systemWords.filter((w) => w.id !== wordId);
 
       applyOptimisticSystemWords(newSystemWords, async () => {
         await deleteSystemVocabularyWord(wordId as number);
-        setSystemWordsBase(newSystemWords);
+        setContextSystemWords(newSystemWords);
       });
     }
 
@@ -481,9 +451,8 @@ export function VocabularyPage() {
         'Are you sure? This will erase all your vocabulary progress for this direction and cannot be undone.'
       )
     ) {
-      await clearVocabularyData(settings.direction);
-      const freshStore = await loadVocabularyReviewData(settings.direction);
-      setReviewStore(freshStore);
+      await clearVocabularyReviewData(settings.direction);
+      const freshStore = vocabularyReviewStores[settings.direction];
       buildSession(allWords, freshStore, settings);
       setShowSettings(false);
     }
@@ -516,6 +485,8 @@ export function VocabularyPage() {
     sessionQueue.length - currentIndex + learningQueue.length;
 
   const currentPracticeWord = practiceCards[practiceIndex];
+
+  const isLoading = contextLoading || isDirectionChanging;
 
   return (
     <>

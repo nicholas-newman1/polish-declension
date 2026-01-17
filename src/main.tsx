@@ -9,6 +9,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { TranslationProvider } from './contexts/TranslationContext';
 import { CheatSheetProvider } from './contexts/CheatSheetContext';
 import { SnackbarProvider } from './contexts/SnackbarContext';
+import { ReviewDataProvider } from './contexts/ReviewDataContext';
 import { AuthGate } from './components/AuthGate';
 import { SignIn } from './components/SignIn';
 import { Layout } from './components/Layout';
@@ -26,26 +27,37 @@ createRoot(document.getElementById('root')!).render(
       <SnackbarProvider>
         <AuthProvider>
           <AuthGate>
-            <TranslationProvider>
-              <CheatSheetProvider>
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/login" element={<SignIn />} />
-                    <Route element={<Layout />}>
-                      <Route path="/dashboard" element={<DashboardPage />} />
-                      <Route path="/declension" element={<DeclensionPage />} />
-                      <Route path="/vocabulary" element={<VocabularyPage />} />
-                      <Route path="/sentences" element={<SentencesPage />} />
-                      <Route path="/my-words" element={<CustomVocabularyPage />} />
-                    </Route>
-                    <Route
-                      path="*"
-                      element={<Navigate to="/dashboard" replace />}
-                    />
-                  </Routes>
-                </BrowserRouter>
-              </CheatSheetProvider>
-            </TranslationProvider>
+            <ReviewDataProvider>
+              <TranslationProvider>
+                <CheatSheetProvider>
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/login" element={<SignIn />} />
+                      <Route element={<Layout />}>
+                        <Route path="/dashboard" element={<DashboardPage />} />
+                        <Route
+                          path="/declension"
+                          element={<DeclensionPage />}
+                        />
+                        <Route
+                          path="/vocabulary"
+                          element={<VocabularyPage />}
+                        />
+                        <Route path="/sentences" element={<SentencesPage />} />
+                        <Route
+                          path="/my-words"
+                          element={<CustomVocabularyPage />}
+                        />
+                      </Route>
+                      <Route
+                        path="*"
+                        element={<Navigate to="/dashboard" replace />}
+                      />
+                    </Routes>
+                  </BrowserRouter>
+                </CheatSheetProvider>
+              </TranslationProvider>
+            </ReviewDataProvider>
           </AuthGate>
         </AuthProvider>
         <AppSnackbar />
