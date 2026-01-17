@@ -24,15 +24,17 @@ const StyledButton = styled(Button)<StyledButtonProps>(({ theme, $active }) => (
 interface PracticeModeButtonProps {
   active: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-export function PracticeModeButton({ active, onClick }: PracticeModeButtonProps) {
+export function PracticeModeButton({ active, onClick, disabled }: PracticeModeButtonProps) {
   return (
     <StyledButton
       variant={active ? 'contained' : 'outlined'}
       onClick={onClick}
       $active={active}
       size="small"
+      disabled={disabled}
     >
       {active ? '✓ Practice' : 'Practice'}
     </StyledButton>

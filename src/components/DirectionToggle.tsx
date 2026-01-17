@@ -13,17 +13,19 @@ interface DirectionToggleProps {
   direction: TranslationDirection;
   onToggle: () => void;
   size?: 'small' | 'medium' | 'large';
+  disabled?: boolean;
 }
 
 export function DirectionToggle({
   direction,
   onToggle,
   size = 'small',
+  disabled,
 }: DirectionToggleProps) {
   const englishFirst = direction === 'en-to-pl';
 
   return (
-    <StyledButton variant="outlined" size={size} onClick={onToggle}>
+    <StyledButton variant="outlined" size={size} onClick={onToggle} disabled={disabled}>
       {englishFirst ? 'EN' : 'PL'}
       <SwapHorizIcon sx={{ fontSize: size === 'small' ? 18 : 22 }} />
       {englishFirst ? 'PL' : 'EN'}

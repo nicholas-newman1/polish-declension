@@ -70,13 +70,6 @@ function getDefaultVocabularyReviewStore(): VocabularyReviewDataStore {
   };
 }
 
-const LoadingContainer = styled(Box)({
-  flex: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
 const MainContent = styled(Box)({
   flex: 1,
   display: 'flex',
@@ -524,36 +517,32 @@ export function VocabularyPage() {
 
   const currentPracticeWord = practiceCards[practiceIndex];
 
-  if (isLoading) {
-    return (
-      <LoadingContainer>
-        <CircularProgress sx={{ color: 'text.disabled' }} />
-      </LoadingContainer>
-    );
-  }
-
   return (
     <>
       <ControlsRow direction="row" alignItems="center">
         <DirectionToggle
           direction={settings.direction}
           onToggle={handleDirectionToggle}
+          disabled={isLoading}
         />
 
         <PracticeModeButton
           active={practiceMode}
           onClick={togglePracticeMode}
+          disabled={isLoading}
         />
 
         <SettingsButton
           active={showSettings}
           onClick={() => setShowSettings(!showSettings)}
+          disabled={isLoading}
         />
 
         {user && (
           <AddButton
             onClick={() => setShowAddModal(true)}
             aria-label="add word"
+            disabled={isLoading}
           >
             <AddIcon />
           </AddButton>
@@ -573,53 +562,59 @@ export function VocabularyPage() {
       )}
 
       <MainContent>
-        <Typography
-          variant="body2"
-          color="text.disabled"
-          sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}
-        >
-          {practiceMode
-            ? `Practice Mode · ${practiceCards.length} words`
-            : isFinished
-            ? ''
-            : isPracticeAhead
-            ? `Practice Ahead · ${totalRemaining} remaining`
-            : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
-        </Typography>
+        {isLoading ? (
+          <CircularProgress sx={{ color: 'text.disabled' }} />
+        ) : (
+          <>
+            <Typography
+              variant="body2"
+              color="text.disabled"
+              sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}
+            >
+              {practiceMode
+                ? `Practice Mode · ${practiceCards.length} words`
+                : isFinished
+                ? ''
+                : isPracticeAhead
+                ? `Practice Ahead · ${totalRemaining} remaining`
+                : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
+            </Typography>
 
-        {practiceMode ? (
-          currentPracticeWord ? (
-            <VocabularyFlashcard
-              key={`practice-${currentPracticeWord.id}-${practiceIndex}`}
-              word={currentPracticeWord}
-              direction={settings.direction}
-              practiceMode
-              onNext={handlePracticeNext}
-            />
-          ) : (
-            <EmptyState message="No words available" />
-          )
-        ) : isFinished ? (
-          <FinishedState
-            practiceAheadCount={practiceAheadCount}
-            setPracticeAheadCount={setPracticeAheadCount}
-            extraNewCardsCount={extraNewCardsCount}
-            setExtraNewCardsCount={setExtraNewCardsCount}
-            onPracticeAhead={startPracticeAhead}
-            onLearnExtra={startExtraNewCards}
-          />
-        ) : currentSessionCard ? (
-          <VocabularyFlashcard
-            key={`${currentSessionCard.word.id}-${ratingCounter}`}
-            word={currentSessionCard.word}
-            direction={settings.direction}
-            intervals={intervals}
-            isAdmin={isAdmin}
-            onRate={handleRate}
-            onEdit={handleOpenEditModal}
-            onDelete={handleDeleteWord}
-          />
-        ) : null}
+            {practiceMode ? (
+              currentPracticeWord ? (
+                <VocabularyFlashcard
+                  key={`practice-${currentPracticeWord.id}-${practiceIndex}`}
+                  word={currentPracticeWord}
+                  direction={settings.direction}
+                  practiceMode
+                  onNext={handlePracticeNext}
+                />
+              ) : (
+                <EmptyState message="No words available" />
+              )
+            ) : isFinished ? (
+              <FinishedState
+                practiceAheadCount={practiceAheadCount}
+                setPracticeAheadCount={setPracticeAheadCount}
+                extraNewCardsCount={extraNewCardsCount}
+                setExtraNewCardsCount={setExtraNewCardsCount}
+                onPracticeAhead={startPracticeAhead}
+                onLearnExtra={startExtraNewCards}
+              />
+            ) : currentSessionCard ? (
+              <VocabularyFlashcard
+                key={`${currentSessionCard.word.id}-${ratingCounter}`}
+                word={currentSessionCard.word}
+                direction={settings.direction}
+                intervals={intervals}
+                isAdmin={isAdmin}
+                onRate={handleRate}
+                onEdit={handleOpenEditModal}
+                onDelete={handleDeleteWord}
+              />
+            ) : null}
+          </>
+        )}
       </MainContent>
 
       <AddVocabularyModal

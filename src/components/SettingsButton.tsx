@@ -29,13 +29,22 @@ const StyledIconButton = styled(IconButton)<StyledButtonProps>(
 interface SettingsButtonProps {
   active: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-export function SettingsButton({ active, onClick }: SettingsButtonProps) {
+export function SettingsButton({
+  active,
+  onClick,
+  disabled,
+}: SettingsButtonProps) {
   return (
-    <StyledIconButton onClick={onClick} size="small" $active={active}>
+    <StyledIconButton
+      onClick={onClick}
+      size="small"
+      $active={active}
+      disabled={disabled}
+    >
       <SettingsIcon fontSize="small" />
     </StyledIconButton>
   );
 }
-
