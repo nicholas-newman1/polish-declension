@@ -6,9 +6,11 @@ import {
   Card,
   Chip,
   Divider,
+  IconButton,
   Stack,
   Typography,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { styled } from '../lib/styled';
 import type { Card as FlashCard } from '../types';
 import { renderTappableText } from '../lib/renderTappableText';
@@ -26,8 +28,10 @@ interface FlashcardProps {
   card: FlashCard;
   practiceMode?: boolean;
   intervals?: RatingIntervals;
+  isAdmin?: boolean;
   onRate?: (rating: Grade) => void;
   onNext?: () => void;
+  onEdit?: () => void;
 }
 
 const CardWrapper = styled(Box)({
@@ -110,12 +114,31 @@ const IntervalText = styled(Typography)({
   fontFamily: '"JetBrains Mono", monospace',
 });
 
+const CardHeader = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'flex-start',
+});
+
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  color: theme.palette.text.disabled,
+  padding: theme.spacing(0.75),
+  marginTop: theme.spacing(-1),
+  marginRight: theme.spacing(-1),
+  '&:hover': {
+    color: theme.palette.text.secondary,
+    backgroundColor: alpha(theme.palette.text.primary, 0.05),
+  },
+}));
+
 export function Flashcard({
   card,
   practiceMode = false,
   intervals,
+  isAdmin = false,
   onRate,
   onNext,
+  onEdit,
 }: FlashcardProps) {
   const [revealed, setRevealed] = useState(false);
   const translationCache = useRef<Map<string, string>>(new Map());
@@ -134,6 +157,13 @@ export function Flashcard({
     <CardWrapper className="animate-fade-up">
       <StyledCard>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {isAdmin && (
+            <CardHeader>
+              <ActionButton onClick={onEdit} size="small" aria-label="edit">
+                <EditIcon fontSize="small" />
+              </ActionButton>
+            </CardHeader>
+          )}
           <QuestionText variant="h5" color="text.primary">
             {renderTappableText(card.front, tappableTextOptions)}
           </QuestionText>

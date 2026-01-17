@@ -6,6 +6,7 @@ import { FilterControls } from '../components/FilterControls';
 import { SettingsPanel } from '../components/SettingsPanel';
 import { FinishedState } from '../components/FinishedState';
 import { EmptyState } from '../components/EmptyState';
+import { EditDeclensionModal } from '../components/EditDeclensionModal';
 import type {
   Card as CardType,
   Case,
@@ -14,6 +15,7 @@ import type {
   ReviewDataStore,
   Settings,
 } from '../types';
+import { updateDeclensionCard } from '../lib/storage/systemDeclension';
 import getOrCreateCardReviewData from '../lib/storage/getOrCreateCardReviewData';
 import getSessionCards from '../lib/declensionScheduler/getSessionCards';
 import getPracticeAheadCards from '../lib/declensionScheduler/getPracticeAheadCards';
@@ -23,6 +25,8 @@ import getNextIntervals from '../lib/fsrsUtils/getNextIntervals';
 import type { SessionCard } from '../lib/declensionScheduler/types';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useReviewData } from '../hooks/useReviewData';
+import { useOptimistic } from '../hooks/useOptimistic';
+import { useSnackbar } from '../hooks/useSnackbar';
 import { DEFAULT_SETTINGS } from '../constants';
 import shuffleArray from '../lib/utils/shuffleArray';
 
@@ -42,19 +46,30 @@ const MainContent = styled(Box)({
 });
 
 export function DeclensionPage() {
-  const { user } = useAuthContext();
+  const { user, isAdmin } = useAuthContext();
+  const { showSnackbar } = useSnackbar();
   const {
     loading: contextLoading,
-    declensionCards,
+    declensionCards: contextDeclensionCards,
     declensionReviewStore: reviewStore,
     declensionSettings: settings,
     updateDeclensionReviewStore,
     updateDeclensionSettings,
     clearDeclensionData,
+    setDeclensionCards: setContextDeclensionCards,
   } = useReviewData();
+
+  const [declensionCards, applyOptimisticDeclensionCards] = useOptimistic(
+    contextDeclensionCards,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
+  );
 
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCard, setEditingCard] = useState<CardType | null>(null);
 
   const [caseFilter, setCaseFilter] = useState<Case | 'All'>('All');
   const [genderFilter, setGenderFilter] = useState<Gender | 'All'>('All');
@@ -294,6 +309,50 @@ export function DeclensionPage() {
     }
   };
 
+  const handleOpenEditModal = useCallback(() => {
+    if (!currentSessionCard) return;
+    setEditingCard(currentSessionCard.card);
+    setShowEditModal(true);
+  }, [currentSessionCard]);
+
+  const handleEditCard = useCallback(
+    (updates: Partial<Omit<CardType, 'id'>>) => {
+      if (!editingCard) return;
+
+      const updatedCard = { ...editingCard, ...updates };
+
+      const newDeclensionCards = declensionCards.map((card) =>
+        card.id === editingCard.id ? updatedCard : card
+      );
+
+      setSessionQueue((prev) =>
+        prev.map((item) =>
+          item.card.id === editingCard.id
+            ? { ...item, card: updatedCard }
+            : item
+        )
+      );
+      setLearningQueue((prev) =>
+        prev.map((item) =>
+          item.card.id === editingCard.id
+            ? { ...item, card: updatedCard }
+            : item
+        )
+      );
+      setPracticeCards((prev) =>
+        prev.map((card) =>
+          card.id === editingCard.id ? updatedCard : card
+        )
+      );
+
+      applyOptimisticDeclensionCards(newDeclensionCards, async () => {
+        await updateDeclensionCard(editingCard.id, updates);
+        setContextDeclensionCards(newDeclensionCards);
+      });
+    },
+    [editingCard, declensionCards, applyOptimisticDeclensionCards, setContextDeclensionCards]
+  );
+
   const intervals: RatingIntervals = useMemo(() => {
     if (!currentSessionCard) {
       return {
@@ -392,10 +451,22 @@ export function DeclensionPage() {
             key={`${currentSessionCard.card.id}-${ratingCounter}`}
             card={currentSessionCard.card}
             intervals={intervals}
+            isAdmin={isAdmin}
             onRate={handleRate}
+            onEdit={handleOpenEditModal}
           />
         ) : null}
       </MainContent>
+
+      <EditDeclensionModal
+        open={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingCard(null);
+        }}
+        onSave={handleEditCard}
+        card={editingCard}
+      />
     </>
   );
 }

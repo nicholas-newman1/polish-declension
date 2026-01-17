@@ -56,6 +56,7 @@ export interface ReviewDataContextType {
   updateDeclensionReviewStore: (store: ReviewDataStore) => Promise<void>;
   updateDeclensionSettings: (settings: Settings) => Promise<void>;
   clearDeclensionData: () => Promise<void>;
+  setDeclensionCards: (cards: Card[]) => void;
 
   vocabularyReviewStores: Record<
     VocabularyDirection,
@@ -345,6 +346,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
         updateDeclensionReviewStore,
         updateDeclensionSettings,
         clearDeclensionData: clearDeclensionDataFn,
+        setDeclensionCards,
         vocabularyReviewStores,
         vocabularySettings,
         vocabularyWords,
