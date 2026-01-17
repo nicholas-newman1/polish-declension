@@ -5,13 +5,13 @@ import {
   Card,
   Paper,
   Stack,
-  TextField,
   Tooltip,
   Typography,
   styled,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { alpha } from '../lib/theme';
+import { NumberInput } from './NumberInput';
 
 const CardWrapper = styled(Box)({
   width: '100%',
@@ -68,14 +68,6 @@ const OptionPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: theme.palette.background.default,
 }));
-
-const SmallNumberInput = styled(TextField)({
-  width: 72,
-  '& input': {
-    fontFamily: '"JetBrains Mono", monospace',
-    textAlign: 'center',
-  },
-});
 
 interface FinishedStateProps {
   practiceAheadCount: number;
@@ -140,17 +132,11 @@ export function FinishedState({
                   </Tooltip>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <SmallNumberInput
-                    type="number"
-                    size="small"
-                    value={extraNewCardsCount || ''}
-                    onChange={(e) =>
-                      setExtraNewCardsCount(parseInt(e.target.value) || 0)
-                    }
-                    onBlur={() => {
-                      if (extraNewCardsCount < 1) setExtraNewCardsCount(1);
-                    }}
-                    inputProps={{ min: 1, max: 50 }}
+                  <NumberInput
+                    value={extraNewCardsCount}
+                    onChange={setExtraNewCardsCount}
+                    min={1}
+                    width={72}
                   />
                   <Typography variant="body2" color="text.disabled">
                     cards
@@ -197,17 +183,11 @@ export function FinishedState({
                   </Tooltip>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <SmallNumberInput
-                    type="number"
-                    size="small"
-                    value={practiceAheadCount || ''}
-                    onChange={(e) =>
-                      setPracticeAheadCount(parseInt(e.target.value) || 0)
-                    }
-                    onBlur={() => {
-                      if (practiceAheadCount < 1) setPracticeAheadCount(1);
-                    }}
-                    inputProps={{ min: 1, max: 100 }}
+                  <NumberInput
+                    value={practiceAheadCount}
+                    onChange={setPracticeAheadCount}
+                    min={1}
+                    width={72}
                   />
                   <Typography variant="body2" color="text.disabled">
                     cards

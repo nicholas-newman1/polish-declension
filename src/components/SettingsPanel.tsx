@@ -3,12 +3,12 @@ import {
   Card,
   Divider,
   Stack,
-  TextField,
   Typography,
   styled,
 } from '@mui/material';
 import type { User } from 'firebase/auth';
 import { alpha } from '../lib/theme';
+import { NumberInput } from './NumberInput';
 
 const SettingsCard = styled(Card)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -21,14 +21,6 @@ const SettingsCard = styled(Card)(({ theme }) => ({
     marginBottom: theme.spacing(3),
   },
 }));
-
-const NumberInput = styled(TextField)({
-  width: 80,
-  '& input': {
-    fontFamily: '"JetBrains Mono", monospace',
-    textAlign: 'center',
-  },
-});
 
 const ResetButton = styled(Button)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.primary.main, 0.1),
@@ -69,13 +61,9 @@ export function SettingsPanel({
           New cards per day
         </Typography>
         <NumberInput
-          type="number"
-          size="small"
           value={newCardsPerDay}
-          onChange={(e) =>
-            onSettingsChange(Math.max(1, parseInt(e.target.value) || 1))
-          }
-          inputProps={{ min: 1, max: 100 }}
+          onChange={onSettingsChange}
+          min={1}
         />
       </Stack>
 
