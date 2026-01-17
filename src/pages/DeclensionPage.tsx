@@ -6,7 +6,6 @@ import { FilterControls } from '../components/FilterControls';
 import { SettingsPanel } from '../components/SettingsPanel';
 import { FinishedState } from '../components/FinishedState';
 import { EmptyState } from '../components/EmptyState';
-import cardsData from '../data/cards.json';
 import type {
   Card as CardType,
   Case,
@@ -27,8 +26,6 @@ import { useReviewData } from '../hooks/useReviewData';
 import { DEFAULT_SETTINGS } from '../constants';
 import shuffleArray from '../lib/utils/shuffleArray';
 
-const allCards: CardType[] = cardsData as CardType[];
-
 const LoadingContainer = styled(Box)({
   flex: 1,
   display: 'flex',
@@ -48,6 +45,7 @@ export function DeclensionPage() {
   const { user } = useAuthContext();
   const {
     loading: contextLoading,
+    declensionCards,
     declensionReviewStore: reviewStore,
     declensionSettings: settings,
     updateDeclensionReviewStore,
@@ -76,13 +74,13 @@ export function DeclensionPage() {
   const sessionBuiltRef = useRef(false);
 
   const filteredCards = useMemo(() => {
-    return allCards.filter((card) => {
+    return declensionCards.filter((card) => {
       if (caseFilter !== 'All' && card.case !== caseFilter) return false;
       if (genderFilter !== 'All' && card.gender !== genderFilter) return false;
       if (numberFilter !== 'All' && card.number !== numberFilter) return false;
       return true;
     });
-  }, [caseFilter, genderFilter, numberFilter]);
+  }, [declensionCards, caseFilter, genderFilter, numberFilter]);
 
   const buildSession = useCallback(
     (store: ReviewDataStore, currentSettings: Settings) => {
@@ -92,7 +90,7 @@ export function DeclensionPage() {
         number: numberFilter,
       };
       const { reviewCards, newCards } = getSessionCards(
-        allCards,
+        declensionCards,
         store,
         filters,
         currentSettings
@@ -103,7 +101,7 @@ export function DeclensionPage() {
       setLearningQueue([]);
       setCurrentIndex(0);
     },
-    [caseFilter, genderFilter, numberFilter]
+    [declensionCards, caseFilter, genderFilter, numberFilter]
   );
 
   useEffect(() => {
@@ -126,7 +124,7 @@ export function DeclensionPage() {
       number: numberFilter,
     };
     const aheadCards = getPracticeAheadCards(
-      allCards,
+      declensionCards,
       reviewStore,
       filters,
       practiceAheadCount
@@ -137,7 +135,7 @@ export function DeclensionPage() {
     setLearningQueue([]);
     setCurrentIndex(0);
     setIsPracticeAhead(true);
-  }, [caseFilter, genderFilter, numberFilter, reviewStore, practiceAheadCount]);
+  }, [declensionCards, caseFilter, genderFilter, numberFilter, reviewStore, practiceAheadCount]);
 
   const startExtraNewCards = useCallback(() => {
     const filters = {
@@ -146,7 +144,7 @@ export function DeclensionPage() {
       number: numberFilter,
     };
     const extraCards = getExtraNewCards(
-      allCards,
+      declensionCards,
       reviewStore,
       filters,
       extraNewCardsCount
@@ -157,7 +155,7 @@ export function DeclensionPage() {
     setLearningQueue([]);
     setCurrentIndex(0);
     setIsPracticeAhead(false);
-  }, [caseFilter, genderFilter, numberFilter, reviewStore, extraNewCardsCount]);
+  }, [declensionCards, caseFilter, genderFilter, numberFilter, reviewStore, extraNewCardsCount]);
 
   const handleFilterChange = useCallback(
     (
@@ -168,7 +166,7 @@ export function DeclensionPage() {
       if (practiceMode) {
         setPracticeCards(
           shuffleArray(
-            allCards.filter((card) => {
+            declensionCards.filter((card) => {
               if (newCaseFilter !== 'All' && card.case !== newCaseFilter)
                 return false;
               if (newGenderFilter !== 'All' && card.gender !== newGenderFilter)
@@ -182,7 +180,7 @@ export function DeclensionPage() {
         setPracticeIndex(0);
       }
     },
-    [practiceMode]
+    [declensionCards, practiceMode]
   );
 
   const handleCaseChange = useCallback(

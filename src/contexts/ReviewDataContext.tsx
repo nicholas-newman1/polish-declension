@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import cardsData from '../data/cards.json';
 import type { Card, ReviewDataStore, Settings } from '../types';
 import type {
   VocabularyWord,
@@ -38,8 +37,6 @@ import {
 } from '../lib/storage/helpers';
 import { DEFAULT_SETTINGS } from '../constants';
 
-const allDeclensionCards: Card[] = cardsData as Card[];
-
 const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
   newCardsPerDay: 10,
   direction: 'pl-to-en',
@@ -53,6 +50,7 @@ export interface ReviewCounts {
 export interface ReviewDataContextType {
   loading: boolean;
 
+  declensionCards: Card[];
   declensionReviewStore: ReviewDataStore;
   declensionSettings: Settings;
   updateDeclensionReviewStore: (store: ReviewDataStore) => Promise<void>;
@@ -156,6 +154,7 @@ function computeVocabularyDueCount(
 export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
+  const [declensionCards, setDeclensionCards] = useState<Card[]>([]);
   const [declensionReviewStore, setDeclensionReviewStore] =
     useState<ReviewDataStore>(getDefaultReviewStore);
   const [declensionSettings, setDeclensionSettings] =
@@ -184,7 +183,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     }
 
     const declensionCount = computeDeclensionDueCount(
-      allDeclensionCards,
+      declensionCards,
       declensionReviewStore,
       declensionSettings
     );
@@ -205,6 +204,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       vocabulary: plToEnCount + enToPlCount,
     };
   }, [
+    declensionCards,
     declensionReviewStore,
     declensionSettings,
     vocabularyWords,
@@ -227,16 +227,22 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadedVocabularySettings,
       loadedCustomWords,
       vocabularySnapshot,
+      declensionCardsSnapshot,
     ] = await Promise.all([
       loadSettings(),
       loadReviewData(),
       loadVocabularySettings(),
       loadCustomVocabulary(),
       getDocs(collection(db, 'vocabulary')),
+      getDocs(collection(db, 'declensionCards')),
     ]);
 
     const loadedSystemWords = vocabularySnapshot.docs.map(
       (doc) => doc.data() as VocabularyWord
+    );
+
+    const loadedDeclensionCards = declensionCardsSnapshot.docs.map(
+      (doc) => doc.data() as Card
     );
 
     const [plToEnStore, enToPlStore] = await Promise.all([
@@ -244,6 +250,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadVocabularyReviewData('en-to-pl'),
     ]);
 
+    setDeclensionCards(loadedDeclensionCards);
     setDeclensionSettings(loadedDeclensionSettings);
     setDeclensionReviewStore(loadedDeclensionReviewData);
     setVocabularySettings(loadedVocabularySettings);
@@ -332,6 +339,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     <ReviewDataContext.Provider
       value={{
         loading,
+        declensionCards,
         declensionReviewStore,
         declensionSettings,
         updateDeclensionReviewStore,

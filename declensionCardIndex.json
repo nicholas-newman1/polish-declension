@@ -1,0 +1,1997 @@
+[
+  {
+    "id": 1,
+    "front": "To jest ___ (nauczyciel).",
+    "case": "Nominative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 2,
+    "front": "___ (dziewczyna) jest piękna.",
+    "case": "Nominative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 3,
+    "front": "Samochód jest ___ (czerwony).",
+    "case": "Nominative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 4,
+    "front": "To jest telefon ___ (brat).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 5,
+    "front": "Nie widzę ___ (pies).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 6,
+    "front": "Chciałbym trochę ___ (chleb).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 7,
+    "front": "Mamy dużo ___ (czas).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 8,
+    "front": "Nie ma ___ (mleko).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 9,
+    "front": "Wracam z ___ (miasto).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 10,
+    "front": "Idę do ___ (przyjaciel).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 11,
+    "front": "Mieszka obok ___ (szkoła).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 12,
+    "front": "Pracuję bez ___ (komputer).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 13,
+    "front": "Jestem daleko od ___ (dworzec).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 14,
+    "front": "Klucz jest w środku ___ (pudełko).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 15,
+    "front": "Nie mam ___ (czas).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 16,
+    "front": "Dałem ___ (dziecko) zabawkę.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 17,
+    "front": "Ona pomaga ___ (mama).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 18,
+    "front": "Jest mi ___ (zimno).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 19,
+    "front": "Doradzam ___ (przyjaciel).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 20,
+    "front": "Ufam ___ (rodzice).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 21,
+    "front": "Dzięki ___ (brat) dotarliśmy.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 22,
+    "front": "Jesteśmy przeciw ___ (plan).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 23,
+    "front": "To jest przeciw ___ (zasady).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 24,
+    "front": "Widzę ___ (dom).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 25,
+    "front": "Kupuję ___ (jabłko).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 26,
+    "front": "Czytam ___ (książka).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 27,
+    "front": "Oglądam ___ (film).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 28,
+    "front": "Odwiedzamy ___ (muzeum).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 29,
+    "front": "Idę do ___ (park).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 30,
+    "front": "Pracowałem cały ___ (dzień).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 31,
+    "front": "Czekałem całą ___ (godzina).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 32,
+    "front": "Piszę ___ (długopis).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 33,
+    "front": "Jem ___ (widelec).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 34,
+    "front": "Rozmawiam z ___ (przyjaciel).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 35,
+    "front": "Jestem pod ___ (most).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 36,
+    "front": "Stoję między dwoma ___ (samochód).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 37,
+    "front": "On jest ___ (lekarz).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 38,
+    "front": "Została ___ (nauczycielka).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 39,
+    "front": "On jest ___ (przyjaciel) mojego brata.",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 40,
+    "front": "Siedzę w ___ (park).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 41,
+    "front": "Jestem na ___ (uniwersytet).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 42,
+    "front": "Mówię o ___ (podróż).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 43,
+    "front": "Myślimy o ___ (lato).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 44,
+    "front": "Obraz jest na ___ (ściana).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 45,
+    "front": "Książki są na ___ (stół).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 46,
+    "front": "Mieszkam w ___ (Warszawa).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 47,
+    "front": "Jesteśmy na ___ (spotkanie).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 48,
+    "front": "___ (Przyjaciel)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 49,
+    "front": "___ (Kobieta)!",
+    "case": "Vocative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 50,
+    "front": "___ (Matka)! Co na obiad?",
+    "case": "Vocative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 51,
+    "front": "___ (Dziecko)!",
+    "case": "Vocative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 52,
+    "front": "___ (Bóg)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 53,
+    "front": "___ (Ludzie)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 54,
+    "front": "___ (Przyjaciele)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 55,
+    "front": "___ (Nauczyciel) są zmęczeni.",
+    "case": "Nominative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 56,
+    "front": "___ (Kobieta) są gotowe.",
+    "case": "Nominative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 57,
+    "front": "___ (Dziecko) są małe.",
+    "case": "Nominative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 58,
+    "front": "To są nasi ___ (przyjaciel) (pl).",
+    "case": "Nominative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 59,
+    "front": "Zabawki ___ (kot) (pl) są nowe.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 60,
+    "front": "Nie widzę ___ (student) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 61,
+    "front": "Mamy dużo ___ (jabłko) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 62,
+    "front": "Nie ma ___ (krzesło) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 63,
+    "front": "Jesteśmy daleko od ___ (góra) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 64,
+    "front": "Wracam ze ___ (sklep) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 65,
+    "front": "Mieszkamy blisko ___ (jezioro) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 66,
+    "front": "Nie ma ___ (ludzie).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 67,
+    "front": "Dałem ___ (dziecko) (pl) prezenty.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 68,
+    "front": "Pomagam ___ (rodzice) (pl).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 69,
+    "front": "Dziękuję ___ (nauczyciel) (pl).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 70,
+    "front": "Dzięki moim ___ (przyjaciel) (pl) wygrałem.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 71,
+    "front": "Jesteśmy przeciwni ___ (zasada) (pl).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 72,
+    "front": "Ufamy ___ (sąsiad) (pl).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 73,
+    "front": "Widzę ___ (samochód) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 74,
+    "front": "Czytam ___ (książka) (pl).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 75,
+    "front": "Jem ___ (jabłko) (pl).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 76,
+    "front": "Odwiedzamy ___ (muzeum) (pl).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 77,
+    "front": "Oglądam ___ (film) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 78,
+    "front": "Kroję chleb ___ (nóż) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 79,
+    "front": "Rozmawiam z ___ (przyjaciel) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 80,
+    "front": "Jedziemy ___ (autobus) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 81,
+    "front": "Siedzimy pod ___ (drzewo) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 82,
+    "front": "Stoimy między ___ (budynek) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 83,
+    "front": "Oni są ___ (inżynier) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 84,
+    "front": "Zostali ___ (lekarz) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 85,
+    "front": "Jesteśmy ___ (sąsiad) (pl).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 86,
+    "front": "Jesteśmy w ___ (park) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 87,
+    "front": "Jesteśmy w ___ (biuro) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 88,
+    "front": "Mówimy o ___ (miasto) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 89,
+    "front": "Myślimy o ___ (książka) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 90,
+    "front": "Obrazy są na ___ (ściana) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 91,
+    "front": "Mieszkamy w ___ (góra) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 92,
+    "front": "Jesteśmy na ___ (spotkanie) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 93,
+    "front": "___ (Nauczyciel) (pl)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 94,
+    "front": "___ (Kobieta) (pl)!",
+    "case": "Vocative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 95,
+    "front": "___ (Dziecko) (pl)!",
+    "case": "Vocative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 96,
+    "front": "___ (Przyjaciel) (pl)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 97,
+    "front": "___ (Ludzie) (pl)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 98,
+    "front": "___ (Rodzice) (pl)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 99,
+    "front": "___ (Student) (pl)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 100,
+    "front": "___ (Lekarze)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 101,
+    "front": "___ (Siostry)!",
+    "case": "Vocative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 102,
+    "front": "___ (Koledzy)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 103,
+    "front": "___ (Sąsiedzi)!",
+    "case": "Vocative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 104,
+    "front": "Daję ___ (rodzic) prezent.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 105,
+    "front": "To jest pies ___ (sąsiad).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 106,
+    "front": "Przez ___ (ty) spóźnię się po pracy.",
+    "case": "Accusative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 107,
+    "front": "Oddaję ___ (brat) pieniądze.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 108,
+    "front": "To jest samochód ___ (kuzyn).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 109,
+    "front": "Przeze ___ (ja) przegraliśmy.",
+    "case": "Accusative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 110,
+    "front": "Przekazuję ___ (szef) raport.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 111,
+    "front": "To jest pokój ___ (syn).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 112,
+    "front": "Przez całą ___ (podróż) bolała mnie głowa.",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 113,
+    "front": "Wysyłam ___ (klient) wiadomość.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 114,
+    "front": "To jest komputer ___ (wujek).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 115,
+    "front": "Samochód wjechał w ___ (płot).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 116,
+    "front": "Przynoszę ___ (gość) jedzenie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 117,
+    "front": "To jest kolor ___ (dom).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 118,
+    "front": "Samolot wleciał w ___ (chmura).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 119,
+    "front": "Zabieram ___ (dziecko) zabawkę.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 120,
+    "front": "To jest koniec ___ (film).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 121,
+    "front": "Pijany mężczyzna uderzył pięścią w ___ (okno).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 122,
+    "front": "Sprzedaję ___ (klient) bilety.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 123,
+    "front": "To jest klucz ___ (pokój).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 124,
+    "front": "Nie wchodź na ___ (stół)!",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 125,
+    "front": "Kupuję ___ (dziecko) książkę.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 126,
+    "front": "To jest plan ___ (projekt).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 127,
+    "front": "Boję się wchodzić na ___ (drabina).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 128,
+    "front": "Pożyczam ___ (kolega) rower.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 129,
+    "front": "Nie mogę pracować bez ___ (kawa).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 130,
+    "front": "Chodź na ___ (góra)!",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 131,
+    "front": "Pokazuję ___ (uczeń) przykład.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 132,
+    "front": "Mieszkam blisko ___ (jezioro).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 133,
+    "front": "Jadę po ___ (Marek) do szpitala.",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 134,
+    "front": "Podaję ___ (gość) herbatę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 135,
+    "front": "To jest ważne dla ___ (moje zdrowie).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 136,
+    "front": "Nie widzę żadnego budynku po ___ (horyzont).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 137,
+    "front": "Mówię ___ (przyjaciel) prawdę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 138,
+    "front": "Idziemy do ___ (sklep).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 139,
+    "front": "Idę po ___ (mąka) do sklepu.",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 140,
+    "front": "Powiedziałem ___ (brat) sekret.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 141,
+    "front": "Spacerowaliśmy wokół ___ (jezioro).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 142,
+    "front": "Mężczyzna uderza pięścią o ___ (drzwi).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 143,
+    "front": "Opowiadam ___ (dziecko) historię.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 144,
+    "front": "Usiadłem koło ___ (mój przyjaciel).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 145,
+    "front": "Walczymy o ___ (godność)!",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 146,
+    "front": "Tłumaczę ___ (uczeń) zadanie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 147,
+    "front": "Park obok ___ (szkoła) jest zamknięty.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 148,
+    "front": "Moi sąsiedzi starają się o ___ (pożyczka).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 149,
+    "front": "Odpowiadam ___ (klient) na maila.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 150,
+    "front": "Dostałem wiadomość od ___ (kolega).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 151,
+    "front": "Pies wszedł pod ___ (stół).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 152,
+    "front": "Zadaję ___ (nauczyciel) pytanie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 153,
+    "front": "Oprócz ___ (jedna osoba) wszyscy przyszli.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 154,
+    "front": "Kot wbiegł pod ___ (samochód).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 155,
+    "front": "Radzę ___ (kolega) zmianę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 156,
+    "front": "Zasnąłem podczas ___ (film).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 157,
+    "front": "Krokodyl zanurzył się pod ___ (woda).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 158,
+    "front": "Przypominam ___ (mama) wizytę.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 159,
+    "front": "Stała pośród ___ (tłum).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 160,
+    "front": "Komar wleciał za ___ (szafa).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 161,
+    "front": "Pomagam ___ (sąsiad) pracę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 162,
+    "front": "Pomimo ___ (deszcz) poszliśmy na spacer.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 163,
+    "front": "Telefon wpadł za ___ (łóżko).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 164,
+    "front": "Dziękuję ___ (lekarz) za pomoc.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 165,
+    "front": "Mieszkają naprzeciwko ___ (kościół).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 166,
+    "front": "Wyjdź za ___ (drzwi).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 167,
+    "front": "Gratuluję ___ (zawodnik) zwycięstwa.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 168,
+    "front": "Wybrałem go spośród ___ (wszyscy kandydaci).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 169,
+    "front": "Współczuję ___ (rodzina) straty.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 170,
+    "front": "Wczesnym ___ (ranek) poszedłem na siłownię.",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 171,
+    "front": "Jesteśmy u ___ (babcia).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 172,
+    "front": "Zazdroszczę ___ (kolega) wyniku.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 173,
+    "front": "___ (noc) spadł śnieg.",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 174,
+    "front": "Według ___ (nauczyciel) test był trudny.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 175,
+    "front": "Ufam ___ (przyjaciel).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 176,
+    "front": "___ (wieczór) poszliśmy do kina.",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 177,
+    "front": "Wobec ___ (te fakty) nie mamy wyboru.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 178,
+    "front": "Wierzę ___ (brat).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 179,
+    "front": "___ (lato) mamy burze w Polsce.",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 180,
+    "front": "Droga została zamknięta wskutek ___ (wypadek).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 181,
+    "front": "Grożę ___ (wróg).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 182,
+    "front": "___ (jesień) spadają liście z drzew.",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 183,
+    "front": "Wyszedł z ___ (dom).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 184,
+    "front": "Interesuję się ___ (sztuka).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 185,
+    "front": "Policjant kieruje ___ (ruch).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 186,
+    "front": "Każdy zajmuje się ___ (swoje sprawy).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 187,
+    "front": "Kiedyś zajmowałem się ___ (ochrona środowiska).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 188,
+    "front": "Wielu chłopców interesuje się ___ (piłka nożna).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 189,
+    "front": "Pozwalam ___ (dziecko) na wejście.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 190,
+    "front": "Kot wybiegł spod ___ (stół).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 191,
+    "front": "Porozmawiajmy o tym przy ___ (kawa).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 192,
+    "front": "Zabrania ___ (uczeń) telefonów.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 193,
+    "front": "Samochód zniknął sprzed ___ (mój dom).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 194,
+    "front": "Dobrze się czuję przy ___ (ty).",
+    "case": "Locative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 195,
+    "front": "Nakazuję ___ (pracownik) pracę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 196,
+    "front": "Wiatr przyszedł znad ___ (morze).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 197,
+    "front": "Oddam ci książkę przy ___ (następna okazja).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 198,
+    "front": "Jest ___ (ja) zimno.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 199,
+    "front": "Wyszedł zza ___ (drzewo).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 200,
+    "front": "Jestem w ___ (dom).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 201,
+    "front": "Jest ___ (dziecko) chłodno.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 202,
+    "front": "Wyszedł spomiędzy ___ (ludzie).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 203,
+    "front": "Moi rodzice są w ___ (praca).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 204,
+    "front": "Jest ___ (on) ciepło.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 205,
+    "front": "Zamiast ___ (kawa) wypiłem herbatę.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 206,
+    "front": "We ___ (Wrocław) jest dużo firm informatycznych.",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 207,
+    "front": "Jest ___ (kobieta) gorąco.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 208,
+    "front": "Boję się ___ (ciemność).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 209,
+    "front": "Dzieci bawią się na ___ (dwór).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 210,
+    "front": "Jest ___ (pies) smutno.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 211,
+    "front": "On bronił ___ (miasto).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 212,
+    "front": "Na ___ (zewnątrz) pada śnieg.",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 213,
+    "front": "Jest ___ (my) dobrze.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Plural"
+  },
+  {
+    "id": 214,
+    "front": "Dotykam ___ (stół).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 215,
+    "front": "Na ___ (droga) zdarzył się wypadek.",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 216,
+    "front": "Zadzwonię do ___ (mój brat) później.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 217,
+    "front": "Jest ___ (gość) miło.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 218,
+    "front": "Mówił do ___ (ona) bardzo cicho.",
+    "case": "Genitive",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 219,
+    "front": "Jest ___ (ona) przykro.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 220,
+    "front": "Mrugnął do ___ (dziewczyna).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 221,
+    "front": "Jest ___ (student) łatwo.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 222,
+    "front": "Napiję się ___ (woda).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 223,
+    "front": "Jest ___ (ty) ciężko.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 224,
+    "front": "Nauczyłem się ___ (język polski).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 225,
+    "front": "Jest ___ (pracownik) okropnie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 226,
+    "front": "Nienawidzę ___ (korek uliczny).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 227,
+    "front": "Jest ___ (ona) niewygodnie.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 228,
+    "front": "Oczekuję ___ (odpowiedź).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 229,
+    "front": "Jest ___ (rodzina) wygodnie.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 230,
+    "front": "Pilnuję ___ (dziecko).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 231,
+    "front": "Jest ___ (wy) duszno.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Plural"
+  },
+  {
+    "id": 232,
+    "front": "Potrzebuję ___ (nowy komputer).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 233,
+    "front": "Jest ___ (kot) głupio.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 234,
+    "front": "Próbuję otworzyć ___ (lodówka).",
+    "case": "Accusative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 235,
+    "front": "Jest ___ (oni / one) zimno.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Plural"
+  },
+  {
+    "id": 236,
+    "front": "Pytam ___ (mój przyjaciel) o radę.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 237,
+    "front": "Jest ___ (dziecko) smutno.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 238,
+    "front": "Słucham ___ (muzyka).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 239,
+    "front": "Jest ___ (pacjentka) dobrze.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 240,
+    "front": "Spróbuję ___ (ciasto).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 241,
+    "front": "Jest ___ (kierowca) źle.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 242,
+    "front": "Szukam ___ (klucze).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 243,
+    "front": "Jest ___ (siebie) miło.",
+    "case": "Dative",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 244,
+    "front": "Śmieję się z ___ (on).",
+    "case": "Genitive",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 245,
+    "front": "Uczę się ___ (historia).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 246,
+    "front": "Unikam ___ (tłum).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 247,
+    "front": "Uśmiechnął się do ___ (ona).",
+    "case": "Genitive",
+    "gender": "Pronoun",
+    "number": "Singular"
+  },
+  {
+    "id": 248,
+    "front": "Używam ___ (telefon).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 249,
+    "front": "Wstydzę się ___ (mój błąd).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 250,
+    "front": "To wymaga ___ (czas).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 251,
+    "front": "Żałuję ___ (tamta decyzja).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 252,
+    "front": "Kupiłem kilogram ___ (jabłko).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 253,
+    "front": "Wypiłem szklankę ___ (woda).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 254,
+    "front": "Mam trochę ___ (cukierki).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 255,
+    "front": "Daj mi więcej ___ (ryba).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 256,
+    "front": "Zjadłem kawałek ___ (ser).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 257,
+    "front": "Kupiłem butelkę ___ (sok).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 258,
+    "front": "Chcę łyżeczkę ___ (miód).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 259,
+    "front": "Wypiłem litr ___ (kefir).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 260,
+    "front": "Brakuje mi odrobiny ___ (sól).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 261,
+    "front": "Zjedliśmy porcję ___ (pierogi).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 262,
+    "front": "Kupiłem paczkę ___ (czipsy).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 263,
+    "front": "Wziął garść ___ (orzeszki).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 264,
+    "front": "Ugotowałem miskę ___ (makaron).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 265,
+    "front": "Kupiłem pół ___ (arbuz).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 266,
+    "front": "Dodałem szczyptę ___ (pieprz).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 267,
+    "front": "Zjadłem pełno ___ (ciastka).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 268,
+    "front": "Wlałem kroplę ___ (olej).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 269,
+    "front": "Zrobiliśmy dużo ___ (zdjęcia).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 270,
+    "front": "Mam mało ___ (czas).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 271,
+    "front": "Przyniósł worek ___ (ziemniaki).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 272,
+    "front": "Kupiłem zestaw ___ (narzędzia).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 273,
+    "front": "Zjedli połowę ___ (jabłko).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 274,
+    "front": "Spotkaliśmy się tego ___ (dzień).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 275,
+    "front": "Spotkaliśmy się tamtego ___ (dzień).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 276,
+    "front": "To wydarzyło się tej ___ (noc).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 277,
+    "front": "To wydarzyło się tamtej ___ (noc).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 278,
+    "front": "Widziałem go tego ___ (ranek).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 279,
+    "front": "Widziałem go tamtego ___ (ranek).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 280,
+    "front": "Jedliśmy razem tego ___ (południe).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 281,
+    "front": "Jedliśmy razem tamtego ___ (południe).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 282,
+    "front": "Rozmawialiśmy tego ___ (wieczór).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 283,
+    "front": "Rozmawialiśmy tamtego ___ (wieczór).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 284,
+    "front": "Spotkałem ją tego ___ (popołudnie).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 285,
+    "front": "Spotkałem ją tamtego ___ (popołudnie).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Singular"
+  }
+]
