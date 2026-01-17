@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '../lib/styled';
 import type { Card, Case, Gender, Number } from '../types';
 
@@ -57,7 +58,13 @@ const Content = styled(DialogContent)(({ theme }) => ({
 const Actions = styled(DialogActions)(({ theme }) => ({
   padding: theme.spacing(2, 3),
   borderTop: `1px solid ${theme.palette.divider}`,
+  justifyContent: 'space-between',
 }));
+
+const RightActions = styled(Box)({
+  display: 'flex',
+  gap: 8,
+});
 
 interface FormData {
   front: string;
@@ -72,8 +79,10 @@ interface FormData {
 interface EditDeclensionModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (updates: Partial<Omit<Card, 'id'>>) => void;
+  onSave: (data: Omit<Card, 'id' | 'isCustom'>) => void;
+  onDelete?: () => void;
   card: Card | null;
+  isCreating?: boolean;
 }
 
 const getDefaultValues = (card: Card | null): FormData => ({
@@ -90,7 +99,9 @@ export function EditDeclensionModal({
   open,
   onClose,
   onSave,
+  onDelete,
   card,
+  isCreating = false,
 }: EditDeclensionModalProps) {
   const {
     control,
@@ -120,12 +131,22 @@ export function EditDeclensionModal({
     handleClose();
   };
 
+  const handleDelete = () => {
+    if (onDelete && window.confirm('Are you sure you want to delete this card?')) {
+      onDelete();
+    }
+  };
+
+  const title = isCreating
+    ? 'Create Custom Card'
+    : card?.isCustom
+    ? 'Edit Custom Card'
+    : 'Edit Declension Card';
+
   return (
     <StyledDialog open={open} onClose={handleClose}>
       <Header>
-        <DialogTitle sx={{ p: 0, fontWeight: 500 }}>
-          Edit Declension Card
-        </DialogTitle>
+        <DialogTitle sx={{ p: 0, fontWeight: 500 }}>{title}</DialogTitle>
         <IconButton onClick={handleClose} size="small" aria-label="close">
           <CloseIcon />
         </IconButton>
@@ -251,18 +272,30 @@ export function EditDeclensionModal({
         />
       </Content>
       <Actions>
-        <Button onClick={handleClose} color="inherit">
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSubmit(onSubmit)}
-          variant="contained"
-          disabled={!isValid}
-        >
-          Save Changes
-        </Button>
+        <Box>
+          {onDelete && (
+            <Button
+              onClick={handleDelete}
+              color="error"
+              startIcon={<DeleteIcon />}
+            >
+              Delete
+            </Button>
+          )}
+        </Box>
+        <RightActions>
+          <Button onClick={handleClose} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            variant="contained"
+            disabled={!isValid}
+          >
+            {isCreating ? 'Create Card' : 'Save Changes'}
+          </Button>
+        </RightActions>
       </Actions>
     </StyledDialog>
   );
 }
-

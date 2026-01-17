@@ -9,6 +9,7 @@ import { EmptyState } from '../components/EmptyState';
 import { EditDeclensionModal } from '../components/EditDeclensionModal';
 import type {
   Card as CardType,
+  CustomDeclensionCard,
   Case,
   Gender,
   Number,
@@ -16,6 +17,9 @@ import type {
   Settings,
 } from '../types';
 import { updateDeclensionCard } from '../lib/storage/systemDeclension';
+import { saveCustomDeclension } from '../lib/storage/customDeclension';
+import { includesCardId } from '../lib/storage/helpers';
+import { generateCustomId } from '../types/customItems';
 import getOrCreateCardReviewData from '../lib/storage/getOrCreateCardReviewData';
 import getSessionCards from '../lib/declensionScheduler/getSessionCards';
 import getPracticeAheadCards from '../lib/declensionScheduler/getPracticeAheadCards';
@@ -50,26 +54,42 @@ export function DeclensionPage() {
   const { showSnackbar } = useSnackbar();
   const {
     loading: contextLoading,
-    declensionCards: contextDeclensionCards,
+    declensionCards,
+    customDeclensionCards: contextCustomDeclensionCards,
+    systemDeclensionCards: contextSystemDeclensionCards,
     declensionReviewStore: reviewStore,
     declensionSettings: settings,
     updateDeclensionReviewStore,
     updateDeclensionSettings,
     clearDeclensionData,
-    setDeclensionCards: setContextDeclensionCards,
+    setCustomDeclensionCards: setContextCustomDeclensionCards,
+    setSystemDeclensionCards: setContextSystemDeclensionCards,
   } = useReviewData();
 
-  const [declensionCards, applyOptimisticDeclensionCards] = useOptimistic(
-    contextDeclensionCards,
+  const [customDeclensionCards, applyOptimisticCustomCards] = useOptimistic(
+    contextCustomDeclensionCards,
     {
       onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
     }
+  );
+
+  const [systemDeclensionCards, applyOptimisticSystemCards] = useOptimistic(
+    contextSystemDeclensionCards,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
+  );
+
+  const allDeclensionCards = useMemo(
+    () => [...customDeclensionCards, ...systemDeclensionCards],
+    [customDeclensionCards, systemDeclensionCards]
   );
 
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingCard, setEditingCard] = useState<CardType | null>(null);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
 
   const [caseFilter, setCaseFilter] = useState<Case | 'All'>('All');
   const [genderFilter, setGenderFilter] = useState<Gender | 'All'>('All');
@@ -89,13 +109,13 @@ export function DeclensionPage() {
   const sessionBuiltRef = useRef(false);
 
   const filteredCards = useMemo(() => {
-    return declensionCards.filter((card) => {
+    return allDeclensionCards.filter((card) => {
       if (caseFilter !== 'All' && card.case !== caseFilter) return false;
       if (genderFilter !== 'All' && card.gender !== genderFilter) return false;
       if (numberFilter !== 'All' && card.number !== numberFilter) return false;
       return true;
     });
-  }, [declensionCards, caseFilter, genderFilter, numberFilter]);
+  }, [allDeclensionCards, caseFilter, genderFilter, numberFilter]);
 
   const buildSession = useCallback(
     (store: ReviewDataStore, currentSettings: Settings) => {
@@ -105,7 +125,7 @@ export function DeclensionPage() {
         number: numberFilter,
       };
       const { reviewCards, newCards } = getSessionCards(
-        declensionCards,
+        allDeclensionCards,
         store,
         filters,
         currentSettings
@@ -116,7 +136,7 @@ export function DeclensionPage() {
       setLearningQueue([]);
       setCurrentIndex(0);
     },
-    [declensionCards, caseFilter, genderFilter, numberFilter]
+    [allDeclensionCards, caseFilter, genderFilter, numberFilter]
   );
 
   useEffect(() => {
@@ -139,7 +159,7 @@ export function DeclensionPage() {
       number: numberFilter,
     };
     const aheadCards = getPracticeAheadCards(
-      declensionCards,
+      allDeclensionCards,
       reviewStore,
       filters,
       practiceAheadCount
@@ -150,7 +170,7 @@ export function DeclensionPage() {
     setLearningQueue([]);
     setCurrentIndex(0);
     setIsPracticeAhead(true);
-  }, [declensionCards, caseFilter, genderFilter, numberFilter, reviewStore, practiceAheadCount]);
+  }, [allDeclensionCards, caseFilter, genderFilter, numberFilter, reviewStore, practiceAheadCount]);
 
   const startExtraNewCards = useCallback(() => {
     const filters = {
@@ -159,7 +179,7 @@ export function DeclensionPage() {
       number: numberFilter,
     };
     const extraCards = getExtraNewCards(
-      declensionCards,
+      allDeclensionCards,
       reviewStore,
       filters,
       extraNewCardsCount
@@ -170,7 +190,7 @@ export function DeclensionPage() {
     setLearningQueue([]);
     setCurrentIndex(0);
     setIsPracticeAhead(false);
-  }, [declensionCards, caseFilter, genderFilter, numberFilter, reviewStore, extraNewCardsCount]);
+  }, [allDeclensionCards, caseFilter, genderFilter, numberFilter, reviewStore, extraNewCardsCount]);
 
   const handleFilterChange = useCallback(
     (
@@ -181,7 +201,7 @@ export function DeclensionPage() {
       if (practiceMode) {
         setPracticeCards(
           shuffleArray(
-            declensionCards.filter((card) => {
+            allDeclensionCards.filter((card) => {
               if (newCaseFilter !== 'All' && card.case !== newCaseFilter)
                 return false;
               if (newGenderFilter !== 'All' && card.gender !== newGenderFilter)
@@ -195,7 +215,7 @@ export function DeclensionPage() {
         setPracticeIndex(0);
       }
     },
-    [declensionCards, practiceMode]
+    [allDeclensionCards, practiceMode]
   );
 
   const handleCaseChange = useCallback(
@@ -252,7 +272,7 @@ export function DeclensionPage() {
 
     if (
       currentSessionCard.isNew &&
-      !newStore.newCardsToday.includes(currentSessionCard.card.id)
+      !includesCardId(newStore.newCardsToday, currentSessionCard.card.id)
     ) {
       newStore.newCardsToday = [
         ...newStore.newCardsToday,
@@ -274,7 +294,7 @@ export function DeclensionPage() {
         setLearningQueue([...updated.slice(1), updated[0]]);
       }
     } else {
-      if (!newStore.reviewedToday.includes(currentSessionCard.card.id)) {
+      if (!includesCardId(newStore.reviewedToday, currentSessionCard.card.id)) {
         newStore.reviewedToday = [
           ...newStore.reviewedToday,
           currentSessionCard.card.id,
@@ -312,46 +332,123 @@ export function DeclensionPage() {
   const handleOpenEditModal = useCallback(() => {
     if (!currentSessionCard) return;
     setEditingCard(currentSessionCard.card);
+    setIsCreatingNew(false);
     setShowEditModal(true);
   }, [currentSessionCard]);
 
-  const handleEditCard = useCallback(
-    (updates: Partial<Omit<CardType, 'id'>>) => {
-      if (!editingCard) return;
+  const handleOpenCreateModal = useCallback(() => {
+    setEditingCard(null);
+    setIsCreatingNew(true);
+    setShowEditModal(true);
+  }, []);
 
-      const updatedCard = { ...editingCard, ...updates };
+  const updateCardInQueues = (cardId: CardType['id'], updatedCard: CardType) => {
+    setSessionQueue((prev) =>
+      prev.map((item) =>
+        item.card.id === cardId ? { ...item, card: updatedCard } : item
+      )
+    );
+    setLearningQueue((prev) =>
+      prev.map((item) =>
+        item.card.id === cardId ? { ...item, card: updatedCard } : item
+      )
+    );
+    setPracticeCards((prev) =>
+      prev.map((card) => (card.id === cardId ? updatedCard : card))
+    );
+  };
 
-      const newDeclensionCards = declensionCards.map((card) =>
-        card.id === editingCard.id ? updatedCard : card
-      );
+  const removeCardFromQueues = (cardId: CardType['id']) => {
+    setSessionQueue((prev) => prev.filter((item) => item.card.id !== cardId));
+    setLearningQueue((prev) => prev.filter((item) => item.card.id !== cardId));
+    setPracticeCards((prev) => prev.filter((card) => card.id !== cardId));
+  };
 
-      setSessionQueue((prev) =>
-        prev.map((item) =>
-          item.card.id === editingCard.id
-            ? { ...item, card: updatedCard }
-            : item
-        )
-      );
-      setLearningQueue((prev) =>
-        prev.map((item) =>
-          item.card.id === editingCard.id
-            ? { ...item, card: updatedCard }
-            : item
-        )
-      );
-      setPracticeCards((prev) =>
-        prev.map((card) =>
-          card.id === editingCard.id ? updatedCard : card
-        )
-      );
+  const handleSaveCard = useCallback(
+    (cardData: Omit<CardType, 'id' | 'isCustom'>) => {
+      if (isCreatingNew) {
+        const newCard: CustomDeclensionCard = {
+          ...cardData,
+          id: generateCustomId(),
+          isCustom: true,
+          createdAt: Date.now(),
+        };
+        const newCustomCards = [...customDeclensionCards, newCard];
 
-      applyOptimisticDeclensionCards(newDeclensionCards, async () => {
-        await updateDeclensionCard(editingCard.id, updates);
-        setContextDeclensionCards(newDeclensionCards);
-      });
+        applyOptimisticCustomCards(newCustomCards, async () => {
+          await saveCustomDeclension(newCustomCards);
+          setContextCustomDeclensionCards(newCustomCards);
+        });
+
+        buildSession(reviewStore, settings);
+      } else if (editingCard) {
+        const isCustomCard = editingCard.isCustom === true;
+        const updatedCard = { ...editingCard, ...cardData };
+
+        if (isCustomCard) {
+          const newCustomCards = customDeclensionCards.map((card) =>
+            card.id === editingCard.id
+              ? { ...card, ...cardData }
+              : card
+          );
+
+          updateCardInQueues(editingCard.id, updatedCard);
+
+          applyOptimisticCustomCards(newCustomCards, async () => {
+            await saveCustomDeclension(newCustomCards);
+            setContextCustomDeclensionCards(newCustomCards);
+          });
+        } else {
+          const newSystemCards = systemDeclensionCards.map((card) =>
+            card.id === editingCard.id ? updatedCard : card
+          );
+
+          updateCardInQueues(editingCard.id, updatedCard);
+
+          applyOptimisticSystemCards(newSystemCards, async () => {
+            await updateDeclensionCard(editingCard.id as number, cardData);
+            setContextSystemDeclensionCards(newSystemCards);
+          });
+        }
+      }
     },
-    [editingCard, declensionCards, applyOptimisticDeclensionCards, setContextDeclensionCards]
+    [
+      isCreatingNew,
+      editingCard,
+      customDeclensionCards,
+      systemDeclensionCards,
+      applyOptimisticCustomCards,
+      applyOptimisticSystemCards,
+      setContextCustomDeclensionCards,
+      setContextSystemDeclensionCards,
+      buildSession,
+      reviewStore,
+      settings,
+    ]
   );
+
+  const handleDeleteCard = useCallback(() => {
+    if (!editingCard || !editingCard.isCustom) return;
+
+    const newCustomCards = customDeclensionCards.filter(
+      (card) => card.id !== editingCard.id
+    );
+
+    removeCardFromQueues(editingCard.id);
+
+    applyOptimisticCustomCards(newCustomCards, async () => {
+      await saveCustomDeclension(newCustomCards);
+      setContextCustomDeclensionCards(newCustomCards);
+    });
+
+    setShowEditModal(false);
+    setEditingCard(null);
+  }, [
+    editingCard,
+    customDeclensionCards,
+    applyOptimisticCustomCards,
+    setContextCustomDeclensionCards,
+  ]);
 
   const intervals: RatingIntervals = useMemo(() => {
     if (!currentSessionCard) {
@@ -379,6 +476,9 @@ export function DeclensionPage() {
 
   const currentPracticeCard = practiceCards[practiceIndex];
 
+  const canEditCurrentCard =
+    currentSessionCard?.card.isCustom || isAdmin;
+
   if (contextLoading) {
     return (
       <LoadingContainer>
@@ -400,6 +500,7 @@ export function DeclensionPage() {
         onNumberChange={handleNumberChange}
         onTogglePractice={togglePracticeMode}
         onToggleSettings={() => setShowSettings(!showSettings)}
+        onAddCard={user ? handleOpenCreateModal : undefined}
       />
 
       {showSettings && !practiceMode && (
@@ -451,7 +552,7 @@ export function DeclensionPage() {
             key={`${currentSessionCard.card.id}-${ratingCounter}`}
             card={currentSessionCard.card}
             intervals={intervals}
-            isAdmin={isAdmin}
+            canEdit={canEditCurrentCard}
             onRate={handleRate}
             onEdit={handleOpenEditModal}
           />
@@ -463,9 +564,12 @@ export function DeclensionPage() {
         onClose={() => {
           setShowEditModal(false);
           setEditingCard(null);
+          setIsCreatingNew(false);
         }}
-        onSave={handleEditCard}
+        onSave={handleSaveCard}
+        onDelete={editingCard?.isCustom ? handleDeleteCard : undefined}
         card={editingCard}
+        isCreating={isCreatingNew}
       />
     </>
   );

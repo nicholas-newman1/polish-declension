@@ -1,4 +1,5 @@
 import type { Card as FSRSCard, ReviewLog } from 'ts-fsrs';
+import type { CustomItemBase } from './customItems';
 
 export type PartOfSpeech =
   | 'noun'
@@ -32,16 +33,13 @@ export interface VocabularyWord {
   isCustom?: boolean;
 }
 
-export interface CustomVocabularyWord {
-  id: string;
+export interface CustomVocabularyWord extends CustomItemBase {
   polish: string;
   english: string;
   partOfSpeech?: PartOfSpeech;
   gender?: NounGender;
   notes?: string;
   examples?: ExampleSentence[];
-  isCustom: true;
-  createdAt: number;
 }
 
 import type { TranslationDirection } from '../components/DirectionToggle';

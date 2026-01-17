@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { styled } from '../lib/styled';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import AddIcon from '@mui/icons-material/Add';
 import { PracticeModeButton } from './PracticeModeButton';
 import { SettingsButton } from './SettingsButton';
 import type { Case, Gender, Number } from '../types';
@@ -47,6 +48,19 @@ const FilterButton = styled(Button)<FilterButtonProps>(({ theme, $active }) => (
       }),
 }));
 
+const AddButton = styled(Button)(({ theme }) => ({
+  minWidth: 40,
+  padding: theme.spacing(0.75),
+  borderColor: theme.palette.divider,
+  color: theme.palette.text.secondary,
+  backgroundColor: theme.palette.background.paper,
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+    borderColor: theme.palette.primary.main,
+    color: theme.palette.primary.main,
+  },
+}));
+
 interface FilterControlsProps {
   caseFilter: Case | 'All';
   genderFilter: Gender | 'All';
@@ -58,6 +72,7 @@ interface FilterControlsProps {
   onNumberChange: (value: Number | 'All') => void;
   onTogglePractice: () => void;
   onToggleSettings: () => void;
+  onAddCard?: () => void;
 }
 
 export function FilterControls({
@@ -71,6 +86,7 @@ export function FilterControls({
   onNumberChange,
   onTogglePractice,
   onToggleSettings,
+  onAddCard,
 }: FilterControlsProps) {
   const [showFilters, setShowFilters] = useState(false);
 
@@ -99,6 +115,16 @@ export function FilterControls({
         <PracticeModeButton active={practiceMode} onClick={onTogglePractice} />
 
         <SettingsButton active={showSettings} onClick={onToggleSettings} />
+
+        {onAddCard && (
+          <AddButton
+            variant="outlined"
+            onClick={onAddCard}
+            aria-label="Add custom card"
+          >
+            <AddIcon />
+          </AddButton>
+        )}
       </Stack>
 
       <Collapse in={showFilters}>

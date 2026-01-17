@@ -1,8 +1,8 @@
 import { createEmptyCard } from 'ts-fsrs';
-import type { ReviewDataStore, CardReviewData } from '../../types';
+import type { ReviewDataStore, CardReviewData, CardId } from '../../types';
 
 export default function getOrCreateCardReviewData(
-  cardId: number,
+  cardId: CardId,
   store: ReviewDataStore
 ): CardReviewData {
   if (store.cards[cardId]) {
@@ -13,4 +13,3 @@ export default function getOrCreateCardReviewData(
     fsrsCard: createEmptyCard(),
   };
 }
-

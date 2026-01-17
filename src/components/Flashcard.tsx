@@ -28,7 +28,7 @@ interface FlashcardProps {
   card: FlashCard;
   practiceMode?: boolean;
   intervals?: RatingIntervals;
-  isAdmin?: boolean;
+  canEdit?: boolean;
   onRate?: (rating: Grade) => void;
   onNext?: () => void;
   onEdit?: () => void;
@@ -135,7 +135,7 @@ export function Flashcard({
   card,
   practiceMode = false,
   intervals,
-  isAdmin = false,
+  canEdit = false,
   onRate,
   onNext,
   onEdit,
@@ -157,7 +157,7 @@ export function Flashcard({
     <CardWrapper className="animate-fade-up">
       <StyledCard>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          {isAdmin && (
+          {canEdit && (
             <CardHeader>
               <ActionButton onClick={onEdit} size="small" aria-label="edit">
                 <EditIcon fontSize="small" />

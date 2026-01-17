@@ -8,7 +8,12 @@ import {
 } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import type { Card, ReviewDataStore, Settings } from '../types';
+import type {
+  Card,
+  CustomDeclensionCard,
+  ReviewDataStore,
+  Settings,
+} from '../types';
 import type {
   VocabularyWord,
   VocabularyReviewDataStore,
@@ -25,6 +30,7 @@ import loadVocabularySettings from '../lib/storage/loadVocabularySettings';
 import saveVocabularyReviewData from '../lib/storage/saveVocabularyReviewData';
 import saveVocabularySettings from '../lib/storage/saveVocabularySettings';
 import { loadCustomVocabulary } from '../lib/storage/customVocabulary';
+import { loadCustomDeclension } from '../lib/storage/customDeclension';
 import clearAllData from '../lib/storage/clearAllData';
 import clearVocabularyData from '../lib/storage/clearVocabularyData';
 import getOrCreateCardReviewData from '../lib/storage/getOrCreateCardReviewData';
@@ -34,6 +40,7 @@ import {
   getUserId,
   getDefaultReviewStore,
   getDefaultVocabularyReviewStore,
+  includesCardId,
 } from '../lib/storage/helpers';
 import { DEFAULT_SETTINGS } from '../constants';
 
@@ -51,12 +58,15 @@ export interface ReviewDataContextType {
   loading: boolean;
 
   declensionCards: Card[];
+  customDeclensionCards: CustomDeclensionCard[];
+  systemDeclensionCards: Card[];
   declensionReviewStore: ReviewDataStore;
   declensionSettings: Settings;
   updateDeclensionReviewStore: (store: ReviewDataStore) => Promise<void>;
   updateDeclensionSettings: (settings: Settings) => Promise<void>;
   clearDeclensionData: () => Promise<void>;
-  setDeclensionCards: (cards: Card[]) => void;
+  setCustomDeclensionCards: (cards: CustomDeclensionCard[]) => void;
+  setSystemDeclensionCards: (cards: Card[]) => void;
 
   vocabularyReviewStores: Record<
     VocabularyDirection,
@@ -100,13 +110,13 @@ function computeDeclensionDueCount(
 
     if (isNew) {
       if (
-        !reviewStore.newCardsToday.includes(card.id) &&
+        !includesCardId(reviewStore.newCardsToday, card.id) &&
         newCards < remainingNewCardsToday
       ) {
         newCards++;
       }
     } else if (isDue(reviewData.fsrsCard)) {
-      if (!reviewStore.reviewedToday.includes(card.id)) {
+      if (!includesCardId(reviewStore.reviewedToday, card.id)) {
         dueReviews++;
       }
     }
@@ -155,11 +165,21 @@ function computeVocabularyDueCount(
 export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
-  const [declensionCards, setDeclensionCards] = useState<Card[]>([]);
+  const [customDeclensionCards, setCustomDeclensionCards] = useState<
+    CustomDeclensionCard[]
+  >([]);
+  const [systemDeclensionCards, setSystemDeclensionCards] = useState<Card[]>(
+    []
+  );
   const [declensionReviewStore, setDeclensionReviewStore] =
     useState<ReviewDataStore>(getDefaultReviewStore);
   const [declensionSettings, setDeclensionSettings] =
     useState<Settings>(DEFAULT_SETTINGS);
+
+  const declensionCards = useMemo<Card[]>(
+    () => [...customDeclensionCards, ...systemDeclensionCards],
+    [customDeclensionCards, systemDeclensionCards]
+  );
 
   const [vocabularyReviewStores, setVocabularyReviewStores] = useState<
     Record<VocabularyDirection, VocabularyReviewDataStore>
@@ -227,6 +247,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadedDeclensionReviewData,
       loadedVocabularySettings,
       loadedCustomWords,
+      loadedCustomDeclensionCards,
       vocabularySnapshot,
       declensionCardsSnapshot,
     ] = await Promise.all([
@@ -234,6 +255,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadReviewData(),
       loadVocabularySettings(),
       loadCustomVocabulary(),
+      loadCustomDeclension(),
       getDocs(collection(db, 'vocabulary')),
       getDocs(collection(db, 'declensionCards')),
     ]);
@@ -242,7 +264,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       (doc) => doc.data() as VocabularyWord
     );
 
-    const loadedDeclensionCards = declensionCardsSnapshot.docs.map(
+    const loadedSystemDeclensionCards = declensionCardsSnapshot.docs.map(
       (doc) => doc.data() as Card
     );
 
@@ -251,7 +273,8 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadVocabularyReviewData('en-to-pl'),
     ]);
 
-    setDeclensionCards(loadedDeclensionCards);
+    setCustomDeclensionCards(loadedCustomDeclensionCards);
+    setSystemDeclensionCards(loadedSystemDeclensionCards);
     setDeclensionSettings(loadedDeclensionSettings);
     setDeclensionReviewStore(loadedDeclensionReviewData);
     setVocabularySettings(loadedVocabularySettings);
@@ -341,12 +364,15 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       value={{
         loading,
         declensionCards,
+        customDeclensionCards,
+        systemDeclensionCards,
         declensionReviewStore,
         declensionSettings,
         updateDeclensionReviewStore,
         updateDeclensionSettings,
         clearDeclensionData: clearDeclensionDataFn,
-        setDeclensionCards,
+        setCustomDeclensionCards,
+        setSystemDeclensionCards,
         vocabularyReviewStores,
         vocabularySettings,
         vocabularyWords,

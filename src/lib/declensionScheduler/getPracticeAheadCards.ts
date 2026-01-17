@@ -1,5 +1,6 @@
 import type { Card, ReviewDataStore } from '../../types';
 import getOrCreateCardReviewData from '../storage/getOrCreateCardReviewData';
+import { includesCardId } from '../storage/helpers';
 import isDue from '../fsrsUtils/isDue';
 import sortByDueDate from '../fsrsUtils/sortByDueDate';
 import type { Filters, SessionCard } from './types';
@@ -11,7 +12,8 @@ export default function getPracticeAheadCards(
   filters: Filters,
   count: number
 ): SessionCard[] {
-  const practiceCards: SessionCard[] = [];
+  const customPracticeCards: SessionCard[] = [];
+  const systemPracticeCards: SessionCard[] = [];
 
   for (const card of allCards) {
     if (!matchesFilters(card, filters)) continue;
@@ -22,15 +24,18 @@ export default function getPracticeAheadCards(
     if (isNew) continue;
 
     const isDueCard = isDue(reviewData.fsrsCard);
-    const reviewedToday = reviewStore.reviewedToday.includes(card.id);
+    const reviewedToday = includesCardId(reviewStore.reviewedToday, card.id);
 
     if (!isDueCard || reviewedToday) {
-      practiceCards.push({ card, reviewData, isNew: false });
+      const targetCards = card.isCustom
+        ? customPracticeCards
+        : systemPracticeCards;
+      targetCards.push({ card, reviewData, isNew: false });
     }
   }
 
-  practiceCards.sort(sortByDueDate);
+  customPracticeCards.sort(sortByDueDate);
+  systemPracticeCards.sort(sortByDueDate);
 
-  return practiceCards.slice(0, count);
+  return [...customPracticeCards, ...systemPracticeCards].slice(0, count);
 }
-

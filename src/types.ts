@@ -1,4 +1,5 @@
 import type { Card as FSRSCard, ReviewLog } from 'ts-fsrs';
+import type { CustomItemBase } from './types/customItems';
 
 export type Case =
   | 'Nominative'
@@ -13,8 +14,21 @@ export type Gender = 'Masculine' | 'Feminine' | 'Neuter' | 'Pronoun';
 
 export type Number = 'Singular' | 'Plural';
 
+export type CardId = number | string;
+
 export interface Card {
-  id: number;
+  id: CardId;
+  front: string;
+  back: string;
+  declined: string;
+  case: Case;
+  gender: Gender;
+  number: Number;
+  hint?: string;
+  isCustom?: boolean;
+}
+
+export interface CustomDeclensionCard extends CustomItemBase {
   front: string;
   back: string;
   declined: string;
@@ -25,7 +39,7 @@ export interface Card {
 }
 
 export interface CardReviewData {
-  cardId: number;
+  cardId: CardId;
   fsrsCard: FSRSCard;
   log?: ReviewLog;
 }
@@ -35,8 +49,8 @@ export interface Settings {
 }
 
 export interface ReviewDataStore {
-  cards: Record<number, CardReviewData>;
-  reviewedToday: number[];
-  newCardsToday: number[];
+  cards: Record<CardId, CardReviewData>;
+  reviewedToday: CardId[];
+  newCardsToday: CardId[];
   lastReviewDate: string;
 }

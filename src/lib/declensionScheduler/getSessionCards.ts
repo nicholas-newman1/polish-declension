@@ -1,5 +1,6 @@
 import type { Card, ReviewDataStore, Settings } from '../../types';
 import getOrCreateCardReviewData from '../storage/getOrCreateCardReviewData';
+import { includesCardId } from '../storage/helpers';
 import isDue from '../fsrsUtils/isDue';
 import sortByDueDate from '../fsrsUtils/sortByDueDate';
 import type { Filters, SessionCard } from './types';
@@ -11,32 +12,40 @@ export default function getSessionCards(
   filters: Filters,
   settings: Settings
 ): { reviewCards: SessionCard[]; newCards: SessionCard[] } {
-  const reviewCards: SessionCard[] = [];
-  const newCards: SessionCard[] = [];
+  const customReviewCards: SessionCard[] = [];
+  const customNewCards: SessionCard[] = [];
+  const systemReviewCards: SessionCard[] = [];
+  const systemNewCards: SessionCard[] = [];
   const remainingNewCardsToday =
     settings.newCardsPerDay - reviewStore.newCardsToday.length;
 
   for (const card of allCards) {
     const reviewData = getOrCreateCardReviewData(card.id, reviewStore);
     const isNew = reviewData.fsrsCard.state === 0;
+    const isCustom = card.isCustom === true;
+    const targetNewCards = isCustom ? customNewCards : systemNewCards;
+    const targetReviewCards = isCustom ? customReviewCards : systemReviewCards;
 
     if (isNew) {
       if (
         matchesFilters(card, filters) &&
-        !reviewStore.newCardsToday.includes(card.id) &&
-        newCards.length < remainingNewCardsToday
+        !includesCardId(reviewStore.newCardsToday, card.id) &&
+        customNewCards.length + systemNewCards.length < remainingNewCardsToday
       ) {
-        newCards.push({ card, reviewData, isNew: true });
+        targetNewCards.push({ card, reviewData, isNew: true });
       }
     } else if (isDue(reviewData.fsrsCard)) {
-      if (!reviewStore.reviewedToday.includes(card.id)) {
-        reviewCards.push({ card, reviewData, isNew: false });
+      if (!includesCardId(reviewStore.reviewedToday, card.id)) {
+        targetReviewCards.push({ card, reviewData, isNew: false });
       }
     }
   }
 
-  reviewCards.sort(sortByDueDate);
+  customReviewCards.sort(sortByDueDate);
+  systemReviewCards.sort(sortByDueDate);
 
-  return { reviewCards, newCards };
+  return {
+    reviewCards: [...customReviewCards, ...systemReviewCards],
+    newCards: [...customNewCards, ...systemNewCards],
+  };
 }
-

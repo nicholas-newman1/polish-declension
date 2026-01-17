@@ -1,5 +1,5 @@
 import { auth } from '../firebase';
-import type { ReviewDataStore } from '../../types';
+import type { ReviewDataStore, CardId } from '../../types';
 import type {
   VocabularyReviewDataStore,
   VocabularyDirection,
@@ -14,6 +14,11 @@ export function includesWordId(
   array: VocabularyWordId[],
   id: VocabularyWordId
 ): boolean {
+  const idStr = String(id);
+  return array.some((item) => String(item) === idStr);
+}
+
+export function includesCardId(array: CardId[], id: CardId): boolean {
   const idStr = String(id);
   return array.some((item) => String(item) === idStr);
 }
