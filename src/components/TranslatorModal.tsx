@@ -8,8 +8,8 @@ import {
   Box,
   Typography,
   CircularProgress,
-  styled,
 } from '@mui/material';
+import { styled } from '../lib/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   translate,
@@ -21,13 +21,20 @@ import { DirectionToggle, type TranslationDirection } from './DirectionToggle';
 
 const MAX_TEXT_LENGTH = 500;
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialog-paper': {
-    width: '100%',
-    maxWidth: 500,
-    margin: theme.spacing(2),
-  },
-}));
+const StyledDialog = styled(Dialog)<{ $keyboardOpen?: boolean }>(
+  ({ theme, $keyboardOpen }) => ({
+    '& .MuiDialog-container': {
+      alignItems: $keyboardOpen ? 'flex-start' : 'center',
+      paddingTop: $keyboardOpen ? theme.spacing(2) : 0,
+    },
+    '& .MuiDialog-paper': {
+      width: '100%',
+      maxWidth: 500,
+      margin: theme.spacing(2),
+      maxHeight: $keyboardOpen ? 'calc(100% - 16px)' : undefined,
+    },
+  })
+);
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -66,6 +73,7 @@ export function TranslatorModal() {
   const [direction, setDirection] = useState<TranslationDirection>('en-to-pl');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleClose = useCallback(() => {
@@ -74,6 +82,23 @@ export function TranslatorModal() {
     setError(null);
     onClose();
   }, [onClose]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const initialHeight = window.innerHeight;
+
+    const handleResize = () => {
+      const heightDiff = initialHeight - viewport.height;
+      setKeyboardOpen(heightDiff > 150);
+    };
+
+    viewport.addEventListener('resize', handleResize);
+    return () => viewport.removeEventListener('resize', handleResize);
+  }, [open]);
 
   useEffect(() => {
     if (!text.trim()) {
@@ -128,7 +153,7 @@ export function TranslatorModal() {
   };
 
   return (
-    <StyledDialog open={open} onClose={handleClose}>
+    <StyledDialog open={open} onClose={handleClose} $keyboardOpen={keyboardOpen}>
       <Header>
         <DialogTitle sx={{ p: 0, fontWeight: 500 }}>Translator</DialogTitle>
         <IconButton onClick={handleClose} size="small" aria-label="close">
