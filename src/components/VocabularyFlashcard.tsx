@@ -93,6 +93,39 @@ const HintText = styled(Typography)({
   fontStyle: 'italic',
 });
 
+const ExamplesList = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1.5),
+}));
+
+const ExampleItem = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+});
+
+const ExampleNumber = styled('span')(({ theme }) => ({
+  color: theme.palette.text.disabled,
+  fontSize: '0.75rem',
+  marginRight: theme.spacing(0.5),
+  minWidth: '1.25rem',
+}));
+
+const ExamplePrimary = styled('span')(({ theme }) => ({
+  fontSize: theme.typography.body2.fontSize,
+  color: theme.palette.text.secondary,
+}));
+
+const ExampleTranslation = styled(Typography)(({ theme }) => ({
+  paddingLeft: theme.spacing(2.5),
+  marginTop: theme.spacing(0.25),
+  '&::before': {
+    content: '"→"',
+    marginRight: theme.spacing(0.75),
+    opacity: 0.5,
+  },
+}));
+
 const NextButton = styled(Button)(({ theme }) => ({
   marginTop: 'auto',
   backgroundColor: theme.palette.text.primary,
@@ -183,7 +216,9 @@ export function VocabularyFlashcard({
   const isPolishToEnglish = direction === 'pl-to-en';
   const questionWord = isPolishToEnglish ? word.polish : word.english;
   const answerWord = isPolishToEnglish ? word.english : word.polish;
-  const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
+  const directionLabel = isPolishToEnglish
+    ? 'Polish → English'
+    : 'English → Polish';
   const isCustomWord = word.isCustom === true;
   const canEditOrDelete = isCustomWord || isAdmin;
 
@@ -201,25 +236,49 @@ export function VocabularyFlashcard({
                 <ActionButton onClick={onEdit} size="small" aria-label="edit">
                   <EditIcon fontSize="small" />
                 </ActionButton>
-                <DeleteButton onClick={onDelete} size="small" aria-label="delete">
+                <DeleteButton
+                  onClick={onDelete}
+                  size="small"
+                  aria-label="delete"
+                >
                   <DeleteIcon fontSize="small" />
                 </DeleteButton>
               </ActionButtons>
             )}
           </CardHeader>
-          
+
           <QuestionText variant="h4" color="text.primary" sx={{ mb: 2 }}>
             {questionWord}
           </QuestionText>
 
           {word.examples && word.examples.length > 0 && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-              {word.examples.map((example, index) => (
-                <Typography key={index} variant="body2" color="text.secondary">
-                  {isPolishToEnglish ? example.polish : example.english}
-                </Typography>
-              ))}
-            </Box>
+            <ExamplesList>
+              {word.examples.map((example, index) => {
+                const primaryText = isPolishToEnglish
+                  ? example.polish
+                  : example.english;
+                const translationText = isPolishToEnglish
+                  ? example.english
+                  : example.polish;
+                return (
+                  <ExampleItem key={index}>
+                    <Box>
+                      <ExampleNumber>{index + 1}.</ExampleNumber>
+                      <ExamplePrimary>{primaryText}</ExamplePrimary>
+                    </Box>
+                    {revealed && (
+                      <ExampleTranslation
+                        variant="body2"
+                        color="text.disabled"
+                        className="animate-fade-up"
+                      >
+                        {translationText}
+                      </ExampleTranslation>
+                    )}
+                  </ExampleItem>
+                );
+              })}
+            </ExamplesList>
           )}
 
           {revealed && (
@@ -230,27 +289,18 @@ export function VocabularyFlashcard({
                 {answerWord}
               </AnswerText>
 
-              {word.examples && word.examples.length > 0 && (
-                <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  {word.examples.map((example, index) => (
-                    <Typography key={index} variant="body2" color="text.secondary">
-                      {isPolishToEnglish ? example.english : example.polish}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
-
               <Stack
                 direction="row"
                 spacing={1}
                 sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}
               >
                 {word.partOfSpeech && (
-                  <MetaChip label={formatPartOfSpeech(word.partOfSpeech)} size="small" />
+                  <MetaChip
+                    label={formatPartOfSpeech(word.partOfSpeech)}
+                    size="small"
+                  />
                 )}
-                {word.gender && (
-                  <MetaChip label={word.gender} size="small" />
-                )}
+                {word.gender && <MetaChip label={word.gender} size="small" />}
               </Stack>
 
               {word.notes && (
@@ -342,4 +392,3 @@ export function VocabularyFlashcard({
     </CardWrapper>
   );
 }
-

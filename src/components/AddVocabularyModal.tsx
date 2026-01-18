@@ -16,13 +16,19 @@ import {
   Typography,
   CircularProgress,
   InputAdornment,
+  Collapse,
+  Checkbox,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
 import { translate } from '../lib/translate';
+import { generateExample, type GeneratedExample } from '../lib/generateExample';
+import { useAuthContext } from '../hooks/useAuthContext';
 import type {
   CustomVocabularyWord,
   VocabularyWord,
@@ -102,6 +108,38 @@ const AddExampleButton = styled(Button)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const GenerateSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1),
+  padding: theme.spacing(1.5),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.primary.main, 0.04),
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+}));
+
+const GenerateActions = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(1),
+  alignItems: 'center',
+}));
+
+const GeneratedPreview = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.5),
+  padding: theme.spacing(1.5),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.success.main, 0.08),
+  border: `1px solid ${alpha(theme.palette.success.main, 0.3)}`,
+}));
+
+const PreviewActions = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(1),
+  marginTop: theme.spacing(1),
+}));
+
 interface FormData {
   polish: string;
   english: string;
@@ -137,6 +175,7 @@ export function AddVocabularyModal({
   onSave,
   editWord,
 }: AddVocabularyModalProps) {
+  const { isAdmin } = useAuthContext();
   const {
     control,
     handleSubmit,
@@ -154,6 +193,9 @@ export function AddVocabularyModal({
   });
 
   const partOfSpeech = useWatch({ control, name: 'partOfSpeech' });
+  const polishWord = useWatch({ control, name: 'polish' });
+  const englishWord = useWatch({ control, name: 'english' });
+  const gender = useWatch({ control, name: 'gender' });
   const showGenderField =
     partOfSpeech === 'noun' || partOfSpeech === 'proper noun';
 
@@ -165,6 +207,17 @@ export function AddVocabularyModal({
     Map<number, ReturnType<typeof setTimeout>>
   >(new Map());
   const userEditedEnglish = useRef<Set<number>>(new Set());
+
+  const [showAiGenerate, setShowAiGenerate] = useState(false);
+  const [aiContext, setAiContext] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedExamples, setGeneratedExamples] = useState<
+    GeneratedExample[]
+  >([]);
+  const [selectedExampleIndexes, setSelectedExampleIndexes] = useState<
+    Set<number>
+  >(new Set());
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
   useEffect(() => {
     const timeouts = translationTimeouts.current;
@@ -220,12 +273,68 @@ export function AddVocabularyModal({
     userEditedEnglish.current.add(index);
   }, []);
 
+  const handleGenerateExample = useCallback(async () => {
+    if (!polishWord?.trim() || !englishWord?.trim()) return;
+
+    setIsGenerating(true);
+    setGenerateError(null);
+    setGeneratedExamples([]);
+    setSelectedExampleIndexes(new Set());
+
+    try {
+      const result = await generateExample({
+        polish: polishWord.trim(),
+        english: englishWord.trim(),
+        partOfSpeech: partOfSpeech || undefined,
+        gender: gender || undefined,
+        context: aiContext.trim() || undefined,
+      });
+      setGeneratedExamples(result.examples);
+      setSelectedExampleIndexes(new Set(result.examples.map((_, i) => i)));
+    } catch (error) {
+      console.error('Failed to generate example:', error);
+      setGenerateError('Failed to generate. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [polishWord, englishWord, partOfSpeech, gender, aiContext]);
+
+  const handleToggleExample = useCallback((index: number) => {
+    setSelectedExampleIndexes((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleAcceptSelected = useCallback(() => {
+    const selected = generatedExamples
+      .filter((_, i) => selectedExampleIndexes.has(i))
+      .map(({ polish, english }) => ({ polish, english }));
+
+    selected.forEach((ex) => append(ex));
+    setGeneratedExamples([]);
+    setSelectedExampleIndexes(new Set());
+    setShowAiGenerate(false);
+    setAiContext('');
+  }, [generatedExamples, selectedExampleIndexes, append]);
+
   const handleClose = () => {
     reset(getDefaultValues(null));
     translationTimeouts.current.forEach((timeout) => clearTimeout(timeout));
     translationTimeouts.current.clear();
     userEditedEnglish.current.clear();
     setTranslatingIndexes(new Set());
+    setShowAiGenerate(false);
+    setAiContext('');
+    setGeneratedExamples([]);
+    setSelectedExampleIndexes(new Set());
+    setGenerateError(null);
+    setIsGenerating(false);
     onClose();
   };
 
@@ -443,14 +552,153 @@ export function AddVocabularyModal({
               </ExamplePair>
             ))}
 
-            <AddExampleButton
-              size="small"
-              startIcon={<AddIcon />}
-              onClick={handleAddExample}
-              type="button"
-            >
-              Add example sentence
-            </AddExampleButton>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              <AddExampleButton
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={handleAddExample}
+                type="button"
+              >
+                Add manually
+              </AddExampleButton>
+
+              {isAdmin && (
+                <AddExampleButton
+                  size="small"
+                  startIcon={<AutoAwesomeIcon />}
+                  onClick={() => setShowAiGenerate(!showAiGenerate)}
+                  type="button"
+                  disabled={!polishWord?.trim() || !englishWord?.trim()}
+                >
+                  Generate with AI
+                </AddExampleButton>
+              )}
+            </Box>
+
+            {isAdmin && (
+              <Collapse in={showAiGenerate}>
+                <GenerateSection>
+                  <TextField
+                    size="small"
+                    label="Context (optional)"
+                    placeholder="e.g., restaurant scenario, formal letter, casual conversation..."
+                    value={aiContext}
+                    onChange={(e) => setAiContext(e.target.value)}
+                    fullWidth
+                  />
+
+                  {generateError && (
+                    <Typography variant="caption" color="error">
+                      {generateError}
+                    </Typography>
+                  )}
+
+                  {generatedExamples.length > 0 ? (
+                    <>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 1,
+                        }}
+                      >
+                        {generatedExamples.map((example, index) => (
+                          <GeneratedPreview
+                            key={index}
+                            sx={{
+                              opacity: selectedExampleIndexes.has(index)
+                                ? 1
+                                : 0.5,
+                              cursor: 'pointer',
+                              flexDirection: 'row',
+                              alignItems: 'flex-start',
+                              gap: 1,
+                            }}
+                            onClick={() => handleToggleExample(index)}
+                          >
+                            <Checkbox
+                              checked={selectedExampleIndexes.has(index)}
+                              size="small"
+                              sx={{ p: 0, mt: 0.25 }}
+                              tabIndex={-1}
+                            />
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="body2" fontWeight={500}>
+                                {example.polish}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {example.english}
+                              </Typography>
+                              {example.meaning && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: 'primary.main',
+                                    fontStyle: 'italic',
+                                  }}
+                                >
+                                  ({example.meaning})
+                                </Typography>
+                              )}
+                            </Box>
+                          </GeneratedPreview>
+                        ))}
+                      </Box>
+                      <PreviewActions>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={handleAcceptSelected}
+                          disabled={selectedExampleIndexes.size === 0}
+                        >
+                          Accept Selected ({selectedExampleIndexes.size})
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<RefreshIcon />}
+                          onClick={handleGenerateExample}
+                          disabled={isGenerating}
+                        >
+                          Regenerate
+                        </Button>
+                        <Button
+                          size="small"
+                          color="inherit"
+                          onClick={() => {
+                            setGeneratedExamples([]);
+                            setSelectedExampleIndexes(new Set());
+                          }}
+                        >
+                          Discard
+                        </Button>
+                      </PreviewActions>
+                    </>
+                  ) : (
+                    <GenerateActions>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        startIcon={
+                          isGenerating ? (
+                            <CircularProgress size={16} color="inherit" />
+                          ) : (
+                            <AutoAwesomeIcon />
+                          )
+                        }
+                        onClick={handleGenerateExample}
+                        disabled={isGenerating}
+                      >
+                        {isGenerating ? 'Generating...' : 'Generate'}
+                      </Button>
+                    </GenerateActions>
+                  )}
+                </GenerateSection>
+              </Collapse>
+            )}
           </ExamplesSection>
         </Content>
         <Actions>
