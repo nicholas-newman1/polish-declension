@@ -20,6 +20,7 @@ import { SentencesPage } from './pages/SentencesPage';
 import { VocabularyPage } from './pages/VocabularyPage';
 import { CustomVocabularyPage } from './pages/CustomVocabularyPage';
 import { CustomDeclensionPage } from './pages/CustomDeclensionPage';
+import { StatsPage } from './pages/StatsPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')!).render(
                           path="/my-declensions"
                           element={<CustomDeclensionPage />}
                         />
+                        <Route path="/stats" element={<StatsPage />} />
                       </Route>
                       <Route
                         path="*"

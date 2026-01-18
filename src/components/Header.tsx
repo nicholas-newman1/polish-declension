@@ -13,7 +13,7 @@ import {
   Divider,
   styled,
 } from '@mui/material';
-import { Person, LibraryBooks } from '@mui/icons-material';
+import { Person, LibraryBooks, BarChart } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import getFirstName from '../lib/utils/getFirstName';
@@ -82,6 +82,11 @@ export function Header({ user, onSignOut }: HeaderProps) {
     navigate('/my-declensions');
   };
 
+  const handleStats = () => {
+    handleMenuClose();
+    navigate('/stats');
+  };
+
   return (
     <Stack
       direction="row"
@@ -133,6 +138,13 @@ export function Header({ user, onSignOut }: HeaderProps) {
                   <LibraryBooks fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>My Declensions</ListItemText>
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={handleStats}>
+                <ListItemIcon>
+                  <BarChart fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Statistics</ListItemText>
               </MenuItem>
               <Divider />
               <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
