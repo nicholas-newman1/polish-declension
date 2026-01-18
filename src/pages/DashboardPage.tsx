@@ -3,6 +3,9 @@ import { Box, Typography, ButtonBase, useTheme } from '@mui/material';
 import { School, Abc, Translate } from '@mui/icons-material';
 import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
+import { useReviewData } from '../hooks/useReviewData';
+import { ReviewCountBadge } from '../components/ReviewCountBadge';
+import type { ReviewCounts } from '../contexts/ReviewDataContext';
 
 type ColorKey = 'primary' | 'info' | 'success';
 
@@ -96,6 +99,7 @@ const FEATURES: Array<{
   title: string;
   description: string;
   colorKey: ColorKey;
+  reviewCountKey?: keyof ReviewCounts;
 }> = [
   {
     path: '/declension',
@@ -104,6 +108,7 @@ const FEATURES: Array<{
     description:
       'Practice noun and pronoun declensions with spaced repetition flashcards',
     colorKey: 'primary',
+    reviewCountKey: 'declension',
   },
   {
     path: '/vocabulary',
@@ -112,6 +117,7 @@ const FEATURES: Array<{
     description:
       'Learn the top 1000 most common Polish words with example sentences',
     colorKey: 'info',
+    reviewCountKey: 'vocabulary',
   },
   {
     path: '/sentences',
@@ -126,6 +132,7 @@ const FEATURES: Array<{
 export function DashboardPage() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { counts, loading } = useReviewData();
 
   return (
     <PageContainer>
@@ -141,12 +148,20 @@ export function DashboardPage() {
       <CardsGrid>
         {FEATURES.map((feature) => {
           const color = theme.palette[feature.colorKey].main;
+          const reviewCount = feature.reviewCountKey
+            ? counts[feature.reviewCountKey]
+            : undefined;
           return (
             <FeatureCard
               key={feature.path}
               $color={color}
               onClick={() => navigate(feature.path)}
             >
+              {feature.reviewCountKey && (
+                <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+                  <ReviewCountBadge count={reviewCount} loading={loading} />
+                </Box>
+              )}
               <IconWrapper $color={color}>
                 <feature.icon sx={{ fontSize: 28 }} />
               </IconWrapper>

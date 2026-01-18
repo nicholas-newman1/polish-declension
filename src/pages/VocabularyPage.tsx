@@ -12,6 +12,7 @@ import {
 } from '../components/VocabularyFlashcard';
 import { FinishedState } from '../components/FinishedState';
 import { EmptyState } from '../components/EmptyState';
+import { ReviewCountBadge } from '../components/ReviewCountBadge';
 import { SettingsPanel } from '../components/SettingsPanel';
 import { AddVocabularyModal } from '../components/AddVocabularyModal';
 import type {
@@ -522,15 +523,19 @@ export function VocabularyPage() {
             <Typography
               variant="body2"
               color="text.disabled"
-              sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}
+              sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}
             >
-              {practiceMode
-                ? `Practice Mode · ${practiceCards.length} words`
-                : isFinished
-                ? ''
-                : isPracticeAhead
-                ? `Practice Ahead · ${totalRemaining} remaining`
-                : `${reviewCount} reviews · ${newCount} new · ${totalRemaining} remaining`}
+              {practiceMode ? (
+                `Practice Mode · ${practiceCards.length} words`
+              ) : isFinished ? null : isPracticeAhead ? (
+                <>
+                  Practice Ahead · <ReviewCountBadge count={totalRemaining} /> remaining
+                </>
+              ) : (
+                <>
+                  {reviewCount} reviews · {newCount} new · <ReviewCountBadge count={totalRemaining} /> remaining
+                </>
+              )}
             </Typography>
 
             {practiceMode ? (
