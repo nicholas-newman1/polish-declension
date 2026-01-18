@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import {
   Dialog,
@@ -14,12 +14,15 @@ import {
   Select,
   MenuItem,
   Typography,
+  CircularProgress,
+  InputAdornment,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
+import { translate } from '../lib/translate';
 import type {
   CustomVocabularyWord,
   VocabularyWord,
@@ -155,9 +158,74 @@ export function AddVocabularyModal({
     partOfSpeech === 'noun' || partOfSpeech === 'proper noun';
 
   const newExamplePolishRef = useRef<HTMLInputElement>(null);
+  const [translatingIndexes, setTranslatingIndexes] = useState<Set<number>>(
+    new Set()
+  );
+  const translationTimeouts = useRef<
+    Map<number, ReturnType<typeof setTimeout>>
+  >(new Map());
+  const userEditedEnglish = useRef<Set<number>>(new Set());
+
+  useEffect(() => {
+    const timeouts = translationTimeouts.current;
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+    };
+  }, []);
+
+  const translatePolishText = useCallback(
+    async (index: number, polishText: string) => {
+      const trimmed = polishText.trim();
+      if (!trimmed) return;
+
+      setTranslatingIndexes((prev) => new Set(prev).add(index));
+      try {
+        const result = await translate(trimmed, 'EN');
+        if (!userEditedEnglish.current.has(index)) {
+          setValue(`examples.${index}.english`, result.translatedText);
+        }
+      } catch {
+        // Silently fail - user can manually enter translation
+      } finally {
+        setTranslatingIndexes((prev) => {
+          const next = new Set(prev);
+          next.delete(index);
+          return next;
+        });
+      }
+    },
+    [setValue]
+  );
+
+  const handlePolishChange = useCallback(
+    (index: number, value: string) => {
+      userEditedEnglish.current.delete(index);
+
+      const existingTimeout = translationTimeouts.current.get(index);
+      if (existingTimeout) {
+        clearTimeout(existingTimeout);
+      }
+
+      const timeout = setTimeout(() => {
+        translatePolishText(index, value);
+        translationTimeouts.current.delete(index);
+      }, 500);
+
+      translationTimeouts.current.set(index, timeout);
+    },
+    [translatePolishText]
+  );
+
+  const handleEnglishManualEdit = useCallback((index: number) => {
+    userEditedEnglish.current.add(index);
+  }, []);
 
   const handleClose = () => {
     reset(getDefaultValues(null));
+    translationTimeouts.current.forEach((timeout) => clearTimeout(timeout));
+    translationTimeouts.current.clear();
+    userEditedEnglish.current.clear();
+    setTranslatingIndexes(new Set());
     onClose();
   };
 
@@ -309,7 +377,15 @@ export function AddVocabularyModal({
                   </Typography>
                   <IconButton
                     size="small"
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      const timeout = translationTimeouts.current.get(index);
+                      if (timeout) {
+                        clearTimeout(timeout);
+                        translationTimeouts.current.delete(index);
+                      }
+                      userEditedEnglish.current.delete(index);
+                      remove(index);
+                    }}
                     aria-label="remove example"
                     sx={{ color: 'text.disabled' }}
                   >
@@ -322,6 +398,10 @@ export function AddVocabularyModal({
                   render={({ field }) => (
                     <TextField
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handlePolishChange(index, e.target.value);
+                      }}
                       inputRef={
                         index === fields.length - 1
                           ? newExamplePolishRef
@@ -340,10 +420,23 @@ export function AddVocabularyModal({
                   render={({ field }) => (
                     <TextField
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleEnglishManualEdit(index);
+                      }}
                       label="English"
                       size="small"
                       fullWidth
                       placeholder="e.g., I have a black cat."
+                      slotProps={{
+                        input: {
+                          endAdornment: translatingIndexes.has(index) ? (
+                            <InputAdornment position="end">
+                              <CircularProgress size={16} />
+                            </InputAdornment>
+                          ) : null,
+                        },
+                      }}
                     />
                   )}
                 />
