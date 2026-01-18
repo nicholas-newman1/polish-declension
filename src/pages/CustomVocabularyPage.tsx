@@ -1,28 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
-  Box,
   Typography,
-  CircularProgress,
-  IconButton,
   Chip,
-  Button,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
-  TextField,
   InputAdornment,
-  FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Paper,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
@@ -39,104 +29,24 @@ import type {
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useOptimistic } from '../hooks/useOptimistic';
 import { useSnackbar } from '../hooks/useSnackbar';
+import {
+  PageContainer,
+  FiltersRow,
+  SearchField,
+  FilterSelect,
+  StyledTableContainer,
+  PrimaryCell,
+  SecondaryCell,
+  MetaChip,
+  CustomItemPageHeader,
+  CustomItemEmptyState,
+  CustomItemLoadingState,
+  CustomItemActions,
+  formatDate,
+} from '../components/CustomItemPage';
 
 type SortField = 'polish' | 'english' | 'partOfSpeech' | 'gender' | 'createdAt';
 type SortDirection = 'asc' | 'desc';
-
-const PageContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-});
-
-const HeaderSection = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: theme.spacing(3),
-  flexWrap: 'wrap',
-  gap: theme.spacing(2),
-}));
-
-const TitleGroup = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 4,
-});
-
-const LoadingContainer = styled(Box)({
-  flex: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: 200,
-});
-
-const EmptyContainer = styled(Box)(({ theme }) => ({
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  padding: theme.spacing(6),
-  minHeight: 300,
-}));
-
-const FiltersRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(2),
-  marginBottom: theme.spacing(2),
-  flexWrap: 'wrap',
-}));
-
-const SearchField = styled(TextField)(({ theme }) => ({
-  minWidth: 240,
-  '& .MuiOutlinedInput-root': {
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
-const FilterSelect = styled(FormControl)(({ theme }) => ({
-  minWidth: 140,
-  '& .MuiOutlinedInput-root': {
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
-const StyledTableContainer = styled(Paper)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.divider}`,
-  overflow: 'auto',
-  '& .MuiTableCell-head': {
-    backgroundColor: alpha(theme.palette.text.primary, 0.02),
-    fontWeight: 600,
-    fontSize: '0.8rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    color: theme.palette.text.secondary,
-    whiteSpace: 'nowrap',
-  },
-  '& .MuiTableCell-body': {
-    fontSize: '0.95rem',
-  },
-  '& .MuiTableRow-root:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.02),
-  },
-}));
-
-const PolishCell = styled(Typography)({
-  fontWeight: 600,
-});
-
-const MetaChip = styled(Chip)(({ theme }) => ({
-  height: 24,
-  fontSize: '0.75rem',
-  fontWeight: 500,
-  backgroundColor: alpha(theme.palette.text.primary, 0.06),
-  color: theme.palette.text.secondary,
-}));
 
 const GenderChip = styled(Chip)<{
   $gender: 'masculine' | 'feminine' | 'neuter';
@@ -146,37 +56,6 @@ const GenderChip = styled(Chip)<{
   fontWeight: 500,
   backgroundColor: alpha(theme.palette.gender[$gender].main, 0.12),
   color: theme.palette.gender[$gender].main,
-}));
-
-const NotesCell = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  fontSize: '0.85rem',
-  maxWidth: 200,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-}));
-
-const ActionCell = styled(Box)({
-  display: 'flex',
-  gap: 4,
-});
-
-const AddButton = styled(Button)(({ theme }) => ({
-  borderRadius: theme.spacing(1),
-}));
-
-const CountBadge = styled(Typography)(({ theme }) => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-  color: theme.palette.primary.main,
-  borderRadius: 20,
-  padding: theme.spacing(0.5, 1.5),
-  fontSize: '0.85rem',
-  fontWeight: 600,
-  minWidth: 32,
 }));
 
 const PARTS_OF_SPEECH: PartOfSpeech[] = [
@@ -342,68 +221,27 @@ export function CustomVocabularyPage() {
     sortDirection,
   ]);
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   if (isLoading) {
-    return (
-      <PageContainer>
-        <LoadingContainer>
-          <CircularProgress sx={{ color: 'text.disabled' }} />
-        </LoadingContainer>
-      </PageContainer>
-    );
+    return <CustomItemLoadingState />;
   }
 
   return (
     <PageContainer>
-      <HeaderSection>
-        <TitleGroup>
-          <Typography variant="h5" fontWeight={600}>
-            My Words
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Your personal vocabulary collection
-          </Typography>
-        </TitleGroup>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <CountBadge>{customWords.length}</CountBadge>
-          <AddButton
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setShowAddModal(true)}
-          >
-            Add Word
-          </AddButton>
-        </Box>
-      </HeaderSection>
+      <CustomItemPageHeader
+        title="My Vocabulary"
+        subtitle="Your personal vocabulary collection"
+        count={customWords.length}
+        addLabel="Add Word"
+        onAdd={() => setShowAddModal(true)}
+      />
 
       {customWords.length === 0 ? (
-        <EmptyContainer>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            No custom words yet
-          </Typography>
-          <Typography
-            variant="body2"
-            color="text.disabled"
-            sx={{ mb: 3, maxWidth: 320 }}
-          >
-            Add your own vocabulary words to practice alongside the standard
-            word list.
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={() => setShowAddModal(true)}
-          >
-            Add Your First Word
-          </Button>
-        </EmptyContainer>
+        <CustomItemEmptyState
+          title="No custom words yet"
+          description="Add your own vocabulary words to practice alongside the standard word list."
+          addLabel="Add Your First Word"
+          onAdd={() => setShowAddModal(true)}
+        />
       ) : (
         <>
           <FiltersRow>
@@ -530,26 +368,15 @@ export function CustomVocabularyPage() {
                 {filteredAndSortedWords.map((word) => (
                   <TableRow key={word.id}>
                     <TableCell>
-                      <ActionCell>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleOpenEditModal(word)}
-                          aria-label="edit word"
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDeleteWord(word.id)}
-                          aria-label="delete word"
-                          sx={{ color: 'error.main' }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </ActionCell>
+                      <CustomItemActions
+                        onEdit={() => handleOpenEditModal(word)}
+                        onDelete={() => handleDeleteWord(word.id)}
+                        editLabel="edit word"
+                        deleteLabel="delete word"
+                      />
                     </TableCell>
                     <TableCell>
-                      <PolishCell>{word.polish}</PolishCell>
+                      <PrimaryCell>{word.polish}</PrimaryCell>
                     </TableCell>
                     <TableCell>{word.english}</TableCell>
                     <TableCell>
@@ -568,7 +395,9 @@ export function CustomVocabularyPage() {
                     </TableCell>
                     <TableCell>
                       {word.notes && (
-                        <NotesCell title={word.notes}>{word.notes}</NotesCell>
+                        <SecondaryCell title={word.notes}>
+                          {word.notes}
+                        </SecondaryCell>
                       )}
                     </TableCell>
                     <TableCell>

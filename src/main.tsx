@@ -19,6 +19,7 @@ import { DeclensionPage } from './pages/DeclensionPage';
 import { SentencesPage } from './pages/SentencesPage';
 import { VocabularyPage } from './pages/VocabularyPage';
 import { CustomVocabularyPage } from './pages/CustomVocabularyPage';
+import { CustomDeclensionPage } from './pages/CustomDeclensionPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -45,8 +46,12 @@ createRoot(document.getElementById('root')!).render(
                         />
                         <Route path="/sentences" element={<SentencesPage />} />
                         <Route
-                          path="/my-words"
+                          path="/my-vocabulary"
                           element={<CustomVocabularyPage />}
+                        />
+                        <Route
+                          path="/my-declensions"
+                          element={<CustomDeclensionPage />}
                         />
                       </Route>
                       <Route

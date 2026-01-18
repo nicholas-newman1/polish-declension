@@ -72,9 +72,14 @@ export function Header({ user, onSignOut }: HeaderProps) {
     onSignOut();
   };
 
-  const handleMyWords = () => {
+  const handleMyVocabulary = () => {
     handleMenuClose();
-    navigate('/my-words');
+    navigate('/my-vocabulary');
+  };
+
+  const handleMyDeclensions = () => {
+    handleMenuClose();
+    navigate('/my-declensions');
   };
 
   return (
@@ -117,11 +122,17 @@ export function Header({ user, onSignOut }: HeaderProps) {
                 </Typography>
               </Box>
               <Divider />
-              <MenuItem onClick={handleMyWords}>
+              <MenuItem onClick={handleMyVocabulary}>
                 <ListItemIcon>
                   <LibraryBooks fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>My Words</ListItemText>
+                <ListItemText>My Vocabulary</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleMyDeclensions}>
+                <ListItemIcon>
+                  <LibraryBooks fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>My Declensions</ListItemText>
               </MenuItem>
               <Divider />
               <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
