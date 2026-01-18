@@ -1,4 +1,11 @@
-import { createContext, useState, useCallback, type ReactNode } from 'react';
+import {
+  createContext,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from 'react';
+import { setGlobalErrorHandler } from '../lib/storage/errorHandler';
 
 export type SnackbarSeverity = 'error' | 'success' | 'info' | 'warning';
 
@@ -33,6 +40,11 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
   const hideSnackbar = useCallback(() => {
     setSnackbar(null);
   }, []);
+
+  useEffect(() => {
+    setGlobalErrorHandler(showSnackbar);
+    return () => setGlobalErrorHandler(null);
+  }, [showSnackbar]);
 
   return (
     <SnackbarContext.Provider value={{ snackbar, showSnackbar, hideSnackbar }}>

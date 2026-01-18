@@ -42,6 +42,7 @@ import {
   getDefaultVocabularyReviewStore,
   includesDeclensionCardId,
 } from '../lib/storage/helpers';
+import { showSaveError } from '../lib/storage/errorHandler';
 import { DEFAULT_DECLENSION_SETTINGS } from '../constants';
 
 const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
@@ -316,7 +317,11 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const updateDeclensionReviewStore = useCallback(
     async (store: DeclensionReviewDataStore) => {
       setDeclensionReviewStore(store);
-      await saveDeclensionReviewData(store);
+      try {
+        await saveDeclensionReviewData(store);
+      } catch (e) {
+        showSaveError(e);
+      }
     },
     []
   );
@@ -324,16 +329,24 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const updateDeclensionSettings = useCallback(
     async (settings: DeclensionSettings) => {
       setDeclensionSettings(settings);
-      await saveDeclensionSettings(settings);
+      try {
+        await saveDeclensionSettings(settings);
+      } catch (e) {
+        showSaveError(e);
+      }
     },
     []
   );
 
   const clearDeclensionDataFn = useCallback(async () => {
-    await clearDeclensionData();
-    const freshStore = getDefaultDeclensionReviewStore();
-    setDeclensionReviewStore(freshStore);
-    setDeclensionSettings(DEFAULT_DECLENSION_SETTINGS);
+    try {
+      await clearDeclensionData();
+      const freshStore = getDefaultDeclensionReviewStore();
+      setDeclensionReviewStore(freshStore);
+      setDeclensionSettings(DEFAULT_DECLENSION_SETTINGS);
+    } catch (e) {
+      showSaveError(e);
+    }
   }, []);
 
   const updateVocabularyReviewStore = useCallback(
@@ -345,7 +358,11 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
         ...prev,
         [direction]: store,
       }));
-      await saveVocabularyReviewData(store, direction);
+      try {
+        await saveVocabularyReviewData(store, direction);
+      } catch (e) {
+        showSaveError(e);
+      }
     },
     []
   );
@@ -353,19 +370,27 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const updateVocabularySettingsFn = useCallback(
     async (settings: VocabularySettings) => {
       setVocabularySettings(settings);
-      await saveVocabularySettings(settings);
+      try {
+        await saveVocabularySettings(settings);
+      } catch (e) {
+        showSaveError(e);
+      }
     },
     []
   );
 
   const clearVocabularyReviewDataFn = useCallback(
     async (direction: VocabularyDirection) => {
-      await clearVocabularyData(direction);
-      const freshStore = getDefaultVocabularyReviewStore();
-      setVocabularyReviewStores((prev) => ({
-        ...prev,
-        [direction]: freshStore,
-      }));
+      try {
+        await clearVocabularyData(direction);
+        const freshStore = getDefaultVocabularyReviewStore();
+        setVocabularyReviewStores((prev) => ({
+          ...prev,
+          [direction]: freshStore,
+        }));
+      } catch (e) {
+        showSaveError(e);
+      }
     },
     []
   );

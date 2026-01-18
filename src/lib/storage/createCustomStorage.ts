@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { getUserId } from './helpers';
+import { stripUndefined } from './firestoreUtils';
 import type { CustomItemBase } from '../../types/customItems';
 import { generateCustomId } from '../../types/customItems';
 
@@ -39,16 +40,11 @@ export function createCustomStorage<T extends CustomItemBase>(
     async save(items: T[]): Promise<void> {
       const docRef = getDocRef();
       if (!docRef) return;
-      try {
-        await setDoc(docRef, { [documentKey]: items });
-      } catch (e) {
-        console.error(`Failed to save ${storeName}:`, e);
-      }
+      const cleanedItems = items.map(stripUndefined);
+      await setDoc(docRef, { [documentKey]: cleanedItems });
     },
 
-    async add(
-      data: Omit<T, 'id' | 'isCustom' | 'createdAt'>
-    ): Promise<T> {
+    async add(data: Omit<T, 'id' | 'isCustom' | 'createdAt'>): Promise<T> {
       const existingItems = await this.load();
       const newItem = {
         ...data,

@@ -7,11 +7,7 @@ export default async function saveDeclensionSettings(settings: DeclensionSetting
   const userId = getUserId();
   if (!userId) return;
 
-  try {
-    const docRef = doc(db, 'users', userId, 'data', 'settings');
-    await setDoc(docRef, settings);
-  } catch (e) {
-    console.error('Failed to save declension settings:', e);
-  }
+  const docRef = doc(db, 'users', userId, 'data', 'settings');
+  await setDoc(docRef, settings);
 }
 

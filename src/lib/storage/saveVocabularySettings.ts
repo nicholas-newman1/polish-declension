@@ -9,11 +9,7 @@ export default async function saveVocabularySettings(
   const userId = getUserId();
   if (!userId) return;
 
-  try {
-    const docRef = doc(db, 'users', userId, 'data', 'vocabularySettings');
-    await setDoc(docRef, settings);
-  } catch (e) {
-    console.error('Failed to save vocabulary settings:', e);
-  }
+  const docRef = doc(db, 'users', userId, 'data', 'vocabularySettings');
+  await setDoc(docRef, settings);
 }
 

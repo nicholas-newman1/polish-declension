@@ -1,5 +1,6 @@
-import { doc, updateDoc, deleteDoc, deleteField } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { undefinedToDeleteField } from './firestoreUtils';
 import type { VocabularyWord } from '../../types/vocabulary';
 
 export async function updateSystemVocabularyWord(
@@ -7,13 +8,7 @@ export async function updateSystemVocabularyWord(
   updates: Partial<Omit<VocabularyWord, 'id'>>
 ): Promise<void> {
   const docRef = doc(db, 'vocabulary', String(wordId));
-
-  const firestoreUpdates: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(updates)) {
-    firestoreUpdates[key] = value === undefined ? deleteField() : value;
-  }
-
-  await updateDoc(docRef, firestoreUpdates);
+  await updateDoc(docRef, undefinedToDeleteField(updates));
 }
 
 export async function deleteSystemVocabularyWord(
