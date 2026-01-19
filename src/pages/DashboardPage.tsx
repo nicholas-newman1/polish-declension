@@ -40,7 +40,7 @@ const CardsGrid = styled(Box)(({ theme }) => ({
   maxWidth: 960,
 }));
 
-type StatsKey = 'declension' | 'vocabulary';
+type StatsKey = 'declension' | 'vocabulary' | 'sentences';
 
 const FEATURES: Array<{
   path: string;
@@ -73,8 +73,9 @@ const FEATURES: Array<{
     icon: Translate,
     title: 'Sentences',
     description:
-      'Translate full sentences and explore word-by-word grammar annotations',
+      'Translate full sentences and practice with spaced repetition',
     colorKey: 'success',
+    statsKey: 'sentences',
   },
 ];
 

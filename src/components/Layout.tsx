@@ -217,6 +217,7 @@ const NAV_ITEMS: Array<{
     icon: Translate,
     label: 'Sentences',
     description: 'Translate full sentences',
+    reviewCountKey: 'sentences',
   },
 ];
 
@@ -227,6 +228,8 @@ const PAGE_TITLES: Record<string, string> = {
   '/vocabulary/recognition': 'Recognition',
   '/vocabulary/production': 'Production',
   '/sentences': 'Sentences',
+  '/sentences/recognition': 'Recognition',
+  '/sentences/production': 'Production',
   '/my-vocabulary': 'My Vocabulary',
   '/my-declensions': 'My Declensions',
   '/stats': 'Statistics',
@@ -235,6 +238,8 @@ const PAGE_TITLES: Record<string, string> = {
 const BACK_ROUTES: Record<string, string> = {
   '/vocabulary/recognition': '/vocabulary',
   '/vocabulary/production': '/vocabulary',
+  '/sentences/recognition': '/sentences',
+  '/sentences/production': '/sentences',
 };
 
 function DrawerContent({

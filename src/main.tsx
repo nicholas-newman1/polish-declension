@@ -52,7 +52,17 @@ createRoot(document.getElementById('root')!).render(
                             element={<VocabularyPage mode="en-to-pl" />}
                           />
                         </Route>
-                        <Route path="/sentences" element={<SentencesPage />} />
+                        <Route path="/sentences">
+                          <Route index element={<SentencesPage />} />
+                          <Route
+                            path="recognition"
+                            element={<SentencesPage mode="pl-to-en" />}
+                          />
+                          <Route
+                            path="production"
+                            element={<SentencesPage mode="en-to-pl" />}
+                          />
+                        </Route>
                         <Route
                           path="/my-vocabulary"
                           element={<CustomVocabularyPage />}

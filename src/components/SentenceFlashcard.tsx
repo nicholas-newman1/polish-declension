@@ -1,0 +1,340 @@
+import { useState } from 'react';
+import { Rating, type Grade } from 'ts-fsrs';
+import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
+import { styled } from '../lib/styled';
+import { AnnotatedWord } from './AnnotatedWord';
+import type { Sentence, SentenceDirection, CEFRLevel } from '../types/sentences';
+import { alpha } from '../lib/theme';
+
+export interface RatingIntervals {
+  [Rating.Again]: string;
+  [Rating.Hard]: string;
+  [Rating.Good]: string;
+  [Rating.Easy]: string;
+}
+
+interface SentenceFlashcardProps {
+  sentence: Sentence;
+  direction: SentenceDirection;
+  practiceMode?: boolean;
+  intervals?: RatingIntervals;
+  onRate?: (rating: Grade) => void;
+  onNext?: () => void;
+}
+
+const CardWrapper = styled(Box)({
+  width: '100%',
+  maxWidth: 520,
+  margin: '0 auto',
+});
+
+const StyledCard = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(3),
+  minHeight: 420,
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: alpha(theme.palette.background.paper, 0.95),
+  backdropFilter: 'blur(8px)',
+  borderRadius: theme.spacing(2),
+  boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.4)}`,
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(4),
+    minHeight: 460,
+  },
+}));
+
+const DirectionLabel = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.disabled,
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+}));
+
+const LevelChip = styled(Chip)<{ $level: CEFRLevel }>(({ theme, $level }) => ({
+  backgroundColor: theme.palette.levels[$level],
+  color: theme.palette.common.white,
+  fontWeight: 600,
+  fontSize: '0.7rem',
+  height: 22,
+}));
+
+const TagChip = styled(Chip)(({ theme }) => ({
+  height: 22,
+  fontSize: '0.7rem',
+  backgroundColor: theme.palette.action.hover,
+  color: theme.palette.text.secondary,
+}));
+
+const SentenceText = styled(Typography)(({ theme }) => ({
+  fontSize: '1.35rem',
+  lineHeight: 1.6,
+  fontWeight: 400,
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1.15rem',
+  },
+}));
+
+const AnswerText = styled(Typography)(({ theme }) => ({
+  fontSize: '1.25rem',
+  lineHeight: 1.5,
+  fontWeight: 500,
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1.1rem',
+  },
+}));
+
+const RevealButton = styled(Button)(({ theme }) => ({
+  marginTop: 'auto',
+  backgroundColor: theme.palette.primary.main,
+  boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.3)}`,
+  '&:hover': {
+    backgroundColor: theme.palette.primary.dark,
+  },
+}));
+
+const NextButton = styled(Button)(({ theme }) => ({
+  marginTop: 'auto',
+  backgroundColor: theme.palette.text.primary,
+  '&:hover': {
+    backgroundColor: theme.palette.text.secondary,
+  },
+}));
+
+interface RatingButtonProps {
+  $ratingColor: 'primary' | 'warning' | 'success' | 'info';
+}
+
+const RatingButton = styled(Button)<RatingButtonProps>(
+  ({ theme, $ratingColor }) => ({
+    flexDirection: 'column',
+    padding: theme.spacing(1.5, 1),
+    borderRadius: theme.spacing(1),
+    backgroundColor: theme.palette[$ratingColor].main,
+    '&:hover': {
+      backgroundColor: theme.palette[$ratingColor].dark,
+    },
+    [theme.breakpoints.up('sm')]: {
+      padding: theme.spacing(2, 1),
+    },
+  })
+);
+
+const IntervalText = styled(Typography)({
+  opacity: 0.8,
+  fontFamily: '"JetBrains Mono", monospace',
+});
+
+function renderPolishSentenceWithTappableWords(sentence: Sentence) {
+  const polishText = sentence.polish;
+  const words = sentence.words;
+  const result: React.ReactNode[] = [];
+
+  let lastIndex = 0;
+  words.forEach((wordAnnotation, idx) => {
+    const wordIndex = polishText.indexOf(wordAnnotation.word, lastIndex);
+    if (wordIndex > lastIndex) {
+      result.push(polishText.slice(lastIndex, wordIndex));
+    }
+    result.push(<AnnotatedWord key={idx} annotation={wordAnnotation} />);
+    lastIndex = wordIndex + wordAnnotation.word.length;
+  });
+
+  if (lastIndex < polishText.length) {
+    result.push(polishText.slice(lastIndex));
+  }
+
+  return result;
+}
+
+function renderEnglishSentenceWithTappableWords(sentence: Sentence) {
+  const englishText = sentence.english;
+  const words = sentence.words;
+
+  const wordPattern = /[\w']+|[^\w\s]+|\s+/g;
+  const tokens = englishText.match(wordPattern) || [];
+
+  const annotationMap = new Map<
+    string,
+    { annotation: (typeof words)[0]; used: boolean }[]
+  >();
+  words.forEach((wordAnnotation) => {
+    const englishWords = wordAnnotation.english.toLowerCase().split(/[\s/]+/);
+    englishWords.forEach((engWord) => {
+      const normalized = engWord.replace(/[^\w']/g, '');
+      if (normalized) {
+        if (!annotationMap.has(normalized)) {
+          annotationMap.set(normalized, []);
+        }
+        annotationMap
+          .get(normalized)!
+          .push({ annotation: wordAnnotation, used: false });
+      }
+    });
+  });
+
+  return tokens.map((token, idx) => {
+    const normalized = token.toLowerCase().replace(/[^\w']/g, '');
+    const entries = annotationMap.get(normalized);
+    if (entries) {
+      const unusedEntry = entries.find((e) => !e.used);
+      if (unusedEntry) {
+        unusedEntry.used = true;
+        return (
+          <AnnotatedWord
+            key={idx}
+            annotation={unusedEntry.annotation}
+            displayWord={token}
+            mode="en-to-pl"
+          />
+        );
+      }
+    }
+    return <span key={idx}>{token}</span>;
+  });
+}
+
+export function SentenceFlashcard({
+  sentence,
+  direction,
+  practiceMode = false,
+  intervals,
+  onRate,
+  onNext,
+}: SentenceFlashcardProps) {
+  const [revealed, setRevealed] = useState(false);
+
+  const isPolishToEnglish = direction === 'pl-to-en';
+  const directionLabel = isPolishToEnglish
+    ? 'Polish → English'
+    : 'English → Polish';
+
+  const questionContent = isPolishToEnglish
+    ? renderPolishSentenceWithTappableWords(sentence)
+    : renderEnglishSentenceWithTappableWords(sentence);
+
+  const answerContent = isPolishToEnglish
+    ? sentence.english
+    : renderPolishSentenceWithTappableWords(sentence);
+
+  return (
+    <CardWrapper className="animate-fade-up">
+      <StyledCard>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 1.5,
+            }}
+          >
+            <DirectionLabel>{directionLabel}</DirectionLabel>
+            <LevelChip $level={sentence.level} label={sentence.level} />
+          </Box>
+
+          <SentenceText color="text.primary" sx={{ mb: 2 }}>
+            {questionContent}
+          </SentenceText>
+
+          {revealed && (
+            <Box className="animate-fade-up">
+              <Divider sx={{ my: { xs: 2, sm: 2.5 } }} />
+
+              <AnswerText color="text.primary" sx={{ mb: 2 }}>
+                {answerContent}
+              </AnswerText>
+
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{ flexWrap: 'wrap', gap: 0.5 }}
+              >
+                {sentence.tags.map((tag) => (
+                  <TagChip key={tag} label={tag} size="small" />
+                ))}
+              </Stack>
+            </Box>
+          )}
+        </Box>
+
+        {revealed ? (
+          practiceMode ? (
+            <NextButton
+              fullWidth
+              size="large"
+              variant="contained"
+              onClick={onNext}
+            >
+              Next Card →
+            </NextButton>
+          ) : (
+            <Stack direction="row" spacing={0.5} sx={{ mt: 'auto' }}>
+              <RatingButton
+                fullWidth
+                variant="contained"
+                $ratingColor="primary"
+                onClick={() => onRate?.(Rating.Again)}
+              >
+                <Typography variant="body2" fontWeight={600}>
+                  Again
+                </Typography>
+                <IntervalText variant="caption">
+                  {intervals?.[Rating.Again]}
+                </IntervalText>
+              </RatingButton>
+              <RatingButton
+                fullWidth
+                variant="contained"
+                $ratingColor="warning"
+                onClick={() => onRate?.(Rating.Hard)}
+              >
+                <Typography variant="body2" fontWeight={600}>
+                  Hard
+                </Typography>
+                <IntervalText variant="caption">
+                  {intervals?.[Rating.Hard]}
+                </IntervalText>
+              </RatingButton>
+              <RatingButton
+                fullWidth
+                variant="contained"
+                $ratingColor="success"
+                onClick={() => onRate?.(Rating.Good)}
+              >
+                <Typography variant="body2" fontWeight={600}>
+                  Good
+                </Typography>
+                <IntervalText variant="caption">
+                  {intervals?.[Rating.Good]}
+                </IntervalText>
+              </RatingButton>
+              <RatingButton
+                fullWidth
+                variant="contained"
+                $ratingColor="info"
+                onClick={() => onRate?.(Rating.Easy)}
+              >
+                <Typography variant="body2" fontWeight={600}>
+                  Easy
+                </Typography>
+                <IntervalText variant="caption">
+                  {intervals?.[Rating.Easy]}
+                </IntervalText>
+              </RatingButton>
+            </Stack>
+          )
+        ) : (
+          <RevealButton
+            fullWidth
+            size="large"
+            variant="contained"
+            onClick={() => setRevealed(true)}
+          >
+            Reveal Answer
+          </RevealButton>
+        )}
+      </StyledCard>
+    </CardWrapper>
+  );
+}
+

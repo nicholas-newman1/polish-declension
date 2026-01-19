@@ -21,6 +21,13 @@ import type {
   VocabularyDirection,
   CustomVocabularyWord,
 } from '../types/vocabulary';
+import type {
+  Sentence,
+  SentenceReviewDataStore,
+  SentenceSettings,
+  SentenceDirection,
+  SentenceDirectionSettings,
+} from '../types/sentences';
 import loadDeclensionReviewData from '../lib/storage/loadDeclensionReviewData';
 import loadDeclensionSettings from '../lib/storage/loadDeclensionSettings';
 import saveDeclensionReviewData from '../lib/storage/saveDeclensionReviewData';
@@ -29,18 +36,28 @@ import loadVocabularyReviewData from '../lib/storage/loadVocabularyReviewData';
 import loadVocabularySettings from '../lib/storage/loadVocabularySettings';
 import saveVocabularyReviewData from '../lib/storage/saveVocabularyReviewData';
 import saveVocabularySettings from '../lib/storage/saveVocabularySettings';
+import loadSentenceReviewData from '../lib/storage/loadSentenceReviewData';
+import loadSentenceSettings, {
+  DEFAULT_SENTENCE_SETTINGS,
+} from '../lib/storage/loadSentenceSettings';
+import saveSentenceReviewData from '../lib/storage/saveSentenceReviewData';
+import saveSentenceSettings from '../lib/storage/saveSentenceSettings';
 import { loadCustomVocabulary } from '../lib/storage/customVocabulary';
 import { loadCustomDeclension } from '../lib/storage/customDeclension';
 import clearDeclensionData from '../lib/storage/clearDeclensionData';
 import clearVocabularyData from '../lib/storage/clearVocabularyData';
+import clearSentenceData from '../lib/storage/clearSentenceData';
 import getOrCreateDeclensionCardReviewData from '../lib/storage/getOrCreateDeclensionCardReviewData';
 import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
+import getOrCreateSentenceCardReviewData from '../lib/storage/getOrCreateSentenceCardReviewData';
 import isDue from '../lib/fsrsUtils/isDue';
 import {
   getUserId,
   getDefaultDeclensionReviewStore,
   getDefaultVocabularyReviewStore,
+  getDefaultSentenceReviewStore,
   includesDeclensionCardId,
+  includesSentenceId,
 } from '../lib/storage/helpers';
 import { showSaveError } from '../lib/storage/errorHandler';
 import { DEFAULT_DECLENSION_SETTINGS } from '../constants';
@@ -53,6 +70,7 @@ const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
 export interface ReviewCounts {
   declension: number;
   vocabulary: number;
+  sentences: number;
 }
 
 export interface ReviewDataContextType {
@@ -88,6 +106,19 @@ export interface ReviewDataContextType {
   refreshVocabularyWords: () => Promise<void>;
   setCustomWords: (words: CustomVocabularyWord[]) => void;
   setSystemWords: (words: VocabularyWord[]) => void;
+
+  sentenceReviewStores: Record<SentenceDirection, SentenceReviewDataStore>;
+  sentenceSettings: SentenceSettings;
+  sentences: Sentence[];
+  updateSentenceReviewStore: (
+    direction: SentenceDirection,
+    store: SentenceReviewDataStore
+  ) => Promise<void>;
+  updateSentenceSettings: (
+    direction: SentenceDirection,
+    settings: SentenceDirectionSettings
+  ) => Promise<void>;
+  clearSentenceReviewData: (direction: SentenceDirection) => Promise<void>;
 
   counts: ReviewCounts;
 }
@@ -183,6 +214,50 @@ function computeVocabularyDueCount(
   return dueReviews + newCards;
 }
 
+function computeSentenceDueCount(
+  sentences: Sentence[],
+  reviewStore: SentenceReviewDataStore,
+  settings: SentenceDirectionSettings
+): number {
+  let dueReviews = 0;
+  let newCards = 0;
+  const remainingNewCardsToday =
+    settings.newCardsPerDay - reviewStore.newCardsToday.length;
+
+  const filteredSentences = sentences.filter((s) =>
+    settings.selectedLevels.includes(s.level)
+  );
+
+  for (const sentence of filteredSentences) {
+    const reviewData = getOrCreateSentenceCardReviewData(
+      sentence.id,
+      reviewStore
+    );
+    const state = reviewData.fsrsCard.state;
+    const isNew = state === 0;
+    const isLearning = state === 1 || state === 3;
+
+    if (isNew) {
+      if (
+        !includesSentenceId(reviewStore.newCardsToday, sentence.id) &&
+        newCards < remainingNewCardsToday
+      ) {
+        newCards++;
+      }
+    } else if (isLearning) {
+      if (!includesSentenceId(reviewStore.reviewedToday, sentence.id)) {
+        dueReviews++;
+      }
+    } else if (isDue(reviewData.fsrsCard)) {
+      if (!includesSentenceId(reviewStore.reviewedToday, sentence.id)) {
+        dueReviews++;
+      }
+    }
+  }
+
+  return dueReviews + newCards;
+}
+
 export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
@@ -218,10 +293,21 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     [customWords, systemWords]
   );
 
+  const [sentenceReviewStores, setSentenceReviewStores] = useState<
+    Record<SentenceDirection, SentenceReviewDataStore>
+  >({
+    'pl-to-en': getDefaultSentenceReviewStore(),
+    'en-to-pl': getDefaultSentenceReviewStore(),
+  });
+  const [sentenceSettings, setSentenceSettings] = useState<SentenceSettings>(
+    DEFAULT_SENTENCE_SETTINGS
+  );
+  const [sentences, setSentences] = useState<Sentence[]>([]);
+
   const counts = useMemo<ReviewCounts>(() => {
     const userId = getUserId();
     if (!userId) {
-      return { declension: 0, vocabulary: 0 };
+      return { declension: 0, vocabulary: 0, sentences: 0 };
     }
 
     const declensionCount = computeDeclensionDueCount(
@@ -241,9 +327,21 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       { ...vocabularySettings, direction: 'en-to-pl' }
     );
 
+    const sentencePlToEnCount = computeSentenceDueCount(
+      sentences,
+      sentenceReviewStores['pl-to-en'],
+      sentenceSettings['pl-to-en']
+    );
+    const sentenceEnToPlCount = computeSentenceDueCount(
+      sentences,
+      sentenceReviewStores['en-to-pl'],
+      sentenceSettings['en-to-pl']
+    );
+
     return {
       declension: declensionCount,
       vocabulary: plToEnCount + enToPlCount,
+      sentences: sentencePlToEnCount + sentenceEnToPlCount,
     };
   }, [
     declensionCards,
@@ -252,6 +350,9 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     vocabularyWords,
     vocabularyReviewStores,
     vocabularySettings,
+    sentences,
+    sentenceReviewStores,
+    sentenceSettings,
   ]);
 
   const loadAllData = useCallback(async () => {
@@ -267,18 +368,22 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadedDeclensionSettings,
       loadedDeclensionReviewData,
       loadedVocabularySettings,
+      loadedSentenceSettings,
       loadedCustomWords,
       loadedCustomDeclensionCards,
       vocabularySnapshot,
       declensionCardsSnapshot,
+      sentencesSnapshot,
     ] = await Promise.all([
       loadDeclensionSettings(),
       loadDeclensionReviewData(),
       loadVocabularySettings(),
+      loadSentenceSettings(),
       loadCustomVocabulary(),
       loadCustomDeclension(),
       getDocs(collection(db, 'vocabulary')),
       getDocs(collection(db, 'declensionCards')),
+      getDocs(collection(db, 'sentences')),
     ]);
 
     const loadedSystemWords = vocabularySnapshot.docs.map(
@@ -289,9 +394,20 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       (doc) => doc.data() as DeclensionCard
     );
 
-    const [plToEnStore, enToPlStore] = await Promise.all([
+    const loadedSentences = sentencesSnapshot.docs.map(
+      (doc) => doc.data() as Sentence
+    );
+
+    const [
+      plToEnStore,
+      enToPlStore,
+      sentencePlToEnStore,
+      sentenceEnToPlStore,
+    ] = await Promise.all([
       loadVocabularyReviewData('pl-to-en'),
       loadVocabularyReviewData('en-to-pl'),
+      loadSentenceReviewData('pl-to-en'),
+      loadSentenceReviewData('en-to-pl'),
     ]);
 
     setCustomDeclensionCards(loadedCustomDeclensionCards);
@@ -304,6 +420,12 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     setVocabularyReviewStores({
       'pl-to-en': plToEnStore,
       'en-to-pl': enToPlStore,
+    });
+    setSentenceSettings(loadedSentenceSettings);
+    setSentences(loadedSentences);
+    setSentenceReviewStores({
+      'pl-to-en': sentencePlToEnStore,
+      'en-to-pl': sentenceEnToPlStore,
     });
 
     setLoading(false);
@@ -407,6 +529,52 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     setSystemWords(loadedSystemWords);
   }, []);
 
+  const updateSentenceReviewStore = useCallback(
+    async (direction: SentenceDirection, store: SentenceReviewDataStore) => {
+      setSentenceReviewStores((prev) => ({
+        ...prev,
+        [direction]: store,
+      }));
+      try {
+        await saveSentenceReviewData(store, direction);
+      } catch (e) {
+        showSaveError(e);
+      }
+    },
+    []
+  );
+
+  const updateSentenceSettingsFn = useCallback(
+    async (direction: SentenceDirection, settings: SentenceDirectionSettings) => {
+      setSentenceSettings((prev) => ({
+        ...prev,
+        [direction]: settings,
+      }));
+      try {
+        await saveSentenceSettings(settings, direction);
+      } catch (e) {
+        showSaveError(e);
+      }
+    },
+    []
+  );
+
+  const clearSentenceReviewDataFn = useCallback(
+    async (direction: SentenceDirection) => {
+      try {
+        await clearSentenceData(direction);
+        const freshStore = getDefaultSentenceReviewStore();
+        setSentenceReviewStores((prev) => ({
+          ...prev,
+          [direction]: freshStore,
+        }));
+      } catch (e) {
+        showSaveError(e);
+      }
+    },
+    []
+  );
+
   return (
     <ReviewDataContext.Provider
       value={{
@@ -432,6 +600,12 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
         refreshVocabularyWords,
         setCustomWords,
         setSystemWords,
+        sentenceReviewStores,
+        sentenceSettings,
+        sentences,
+        updateSentenceReviewStore,
+        updateSentenceSettings: updateSentenceSettingsFn,
+        clearSentenceReviewData: clearSentenceReviewDataFn,
         counts,
       }}
     >

@@ -5,6 +5,10 @@ import type {
   VocabularyDirection,
   VocabularyWordId,
 } from '../../types/vocabulary';
+import type {
+  SentenceReviewDataStore,
+  SentenceDirection,
+} from '../../types/sentences';
 
 export function getTodayString(): string {
   return new Date().toISOString().split('T')[0];
@@ -49,5 +53,24 @@ export function getVocabularyDocPath(direction: VocabularyDirection): string {
   return direction === 'pl-to-en'
     ? 'vocabularyReviewData-pl-en'
     : 'vocabularyReviewData-en-pl';
+}
+
+export function includesSentenceId(array: string[], id: string): boolean {
+  return array.includes(id);
+}
+
+export function getDefaultSentenceReviewStore(): SentenceReviewDataStore {
+  return {
+    cards: {},
+    reviewedToday: [],
+    newCardsToday: [],
+    lastReviewDate: getTodayString(),
+  };
+}
+
+export function getSentenceDocPath(direction: SentenceDirection): string {
+  return direction === 'pl-to-en'
+    ? 'sentenceReviewData-pl-en'
+    : 'sentenceReviewData-en-pl';
 }
 

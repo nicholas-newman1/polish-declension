@@ -3,9 +3,15 @@ import { State } from 'ts-fsrs';
 import { useReviewData } from './useReviewData';
 import getOrCreateDeclensionCardReviewData from '../lib/storage/getOrCreateDeclensionCardReviewData';
 import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
+import getOrCreateSentenceCardReviewData from '../lib/storage/getOrCreateSentenceCardReviewData';
 import isDue from '../lib/fsrsUtils/isDue';
-import { includesDeclensionCardId } from '../lib/storage/helpers';
+import {
+  includesDeclensionCardId,
+  includesSentenceId,
+} from '../lib/storage/helpers';
 import type { VocabularyDirection } from '../types/vocabulary';
+import type { SentenceDirection, CEFRLevel } from '../types/sentences';
+import { ALL_LEVELS } from '../types/sentences';
 
 export interface ProgressStats {
   total: number;
@@ -14,10 +20,17 @@ export interface ProgressStats {
   due: number;
 }
 
+export interface SentenceDirectionStats {
+  total: ProgressStats;
+  byLevel: Record<CEFRLevel, ProgressStats>;
+}
+
 export interface AllProgressStats {
   declension: ProgressStats;
   vocabulary: ProgressStats;
   vocabularyByDirection: Record<VocabularyDirection, ProgressStats>;
+  sentences: ProgressStats;
+  sentencesByDirection: Record<SentenceDirection, SentenceDirectionStats>;
 }
 
 export function useProgressStats(): AllProgressStats {
@@ -28,6 +41,9 @@ export function useProgressStats(): AllProgressStats {
     vocabularyWords,
     vocabularyReviewStores,
     vocabularySettings,
+    sentences,
+    sentenceReviewStores,
+    sentenceSettings,
   } = useReviewData();
 
   return useMemo(() => {
@@ -169,6 +185,111 @@ export function useProgressStats(): AllProgressStats {
       }
     }
 
+    const computeSentenceStats = (
+      direction: SentenceDirection
+    ): SentenceDirectionStats => {
+      const store = sentenceReviewStores[direction];
+      const directionSettings = sentenceSettings[direction];
+      let totalLearned = 0;
+      let totalMastered = 0;
+      let totalDue = 0;
+      const remainingNew =
+        directionSettings.newCardsPerDay - store.newCardsToday.length;
+      let newForSession = 0;
+
+      const byLevel = {} as Record<CEFRLevel, ProgressStats>;
+      for (const level of ALL_LEVELS) {
+        byLevel[level] = { total: 0, learned: 0, mastered: 0, due: 0 };
+      }
+
+      for (const sentence of sentences) {
+        const level = sentence.level;
+        byLevel[level].total++;
+
+        const reviewData = getOrCreateSentenceCardReviewData(
+          sentence.id,
+          store
+        );
+        const cardState = reviewData.fsrsCard.state;
+
+        if (cardState !== State.New) {
+          totalLearned++;
+          byLevel[level].learned++;
+        }
+        if (cardState === State.Review) {
+          totalMastered++;
+          byLevel[level].mastered++;
+        }
+
+        const isNew = cardState === State.New;
+        const isLearning =
+          cardState === State.Learning || cardState === State.Relearning;
+
+        if (isNew) {
+          if (
+            !includesSentenceId(store.newCardsToday, sentence.id) &&
+            newForSession < remainingNew
+          ) {
+            newForSession++;
+            totalDue++;
+            byLevel[level].due++;
+          }
+        } else if (isLearning) {
+          if (!includesSentenceId(store.reviewedToday, sentence.id)) {
+            totalDue++;
+            byLevel[level].due++;
+          }
+        } else if (isDue(reviewData.fsrsCard)) {
+          if (!includesSentenceId(store.reviewedToday, sentence.id)) {
+            totalDue++;
+            byLevel[level].due++;
+          }
+        }
+      }
+
+      return {
+        total: {
+          total: sentences.length,
+          learned: totalLearned,
+          mastered: totalMastered,
+          due: totalDue,
+        },
+        byLevel,
+      };
+    };
+
+    const sentencePlToEn = computeSentenceStats('pl-to-en');
+    const sentenceEnToPl = computeSentenceStats('en-to-pl');
+
+    let sentenceCombinedLearned = 0;
+    let sentenceCombinedMastered = 0;
+    const sentencePlStore = sentenceReviewStores['pl-to-en'];
+    const sentenceEnStore = sentenceReviewStores['en-to-pl'];
+
+    for (const sentence of sentences) {
+      const plData = getOrCreateSentenceCardReviewData(
+        sentence.id,
+        sentencePlStore
+      );
+      const enData = getOrCreateSentenceCardReviewData(
+        sentence.id,
+        sentenceEnStore
+      );
+
+      if (
+        plData.fsrsCard.state !== State.New ||
+        enData.fsrsCard.state !== State.New
+      ) {
+        sentenceCombinedLearned++;
+      }
+      if (
+        plData.fsrsCard.state === State.Review &&
+        enData.fsrsCard.state === State.Review
+      ) {
+        sentenceCombinedMastered++;
+      }
+    }
+
     return {
       declension: {
         total: declensionCards.length,
@@ -186,6 +307,16 @@ export function useProgressStats(): AllProgressStats {
         'pl-to-en': plToEn,
         'en-to-pl': enToPl,
       },
+      sentences: {
+        total: sentences.length,
+        learned: sentenceCombinedLearned,
+        mastered: sentenceCombinedMastered,
+        due: sentencePlToEn.total.due + sentenceEnToPl.total.due,
+      },
+      sentencesByDirection: {
+        'pl-to-en': sentencePlToEn,
+        'en-to-pl': sentenceEnToPl,
+      },
     };
   }, [
     declensionCards,
@@ -194,5 +325,8 @@ export function useProgressStats(): AllProgressStats {
     vocabularyWords,
     vocabularyReviewStores,
     vocabularySettings,
+    sentences,
+    sentenceReviewStores,
+    sentenceSettings,
   ]);
 }
