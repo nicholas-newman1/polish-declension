@@ -1,4 +1,12 @@
-import { Box, Button, Card, Chip, Divider, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+} from '@mui/material';
 import type { User } from 'firebase/auth';
 import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
@@ -51,6 +59,7 @@ interface SentenceSettingsPanelProps {
   onLevelsChange: (levels: CEFRLevel[]) => void;
   onResetAllData: () => void;
   resetButtonLabel?: string;
+  practiceMode?: boolean;
 }
 
 export function SentenceSettingsPanel({
@@ -61,6 +70,7 @@ export function SentenceSettingsPanel({
   onLevelsChange,
   onResetAllData,
   resetButtonLabel = 'Reset All Progress',
+  practiceMode = false,
 }: SentenceSettingsPanelProps) {
   const handleToggleLevel = (level: CEFRLevel) => {
     if (selectedLevels.includes(level)) {
@@ -74,22 +84,28 @@ export function SentenceSettingsPanel({
   return (
     <SettingsCard className="animate-fade-up">
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Settings
+        {practiceMode ? 'Filters' : 'Settings'}
       </Typography>
 
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          New cards per day
-        </Typography>
-        <NumberInput value={newCardsPerDay} onChange={onNewCardsChange} min={1} />
-      </Stack>
+      {!practiceMode && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ mb: 2 }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            New cards per day
+          </Typography>
+          <NumberInput
+            value={newCardsPerDay}
+            onChange={onNewCardsChange}
+            min={1}
+          />
+        </Stack>
+      )}
 
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: practiceMode ? 0 : 2 }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
           Difficulty levels
         </Typography>
@@ -106,7 +122,7 @@ export function SentenceSettingsPanel({
         </Stack>
       </Box>
 
-      {user && (
+      {!practiceMode && user && (
         <>
           <Divider sx={{ my: 2 }} />
           <ResetButton fullWidth variant="contained" onClick={onResetAllData}>
@@ -117,4 +133,3 @@ export function SentenceSettingsPanel({
     </SettingsCard>
   );
 }
-

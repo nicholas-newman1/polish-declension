@@ -254,7 +254,13 @@ export function SentencesPage({ mode }: SentencesPageProps) {
     const newSettings = { ...directionSettings, selectedLevels };
     await updateSentenceSettings(currentDirection, newSettings);
     const filtered = sentences.filter((s) => selectedLevels.includes(s.level));
-    buildSession(filtered, reviewStore, newSettings);
+    
+    if (practiceMode) {
+      setPracticeCards(shuffleArray([...filtered]));
+      setPracticeIndex(0);
+    } else {
+      buildSession(filtered, reviewStore, newSettings);
+    }
   };
 
   const handleResetAllData = async () => {
@@ -326,7 +332,7 @@ export function SentencesPage({ mode }: SentencesPageProps) {
         />
       </ControlsRow>
 
-      {showSettings && !practiceMode && (
+      {showSettings && (
         <SentenceSettingsPanel
           newCardsPerDay={directionSettings.newCardsPerDay}
           selectedLevels={directionSettings.selectedLevels}
@@ -337,6 +343,7 @@ export function SentencesPage({ mode }: SentencesPageProps) {
           resetButtonLabel={`Reset ${
             currentDirection === 'pl-to-en' ? 'PL→EN' : 'EN→PL'
           } Progress`}
+          practiceMode={practiceMode}
         />
       )}
 
