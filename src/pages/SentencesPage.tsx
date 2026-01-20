@@ -14,6 +14,7 @@ import { FinishedState } from '../components/FinishedState';
 import { EmptyState } from '../components/EmptyState';
 import { ReviewCountBadge } from '../components/ReviewCountBadge';
 import { SentenceSettingsPanel } from '../components/SentenceSettingsPanel';
+import { EditSentenceModal } from '../components/EditSentenceModal';
 import type {
   Sentence,
   SentenceReviewDataStore,
@@ -31,6 +32,9 @@ import type { SentenceSessionCard } from '../lib/sentenceScheduler/types';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useReviewData } from '../hooks/useReviewData';
 import { useProgressStats } from '../hooks/useProgressStats';
+import { useOptimistic } from '../hooks/useOptimistic';
+import { useSnackbar } from '../hooks/useSnackbar';
+import { updateSentence, deleteSentence } from '../lib/storage/systemSentences';
 import shuffleArray from '../lib/utils/shuffleArray';
 import { includesSentenceId } from '../lib/storage/helpers';
 
@@ -54,19 +58,30 @@ interface SentencesPageProps {
 
 export function SentencesPage({ mode }: SentencesPageProps) {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, isAdmin } = useAuthContext();
+  const { showSnackbar } = useSnackbar();
   const {
     loading: contextLoading,
     sentenceReviewStores,
     sentenceSettings: settings,
-    sentences,
+    sentences: contextSentences,
     updateSentenceReviewStore,
     updateSentenceSettings,
     clearSentenceReviewData,
+    setSentences: setContextSentences,
   } = useReviewData();
+
+  const [sentences, applyOptimisticSentences] = useOptimistic(
+    contextSentences,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
+  );
 
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingSentence, setEditingSentence] = useState<Sentence | null>(null);
 
   const [learningQueue, setLearningQueue] = useState<SentenceSessionCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,8 +103,11 @@ export function SentencesPage({ mode }: SentencesPageProps) {
   const reviewStore = sentenceReviewStores[currentDirection];
 
   const filteredSentences = useMemo(
-    () => sentences.filter((s) => directionSettings.selectedLevels.includes(s.level)),
-    [sentences, directionSettings.selectedLevels]
+    () =>
+      contextSentences.filter((s) =>
+        directionSettings.selectedLevels.includes(s.level)
+      ),
+    [contextSentences, directionSettings.selectedLevels]
   );
 
   const buildSession = useCallback(
@@ -121,7 +139,14 @@ export function SentencesPage({ mode }: SentencesPageProps) {
         buildSession(filteredSentences, reviewStore, directionSettings);
       });
     }
-  }, [contextLoading, buildSession, filteredSentences, reviewStore, directionSettings, currentDirection]);
+  }, [
+    contextLoading,
+    buildSession,
+    filteredSentences,
+    reviewStore,
+    directionSettings,
+    currentDirection,
+  ]);
 
   const progressStats = useProgressStats();
   const modeStats = progressStats.sentencesByDirection;
@@ -141,12 +166,21 @@ export function SentencesPage({ mode }: SentencesPageProps) {
       directionRef.current = mode;
       const modeSettings = settings[mode];
       const modeReviewStore = sentenceReviewStores[mode];
-      const modeSentences = sentences.filter((s) =>
+      const modeSentences = contextSentences.filter((s) =>
         modeSettings.selectedLevels.includes(s.level)
       );
-      buildSession(modeSentences, modeReviewStore, modeSettings);
+      queueMicrotask(() => {
+        buildSession(modeSentences, modeReviewStore, modeSettings);
+      });
     }
-  }, [mode, contextLoading, settings, sentenceReviewStores, sentences, buildSession]);
+  }, [
+    mode,
+    contextLoading,
+    settings,
+    sentenceReviewStores,
+    contextSentences,
+    buildSession,
+  ]);
 
   const startPracticeAhead = useCallback(() => {
     const aheadCards = getSentencePracticeAheadCards(
@@ -244,7 +278,7 @@ export function SentencesPage({ mode }: SentencesPageProps) {
   const handleNewCardsChange = async (newCardsPerDay: number) => {
     const newSettings = { ...directionSettings, newCardsPerDay };
     await updateSentenceSettings(currentDirection, newSettings);
-    const filtered = sentences.filter((s) =>
+    const filtered = contextSentences.filter((s) =>
       newSettings.selectedLevels.includes(s.level)
     );
     buildSession(filtered, reviewStore, newSettings);
@@ -253,8 +287,10 @@ export function SentencesPage({ mode }: SentencesPageProps) {
   const handleLevelsChange = async (selectedLevels: CEFRLevel[]) => {
     const newSettings = { ...directionSettings, selectedLevels };
     await updateSentenceSettings(currentDirection, newSettings);
-    const filtered = sentences.filter((s) => selectedLevels.includes(s.level));
-    
+    const filtered = contextSentences.filter((s) =>
+      selectedLevels.includes(s.level)
+    );
+
     if (practiceMode) {
       setPracticeCards(shuffleArray([...filtered]));
       setPracticeIndex(0);
@@ -275,6 +311,87 @@ export function SentencesPage({ mode }: SentencesPageProps) {
       setShowSettings(false);
     }
   };
+
+  const handleOpenEditModal = useCallback(() => {
+    if (!currentSessionCard) return;
+    setEditingSentence(currentSessionCard.sentence);
+    setShowEditModal(true);
+  }, [currentSessionCard]);
+
+  const updateSentenceInQueues = (
+    sentenceId: string,
+    updatedSentence: Sentence
+  ) => {
+    setSessionQueue((prev) =>
+      prev.map((item) =>
+        item.sentence.id === sentenceId
+          ? { ...item, sentence: updatedSentence }
+          : item
+      )
+    );
+    setLearningQueue((prev) =>
+      prev.map((item) =>
+        item.sentence.id === sentenceId
+          ? { ...item, sentence: updatedSentence }
+          : item
+      )
+    );
+    setPracticeCards((prev) =>
+      prev.map((s) => (s.id === sentenceId ? updatedSentence : s))
+    );
+  };
+
+  const removeSentenceFromQueues = (sentenceId: string) => {
+    setSessionQueue((prev) =>
+      prev.filter((item) => item.sentence.id !== sentenceId)
+    );
+    setLearningQueue((prev) =>
+      prev.filter((item) => item.sentence.id !== sentenceId)
+    );
+    setPracticeCards((prev) => prev.filter((s) => s.id !== sentenceId));
+  };
+
+  const handleSaveSentence = useCallback(
+    (sentenceData: Omit<Sentence, 'id'>) => {
+      if (!editingSentence) return;
+
+      const updatedSentence: Sentence = {
+        ...editingSentence,
+        ...sentenceData,
+      };
+
+      const newSentences = sentences.map((s) =>
+        s.id === editingSentence.id ? updatedSentence : s
+      );
+
+      updateSentenceInQueues(editingSentence.id, updatedSentence);
+
+      applyOptimisticSentences(newSentences, async () => {
+        await updateSentence(editingSentence.id, sentenceData);
+        setContextSentences(newSentences);
+      });
+    },
+    [editingSentence, sentences, applyOptimisticSentences, setContextSentences]
+  );
+
+  const handleDeleteSentence = useCallback(() => {
+    if (!currentSessionCard) return;
+
+    const sentenceToDelete = currentSessionCard.sentence;
+    const newSentences = sentences.filter((s) => s.id !== sentenceToDelete.id);
+
+    removeSentenceFromQueues(sentenceToDelete.id);
+
+    applyOptimisticSentences(newSentences, async () => {
+      await deleteSentence(sentenceToDelete.id);
+      setContextSentences(newSentences);
+    });
+  }, [
+    currentSessionCard,
+    sentences,
+    applyOptimisticSentences,
+    setContextSentences,
+  ]);
 
   const intervals: RatingIntervals = useMemo(() => {
     if (!currentSessionCard) {
@@ -406,12 +523,25 @@ export function SentencesPage({ mode }: SentencesPageProps) {
                 sentence={currentSessionCard.sentence}
                 direction={currentDirection}
                 intervals={intervals}
+                canEdit={isAdmin}
                 onRate={handleRate}
+                onEdit={handleOpenEditModal}
+                onDelete={handleDeleteSentence}
               />
             ) : null}
           </>
         )}
       </MainContent>
+
+      <EditSentenceModal
+        open={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingSentence(null);
+        }}
+        onSave={handleSaveSentence}
+        sentence={editingSentence}
+      />
     </>
   );
 }

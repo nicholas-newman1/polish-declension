@@ -119,6 +119,7 @@ export interface ReviewDataContextType {
     settings: SentenceDirectionSettings
   ) => Promise<void>;
   clearSentenceReviewData: (direction: SentenceDirection) => Promise<void>;
+  setSentences: (sentences: Sentence[]) => void;
 
   counts: ReviewCounts;
 }
@@ -606,6 +607,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
         updateSentenceReviewStore,
         updateSentenceSettings: updateSentenceSettingsFn,
         clearSentenceReviewData: clearSentenceReviewDataFn,
+        setSentences,
         counts,
       }}
     >

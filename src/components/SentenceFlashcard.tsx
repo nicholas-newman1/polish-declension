@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Rating, type Grade } from 'ts-fsrs';
-import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Divider, IconButton, Stack, Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '../lib/styled';
 import { AnnotatedWord } from './AnnotatedWord';
 import type { Sentence, SentenceDirection, CEFRLevel } from '../types/sentences';
@@ -18,8 +20,11 @@ interface SentenceFlashcardProps {
   direction: SentenceDirection;
   practiceMode?: boolean;
   intervals?: RatingIntervals;
+  canEdit?: boolean;
   onRate?: (rating: Grade) => void;
   onNext?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const CardWrapper = styled(Box)({
@@ -124,6 +129,35 @@ const IntervalText = styled(Typography)({
   fontFamily: '"JetBrains Mono", monospace',
 });
 
+const CardHeader = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'flex-start',
+});
+
+const ActionButtons = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(0.5),
+  marginTop: theme.spacing(-1),
+  marginRight: theme.spacing(-1),
+}));
+
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  color: theme.palette.text.disabled,
+  padding: theme.spacing(0.75),
+  '&:hover': {
+    color: theme.palette.text.secondary,
+    backgroundColor: alpha(theme.palette.text.primary, 0.05),
+  },
+}));
+
+const DeleteButton = styled(ActionButton)(({ theme }) => ({
+  '&:hover': {
+    color: theme.palette.error.main,
+    backgroundColor: alpha(theme.palette.error.main, 0.1),
+  },
+}));
+
 function renderPolishSentenceWithTappableWords(sentence: Sentence) {
   const polishText = sentence.polish;
   const words = sentence.words;
@@ -198,8 +232,11 @@ export function SentenceFlashcard({
   direction,
   practiceMode = false,
   intervals,
+  canEdit = false,
   onRate,
   onNext,
+  onEdit,
+  onDelete,
 }: SentenceFlashcardProps) {
   const [revealed, setRevealed] = useState(false);
 
@@ -216,10 +253,28 @@ export function SentenceFlashcard({
     ? sentence.english
     : renderPolishSentenceWithTappableWords(sentence);
 
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this sentence?')) {
+      onDelete?.();
+    }
+  };
+
   return (
     <CardWrapper className="animate-fade-up">
       <StyledCard>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {canEdit && (
+            <CardHeader>
+              <ActionButtons>
+                <ActionButton onClick={onEdit} size="small" aria-label="edit">
+                  <EditIcon fontSize="small" />
+                </ActionButton>
+                <DeleteButton onClick={handleDelete} size="small" aria-label="delete">
+                  <DeleteIcon fontSize="small" />
+                </DeleteButton>
+              </ActionButtons>
+            </CardHeader>
+          )}
           <Box
             sx={{
               display: 'flex',
