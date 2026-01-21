@@ -3,16 +3,19 @@ import {
   Badge,
   Box,
   Button,
+  Chip,
   Collapse,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  type SelectChangeEvent,
   Stack,
 } from '@mui/material';
 import { styled } from '../lib/styled';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { AddButton } from './AddButton';
+import { ClearButton } from './ClearButton';
 import { PracticeModeButton } from './PracticeModeButton';
 import { SettingsButton } from './SettingsButton';
 import type { Case, Gender, Number } from '../types';
@@ -34,29 +37,31 @@ interface FilterButtonProps {
   $active: boolean;
 }
 
-const FilterButton = styled(Button)<FilterButtonProps>(({ theme, $active }) => ({
-  minWidth: 100,
-  ...($active
-    ? {
-        backgroundColor: theme.palette.success.main,
-        '&:hover': { backgroundColor: theme.palette.success.dark },
-      }
-    : {
-        borderColor: theme.palette.divider,
-        color: theme.palette.text.secondary,
-        backgroundColor: theme.palette.background.paper,
-        '&:hover': { backgroundColor: theme.palette.action.hover },
-      }),
-}));
+const FilterButton = styled(Button)<FilterButtonProps>(
+  ({ theme, $active }) => ({
+    minWidth: 100,
+    ...($active
+      ? {
+          backgroundColor: theme.palette.success.main,
+          '&:hover': { backgroundColor: theme.palette.success.dark },
+        }
+      : {
+          borderColor: theme.palette.divider,
+          color: theme.palette.text.secondary,
+          backgroundColor: theme.palette.background.paper,
+          '&:hover': { backgroundColor: theme.palette.action.hover },
+        }),
+  })
+);
 
 interface DeclensionFilterControlsProps {
-  caseFilter: Case | 'All';
-  genderFilter: Gender | 'All';
+  caseFilter: Case[];
+  genderFilter: Gender[];
   numberFilter: Number | 'All';
   practiceMode: boolean;
   showSettings: boolean;
-  onCaseChange: (value: Case | 'All') => void;
-  onGenderChange: (value: Gender | 'All') => void;
+  onCaseChange: (value: Case[]) => void;
+  onGenderChange: (value: Gender[]) => void;
   onNumberChange: (value: Number | 'All') => void;
   onTogglePractice: () => void;
   onToggleSettings: () => void;
@@ -78,9 +83,24 @@ export function DeclensionFilterControls({
 }: DeclensionFilterControlsProps) {
   const [showFilters, setShowFilters] = useState(false);
 
-  const activeFilterCount = [caseFilter, genderFilter, numberFilter].filter(
-    (f) => f !== 'All'
-  ).length;
+  const activeFilterCount =
+    (caseFilter.length > 0 ? 1 : 0) +
+    (genderFilter.length > 0 ? 1 : 0) +
+    (numberFilter !== 'All' ? 1 : 0);
+
+  const handleCaseSelectChange = (event: SelectChangeEvent<Case[]>) => {
+    const value = event.target.value;
+    onCaseChange(
+      typeof value === 'string' ? (value.split(',') as Case[]) : value
+    );
+  };
+
+  const handleGenderSelectChange = (event: SelectChangeEvent<Gender[]>) => {
+    const value = event.target.value;
+    onGenderChange(
+      typeof value === 'string' ? (value.split(',') as Gender[]) : value
+    );
+  };
 
   return (
     <Box sx={{ mb: { xs: 2, sm: 3 } }}>
@@ -113,34 +133,56 @@ export function DeclensionFilterControls({
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
           <FilterFormControl size="small">
             <InputLabel>Case</InputLabel>
-            <FilterSelect
+            <Select<Case[]>
+              multiple
               value={caseFilter}
               label="Case"
-              onChange={(e) => onCaseChange(e.target.value as Case | 'All')}
+              onChange={handleCaseSelectChange}
+              renderValue={() => 'Case'}
+              sx={{ backgroundColor: 'background.paper' }}
             >
-              <MenuItem value="All">All Cases</MenuItem>
               {CASES.map((c) => (
-                <MenuItem key={c} value={c}>
+                <MenuItem
+                  key={c}
+                  value={c}
+                  sx={{
+                    fontWeight: caseFilter.includes(c) ? 600 : 400,
+                    backgroundColor: caseFilter.includes(c)
+                      ? 'action.selected'
+                      : 'transparent',
+                  }}
+                >
                   {c}
                 </MenuItem>
               ))}
-            </FilterSelect>
+            </Select>
           </FilterFormControl>
 
           <FilterFormControl size="small">
             <InputLabel>Gender</InputLabel>
-            <FilterSelect
+            <Select<Gender[]>
+              multiple
               value={genderFilter}
               label="Gender"
-              onChange={(e) => onGenderChange(e.target.value as Gender | 'All')}
+              onChange={handleGenderSelectChange}
+              renderValue={() => 'Gender'}
+              sx={{ backgroundColor: 'background.paper' }}
             >
-              <MenuItem value="All">All Genders</MenuItem>
               {GENDERS.map((g) => (
-                <MenuItem key={g} value={g}>
+                <MenuItem
+                  key={g}
+                  value={g}
+                  sx={{
+                    fontWeight: genderFilter.includes(g) ? 600 : 400,
+                    backgroundColor: genderFilter.includes(g)
+                      ? 'action.selected'
+                      : 'transparent',
+                  }}
+                >
                   {g}
                 </MenuItem>
               ))}
-            </FilterSelect>
+            </Select>
           </FilterFormControl>
 
           <FilterFormControl size="small" sx={{ minWidth: 130 }}>
@@ -158,9 +200,58 @@ export function DeclensionFilterControls({
               ))}
             </FilterSelect>
           </FilterFormControl>
+
+          {activeFilterCount > 0 && (
+            <ClearButton
+              onClick={() => {
+                onCaseChange([]);
+                onGenderChange([]);
+                onNumberChange('All');
+              }}
+            />
+          )}
         </Box>
+
+        {(caseFilter.length > 0 ||
+          genderFilter.length > 0 ||
+          numberFilter !== 'All') && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1.5 }}>
+            {caseFilter.map((c) => (
+              <Chip
+                key={c}
+                label={c}
+                size="small"
+                onClick={() => onCaseChange(caseFilter.filter((x) => x !== c))}
+                onDelete={() => onCaseChange(caseFilter.filter((x) => x !== c))}
+                sx={{ cursor: 'pointer' }}
+              />
+            ))}
+            {genderFilter.map((g) => (
+              <Chip
+                key={g}
+                label={g}
+                size="small"
+                onClick={() =>
+                  onGenderChange(genderFilter.filter((x) => x !== g))
+                }
+                onDelete={() =>
+                  onGenderChange(genderFilter.filter((x) => x !== g))
+                }
+                sx={{ cursor: 'pointer' }}
+              />
+            ))}
+            {numberFilter !== 'All' && (
+              <Chip
+                label={numberFilter}
+                size="small"
+                onClick={() => onNumberChange('All')}
+                onDelete={() => onNumberChange('All')}
+                sx={{ cursor: 'pointer' }}
+              />
+            )}
+          </Box>
+        )}
       </Collapse>
     </Box>
   );
 }
-

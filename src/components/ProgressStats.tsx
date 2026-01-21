@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { styled } from '../lib/styled';
 import { alpha } from '../lib/theme';
 
@@ -9,6 +9,7 @@ interface ProgressStatsProps {
   total: number;
   color: string;
   layout?: Layout;
+  loading?: boolean;
 }
 
 const StatsContainer = styled(Box)<{ $layout: Layout }>(
@@ -77,6 +78,7 @@ export function ProgressStats({
   total,
   color,
   layout = 'inline',
+  loading,
 }: ProgressStatsProps) {
   const progress = total > 0 ? (learned / total) * 100 : 0;
 
@@ -84,25 +86,44 @@ export function ProgressStats({
     <StatsContainer $layout={layout}>
       <StatsRow $layout={layout}>
         <StatItem $layout={layout}>
-          <StatValue $layout={layout} color="text.primary">
-            {learned}
-          </StatValue>
+          {loading ? (
+            <Skeleton
+              variant="text"
+              width={24}
+              height={layout === 'stacked' ? 24 : 20}
+            />
+          ) : (
+            <StatValue $layout={layout} color="text.primary">
+              {learned}
+            </StatValue>
+          )}
           <StatLabel $layout={layout}>Learned</StatLabel>
         </StatItem>
         <Typography color="text.disabled" sx={{ fontSize: '0.75rem' }}>
           /
         </Typography>
         <StatItem $layout={layout}>
-          <StatValue $layout={layout} color="text.secondary">
-            {total}
-          </StatValue>
+          {loading ? (
+            <Skeleton
+              variant="text"
+              width={24}
+              height={layout === 'stacked' ? 24 : 20}
+            />
+          ) : (
+            <StatValue $layout={layout} color="text.secondary">
+              {total}
+            </StatValue>
+          )}
           <StatLabel $layout={layout}>Total</StatLabel>
         </StatItem>
       </StatsRow>
       <ProgressBar $layout={layout}>
-        <ProgressFill $progress={progress} $color={color} />
+        {loading ? (
+          <Skeleton variant="rectangular" width="100%" height="100%" />
+        ) : (
+          <ProgressFill $progress={progress} $color={color} />
+        )}
       </ProgressBar>
     </StatsContainer>
   );
 }
-

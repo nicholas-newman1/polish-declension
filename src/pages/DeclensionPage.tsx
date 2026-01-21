@@ -94,8 +94,8 @@ export function DeclensionPage() {
   const [editingCard, setEditingCard] = useState<DeclensionCard | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
 
-  const [caseFilter, setCaseFilter] = useState<Case | 'All'>('All');
-  const [genderFilter, setGenderFilter] = useState<Gender | 'All'>('All');
+  const [caseFilter, setCaseFilter] = useState<Case[]>([]);
+  const [genderFilter, setGenderFilter] = useState<Gender[]>([]);
   const [numberFilter, setNumberFilter] = useState<Number | 'All'>('All');
 
   const [learningQueue, setLearningQueue] = useState<DeclensionSessionCard[]>(
@@ -116,8 +116,8 @@ export function DeclensionPage() {
 
   const filteredCards = useMemo(() => {
     return allDeclensionCards.filter((card) => {
-      if (caseFilter !== 'All' && card.case !== caseFilter) return false;
-      if (genderFilter !== 'All' && card.gender !== genderFilter) return false;
+      if (caseFilter.length > 0 && !caseFilter.includes(card.case)) return false;
+      if (genderFilter.length > 0 && !genderFilter.includes(card.gender)) return false;
       if (numberFilter !== 'All' && card.number !== numberFilter) return false;
       return true;
     });
@@ -126,8 +126,8 @@ export function DeclensionPage() {
   const buildSession = useCallback(
     (store: DeclensionReviewDataStore, currentSettings: DeclensionSettings) => {
       const filters = {
-        case: caseFilter,
-        gender: genderFilter,
+        cases: caseFilter,
+        genders: genderFilter,
         number: numberFilter,
       };
       const { reviewCards, newCards } = getDeclensionSessionCards(
@@ -171,8 +171,8 @@ export function DeclensionPage() {
 
   const startPracticeAhead = useCallback(() => {
     const filters = {
-      case: caseFilter,
-      gender: genderFilter,
+      cases: caseFilter,
+      genders: genderFilter,
       number: numberFilter,
     };
     const aheadCards = getDeclensionPracticeAheadCards(
@@ -198,8 +198,8 @@ export function DeclensionPage() {
 
   const startExtraNewCards = useCallback(() => {
     const filters = {
-      case: caseFilter,
-      gender: genderFilter,
+      cases: caseFilter,
+      genders: genderFilter,
       number: numberFilter,
     };
     const extraCards = getDeclensionExtraNewCards(
@@ -225,17 +225,17 @@ export function DeclensionPage() {
 
   const handleFilterChange = useCallback(
     (
-      newCaseFilter: Case | 'All',
-      newGenderFilter: Gender | 'All',
+      newCaseFilter: Case[],
+      newGenderFilter: Gender[],
       newNumberFilter: Number | 'All'
     ) => {
       if (practiceMode) {
         setPracticeCards(
           shuffleArray(
             allDeclensionCards.filter((card) => {
-              if (newCaseFilter !== 'All' && card.case !== newCaseFilter)
+              if (newCaseFilter.length > 0 && !newCaseFilter.includes(card.case))
                 return false;
-              if (newGenderFilter !== 'All' && card.gender !== newGenderFilter)
+              if (newGenderFilter.length > 0 && !newGenderFilter.includes(card.gender))
                 return false;
               if (newNumberFilter !== 'All' && card.number !== newNumberFilter)
                 return false;
@@ -250,7 +250,7 @@ export function DeclensionPage() {
   );
 
   const handleCaseChange = useCallback(
-    (value: Case | 'All') => {
+    (value: Case[]) => {
       setCaseFilter(value);
       resetSession();
       handleFilterChange(value, genderFilter, numberFilter);
@@ -259,7 +259,7 @@ export function DeclensionPage() {
   );
 
   const handleGenderChange = useCallback(
-    (value: Gender | 'All') => {
+    (value: Gender[]) => {
       setGenderFilter(value);
       resetSession();
       handleFilterChange(caseFilter, value, numberFilter);

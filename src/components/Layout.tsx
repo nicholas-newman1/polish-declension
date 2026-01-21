@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Drawer,
+  SwipeableDrawer,
   List,
   ListItem,
   ListItemButton,
@@ -346,10 +347,13 @@ export function Layout() {
           />
         </Drawer>
       ) : (
-        <Drawer
+        <SwipeableDrawer
           anchor="left"
           open={mobileDrawerOpen}
+          onOpen={() => setMobileDrawerOpen(true)}
           onClose={() => setMobileDrawerOpen(false)}
+          swipeAreaWidth={20}
+          disableBackdropTransition
           PaperProps={{
             sx: {
               width: DRAWER_WIDTH,
@@ -365,7 +369,7 @@ export function Layout() {
             reviewCounts={counts}
             loading={countsLoading}
           />
-        </Drawer>
+        </SwipeableDrawer>
       )}
 
       <MainArea>

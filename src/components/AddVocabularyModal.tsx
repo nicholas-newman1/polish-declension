@@ -16,7 +16,6 @@ import {
   Typography,
   CircularProgress,
   InputAdornment,
-  Collapse,
   Checkbox,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -113,10 +112,6 @@ const GenerateSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
-  padding: theme.spacing(1.5),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.primary.main, 0.04),
-  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
 }));
 
 const GenerateActions = styled(Box)(({ theme }) => ({
@@ -209,7 +204,6 @@ export function AddVocabularyModal({
   >(new Map());
   const userEditedEnglish = useRef<Set<number>>(new Set());
 
-  const [showAiGenerate, setShowAiGenerate] = useState(false);
   const [aiContext, setAiContext] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedExamples, setGeneratedExamples] = useState<
@@ -320,7 +314,6 @@ export function AddVocabularyModal({
     selected.forEach((ex) => append(ex));
     setGeneratedExamples([]);
     setSelectedExampleIndexes(new Set());
-    setShowAiGenerate(false);
     setAiContext('');
   }, [generatedExamples, selectedExampleIndexes, append]);
 
@@ -330,7 +323,6 @@ export function AddVocabularyModal({
     translationTimeouts.current.clear();
     userEditedEnglish.current.clear();
     setTranslatingIndexes(new Set());
-    setShowAiGenerate(false);
     setAiContext('');
     setGeneratedExamples([]);
     setSelectedExampleIndexes(new Set());
@@ -565,21 +557,10 @@ export function AddVocabularyModal({
                 Add manually
               </AddExampleButton>
 
-              {isAdmin && (
-                <AddExampleButton
-                  size="small"
-                  startIcon={<AutoAwesomeIcon />}
-                  onClick={() => setShowAiGenerate(!showAiGenerate)}
-                  type="button"
-                  disabled={!polishWord?.trim() || !englishWord?.trim()}
-                >
-                  Generate with AI
-                </AddExampleButton>
-              )}
             </Box>
 
             {isAdmin && (
-              <Collapse in={showAiGenerate}>
+              <Box>
                 <GenerateSection>
                   <TextField
                     size="small"
@@ -695,12 +676,12 @@ export function AddVocabularyModal({
                         onClick={handleGenerateExample}
                         disabled={isGenerating}
                       >
-                        {isGenerating ? 'Generating...' : 'Generate'}
+                        {isGenerating ? 'Generating...' : 'Generate with AI'}
                       </Button>
                     </GenerateActions>
                   )}
                 </GenerateSection>
-              </Collapse>
+              </Box>
             )}
           </ExamplesSection>
         </Content>

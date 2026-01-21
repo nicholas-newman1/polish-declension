@@ -133,6 +133,7 @@ export function DashboardPage() {
                   total={stats.total}
                   color={color}
                   layout="inline"
+                  loading={loading}
                 />
               )}
             </FeatureCard>

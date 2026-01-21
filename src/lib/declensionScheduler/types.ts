@@ -1,8 +1,8 @@
 import type { DeclensionCard, DeclensionCardReviewData, Case, Gender, Number } from '../../types';
 
 export interface DeclensionFilters {
-  case: Case | 'All';
-  gender: Gender | 'All';
+  cases: Case[];
+  genders: Gender[];
   number: Number | 'All';
 }
 
