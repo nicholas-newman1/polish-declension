@@ -18,6 +18,7 @@ import type {
   VocabularyWord,
   VocabularyReviewDataStore,
   VocabularySettings,
+  VocabularyDirectionSettings,
   VocabularyDirection,
   CustomVocabularyWord,
 } from '../types/vocabulary';
@@ -33,7 +34,9 @@ import loadDeclensionSettings from '../lib/storage/loadDeclensionSettings';
 import saveDeclensionReviewData from '../lib/storage/saveDeclensionReviewData';
 import saveDeclensionSettings from '../lib/storage/saveDeclensionSettings';
 import loadVocabularyReviewData from '../lib/storage/loadVocabularyReviewData';
-import loadVocabularySettings from '../lib/storage/loadVocabularySettings';
+import loadVocabularySettings, {
+  DEFAULT_VOCABULARY_SETTINGS,
+} from '../lib/storage/loadVocabularySettings';
 import saveVocabularyReviewData from '../lib/storage/saveVocabularyReviewData';
 import saveVocabularySettings from '../lib/storage/saveVocabularySettings';
 import loadSentenceReviewData from '../lib/storage/loadSentenceReviewData';
@@ -61,11 +64,6 @@ import {
 } from '../lib/storage/helpers';
 import { showSaveError } from '../lib/storage/errorHandler';
 import { DEFAULT_DECLENSION_SETTINGS } from '../constants';
-
-const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
-  newCardsPerDay: 10,
-  direction: 'pl-to-en',
-};
 
 export interface ReviewCounts {
   declension: number;
@@ -101,7 +99,10 @@ export interface ReviewDataContextType {
     direction: VocabularyDirection,
     store: VocabularyReviewDataStore
   ) => Promise<void>;
-  updateVocabularySettings: (settings: VocabularySettings) => Promise<void>;
+  updateVocabularySettings: (
+    direction: VocabularyDirection,
+    settings: VocabularyDirectionSettings
+  ) => Promise<void>;
   clearVocabularyReviewData: (direction: VocabularyDirection) => Promise<void>;
   refreshVocabularyWords: () => Promise<void>;
   setCustomWords: (words: CustomVocabularyWord[]) => void;
@@ -172,7 +173,7 @@ function computeDeclensionDueCount(
 function computeVocabularyDueCount(
   words: VocabularyWord[],
   reviewStore: VocabularyReviewDataStore,
-  settings: VocabularySettings
+  settings: VocabularyDirectionSettings
 ): number {
   let dueReviews = 0;
   let newCards = 0;
@@ -320,12 +321,12 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
     const plToEnCount = computeVocabularyDueCount(
       vocabularyWords,
       vocabularyReviewStores['pl-to-en'],
-      { ...vocabularySettings, direction: 'pl-to-en' }
+      vocabularySettings['pl-to-en']
     );
     const enToPlCount = computeVocabularyDueCount(
       vocabularyWords,
       vocabularyReviewStores['en-to-pl'],
-      { ...vocabularySettings, direction: 'en-to-pl' }
+      vocabularySettings['en-to-pl']
     );
 
     const sentencePlToEnCount = computeSentenceDueCount(
@@ -491,10 +492,13 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
   );
 
   const updateVocabularySettingsFn = useCallback(
-    async (settings: VocabularySettings) => {
-      setVocabularySettings(settings);
+    async (direction: VocabularyDirection, settings: VocabularyDirectionSettings) => {
+      setVocabularySettings((prev) => ({
+        ...prev,
+        [direction]: settings,
+      }));
       try {
-        await saveVocabularySettings(settings);
+        await saveVocabularySettings(settings, direction);
       } catch (e) {
         showSaveError(e);
       }

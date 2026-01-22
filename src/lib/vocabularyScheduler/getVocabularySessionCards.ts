@@ -1,7 +1,7 @@
 import type {
   VocabularyWord,
   VocabularyReviewDataStore,
-  VocabularySettings,
+  VocabularyDirectionSettings,
 } from '../../types/vocabulary';
 import getOrCreateVocabularyCardReviewData from '../storage/getOrCreateVocabularyCardReviewData';
 import { includesWordId } from '../storage/helpers';
@@ -12,7 +12,7 @@ import type { VocabularySessionCard } from './types';
 export default function getVocabularySessionCards(
   allWords: VocabularyWord[],
   reviewStore: VocabularyReviewDataStore,
-  settings: VocabularySettings
+  settings: VocabularyDirectionSettings
 ): { reviewCards: VocabularySessionCard[]; newCards: VocabularySessionCard[] } {
   const customReviewCards: VocabularySessionCard[] = [];
   const customNewCards: VocabularySessionCard[] = [];

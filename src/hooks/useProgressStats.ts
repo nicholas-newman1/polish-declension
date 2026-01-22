@@ -109,11 +109,12 @@ export function useProgressStats(): AllProgressStats {
       direction: VocabularyDirection
     ): ProgressStats => {
       const store = vocabularyReviewStores[direction];
+      const directionSettings = vocabularySettings[direction];
       let learned = 0;
       let mastered = 0;
       let due = 0;
       const remainingNew =
-        vocabularySettings.newCardsPerDay - store.newCardsToday.length;
+        directionSettings.newCardsPerDay - store.newCardsToday.length;
       let newForSession = 0;
 
       for (const word of vocabularyWords) {

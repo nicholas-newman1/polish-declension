@@ -20,7 +20,7 @@ import type {
   VocabularyWord,
   VocabularyWordId,
   VocabularyReviewDataStore,
-  VocabularySettings,
+  VocabularyDirectionSettings,
   VocabularyDirection,
   CustomVocabularyWord,
 } from '../types/vocabulary';
@@ -95,7 +95,6 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
 
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
-  const [isDirectionChanging, setIsDirectionChanging] = useState(false);
 
   const [learningQueue, setLearningQueue] = useState<VocabularySessionCard[]>(
     []
@@ -118,9 +117,11 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
   const [editingSystemWord, setEditingSystemWord] = useState(false);
 
   const sessionBuiltRef = useRef(false);
-  const directionRef = useRef(settings.direction);
+  const currentDirection = mode ?? 'pl-to-en';
+  const directionRef = useRef(currentDirection);
 
-  const reviewStore = vocabularyReviewStores[settings.direction];
+  const directionSettings = settings[currentDirection];
+  const reviewStore = vocabularyReviewStores[currentDirection];
 
   const allWords = useMemo<VocabularyWord[]>(
     () => [...customWords, ...systemWords],
@@ -131,7 +132,7 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
     (
       words: VocabularyWord[],
       store: VocabularyReviewDataStore,
-      currentSettings: VocabularySettings
+      currentSettings: VocabularyDirectionSettings
     ) => {
       const { reviewCards, newCards } = getVocabularySessionCards(
         words,
@@ -151,12 +152,19 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
   useEffect(() => {
     if (!contextLoading && !sessionBuiltRef.current) {
       sessionBuiltRef.current = true;
-      directionRef.current = settings.direction;
+      directionRef.current = currentDirection;
       queueMicrotask(() => {
-        buildSession(vocabularyWords, reviewStore, settings);
+        buildSession(vocabularyWords, reviewStore, directionSettings);
       });
     }
-  }, [contextLoading, buildSession, vocabularyWords, reviewStore, settings]);
+  }, [
+    contextLoading,
+    buildSession,
+    vocabularyWords,
+    reviewStore,
+    directionSettings,
+    currentDirection,
+  ]);
 
   const progressStats = useProgressStats();
   const modeStats = {
@@ -183,24 +191,18 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
   useEffect(() => {
     if (!mode || contextLoading) return;
 
-    const syncDirection = async () => {
-      if (mode !== settings.direction) {
-        setIsDirectionChanging(true);
-        const newSettings = { ...settings, direction: mode };
-        directionRef.current = mode;
-        await updateVocabularySettings(newSettings);
-
-        const newReviewStore = vocabularyReviewStores[mode];
-        buildSession(allWords, newReviewStore, newSettings);
-        setIsDirectionChanging(false);
-      }
-    };
-    syncDirection();
+    if (directionRef.current !== mode) {
+      directionRef.current = mode;
+      const modeSettings = settings[mode];
+      const modeReviewStore = vocabularyReviewStores[mode];
+      queueMicrotask(() => {
+        buildSession(allWords, modeReviewStore, modeSettings);
+      });
+    }
   }, [
     mode,
     contextLoading,
     settings,
-    updateVocabularySettings,
     vocabularyReviewStores,
     allWords,
     buildSession,
@@ -301,8 +303,8 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
   };
 
   const handleSettingsChange = async (newCardsPerDay: number) => {
-    const newSettings = { ...settings, newCardsPerDay };
-    await updateVocabularySettings(newSettings);
+    const newSettings = { ...directionSettings, newCardsPerDay };
+    await updateVocabularySettings(currentDirection, newSettings);
     buildSession(allWords, reviewStore, newSettings);
   };
 
@@ -323,7 +325,7 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
     });
 
     const mergedWords = [...newCustomWords, ...systemWords];
-    buildSession(mergedWords, reviewStore, settings);
+    buildSession(mergedWords, reviewStore, directionSettings);
   };
 
   const updateWordInQueues = (
@@ -465,9 +467,9 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
         'Are you sure? This will erase all your vocabulary progress for this direction and cannot be undone.'
       )
     ) {
-      await clearVocabularyReviewData(settings.direction);
-      const freshStore = vocabularyReviewStores[settings.direction];
-      buildSession(allWords, freshStore, settings);
+      await clearVocabularyReviewData(currentDirection);
+      const freshStore = vocabularyReviewStores[currentDirection];
+      buildSession(allWords, freshStore, directionSettings);
       setShowSettings(false);
     }
   };
@@ -500,13 +502,13 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
 
   const currentPracticeWord = practiceCards[practiceIndex];
 
-  const isLoading = contextLoading || isDirectionChanging;
+  const isLoading = contextLoading;
 
   if (!mode) {
     return (
       <VocabularyModeSelector
         stats={modeStats}
-        loading={contextLoading || isDirectionChanging}
+        loading={contextLoading}
         onSelectMode={handleSelectMode}
       />
     );
@@ -538,12 +540,12 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
 
       {showSettings && !practiceMode && (
         <SettingsPanel
-          newCardsPerDay={settings.newCardsPerDay}
+          newCardsPerDay={directionSettings.newCardsPerDay}
           user={user}
           onSettingsChange={handleSettingsChange}
           onResetAllData={handleResetAllData}
           resetButtonLabel={`Reset ${
-            settings.direction === 'pl-to-en' ? 'PL→EN' : 'EN→PL'
+            currentDirection === 'pl-to-en' ? 'PL→EN' : 'EN→PL'
           } Progress`}
         />
       )}
@@ -585,7 +587,7 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
                 <VocabularyFlashcard
                   key={`practice-${currentPracticeWord.id}-${practiceIndex}`}
                   word={currentPracticeWord}
-                  direction={settings.direction}
+                  direction={currentDirection}
                   practiceMode
                   onNext={handlePracticeNext}
                 />
@@ -605,7 +607,7 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
               <VocabularyFlashcard
                 key={`${currentSessionCard.word.id}-${ratingCounter}`}
                 word={currentSessionCard.word}
-                direction={settings.direction}
+                direction={currentDirection}
                 intervals={intervals}
                 isAdmin={isAdmin}
                 onRate={handleRate}

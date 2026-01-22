@@ -21,8 +21,12 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // User vocabulary settings - only the owner can read/write
-    match /users/{userId}/data/vocabularySettings {
+    // User vocabulary settings (per direction) - only the owner can read/write
+    match /users/{userId}/data/vocabularySettings-pl-en {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/data/vocabularySettings-en-pl {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 

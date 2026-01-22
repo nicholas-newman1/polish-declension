@@ -59,7 +59,11 @@ export interface VocabularyReviewDataStore {
   lastReviewDate: string;
 }
 
-export interface VocabularySettings {
+export interface VocabularyDirectionSettings {
   newCardsPerDay: number;
-  direction: VocabularyDirection;
 }
+
+export type VocabularySettings = Record<
+  VocabularyDirection,
+  VocabularyDirectionSettings
+>;
