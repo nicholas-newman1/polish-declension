@@ -222,6 +222,10 @@ export function useProgressStats(): AllProgressStats {
           byLevel[level].mastered++;
         }
 
+        const isInSelectedLevels =
+          directionSettings.selectedLevels.includes(level);
+        if (!isInSelectedLevels) continue;
+
         const isNew = cardState === State.New;
         const isLearning =
           cardState === State.Learning || cardState === State.Relearning;
