@@ -1,6 +1,6 @@
 import { Box, Paper, Popper, type PopperProps } from '@mui/material';
 import { styled } from '../../lib/styled';
-import { forwardRef, type RefObject } from 'react';
+import type { RefObject } from 'react';
 
 export const TappableSpan = styled('span')(({ theme }) => ({
   cursor: 'pointer',
@@ -56,15 +56,17 @@ export const TooltipContentRich = styled(Box)(({ theme }) => ({
   color: theme.palette.tooltip.text,
 }));
 
-interface WordTooltipPopperProps extends Omit<PopperProps, 'ref'> {
+interface WordTooltipPopperProps
+  extends Omit<PopperProps, 'ref' | 'popperRef'> {
   popperRef: RefObject<HTMLDivElement | null>;
   children: React.ReactNode;
 }
 
-export const WordTooltipPopper = forwardRef<
-  HTMLDivElement,
-  WordTooltipPopperProps
->(function WordTooltipPopper({ popperRef, children, ...props }, _ref) {
+export function WordTooltipPopper({
+  popperRef,
+  children,
+  ...props
+}: WordTooltipPopperProps) {
   return (
     <Popper
       placement="top"
@@ -76,5 +78,4 @@ export const WordTooltipPopper = forwardRef<
       </TooltipPaper>
     </Popper>
   );
-});
-
+}

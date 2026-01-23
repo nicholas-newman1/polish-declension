@@ -1,5 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { CircularProgress, Typography, IconButton, TextField, InputAdornment } from '@mui/material';
+import {
+  CircularProgress,
+  Typography,
+  IconButton,
+  TextField,
+  InputAdornment,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,6 +22,7 @@ import {
   TooltipContent,
   WordTooltipPopper,
 } from './shared';
+import { useTranslatableText } from '../hooks/useTranslatableText';
 
 const EditButton = styled(IconButton)(({ theme }) => ({
   padding: 2,
@@ -55,8 +62,33 @@ const ActionIconButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
+const SelectableSpan = styled(TappableSpan, {
+  shouldForwardProp: (prop) => prop !== '$isSelected',
+})<{ $isSelected?: boolean }>(({ theme, $isSelected }) => ({
+  ...($isSelected && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+    },
+  }),
+}));
+
+const SelectableHighlightedSpan = styled(HighlightedSpan, {
+  shouldForwardProp: (prop) => prop !== '$isSelected',
+})<{ $isSelected?: boolean }>(({ theme, $isSelected }) => ({
+  ...($isSelected && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+    },
+  }),
+}));
+
 export interface TranslatableWordProps {
   word: string;
+  wordIndex?: number;
   sentenceContext?: string;
   isHighlighted?: boolean;
   translations?: Record<string, string>;
@@ -68,6 +100,7 @@ export interface TranslatableWordProps {
 
 export function TranslatableWord({
   word,
+  wordIndex,
   sentenceContext,
   isHighlighted,
   translations,
@@ -83,6 +116,20 @@ export function TranslatableWord({
   const [editValue, setEditValue] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
+
+  const dragContext = useTranslatableText();
+  const isDragEnabled = dragContext !== null && wordIndex !== undefined;
+  const isSelected =
+    isDragEnabled && dragContext.selectedIndices.has(wordIndex);
+  const isDragging = isDragEnabled && dragContext.isDragging;
+  const hasPhrase = isDragEnabled && dragContext.selectedPhrase !== null;
+
+  useEffect(() => {
+    if (isDragEnabled) {
+      dragContext.registerWord(wordIndex, word);
+    }
+  }, [isDragEnabled, dragContext, wordIndex, word]);
 
   const {
     anchorEl,
@@ -186,8 +233,51 @@ export function TranslatableWord({
     }
   };
 
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLSpanElement>) => {
+      if (isDragEnabled && event.button === 0) {
+        event.preventDefault();
+        dragContext.startDrag(wordIndex, event.currentTarget);
+      }
+    },
+    [isDragEnabled, dragContext, wordIndex]
+  );
+
+  const handleMouseEnterWord = useCallback(
+    (event: React.MouseEvent<HTMLSpanElement>) => {
+      if (isDragEnabled && dragContext.isDragging) {
+        dragContext.updateDrag(wordIndex);
+      }
+      if (!isDragging && !hasPhrase) {
+        baseHandleMouseEnter(event);
+        fetchTranslation();
+      }
+    },
+    [
+      isDragEnabled,
+      dragContext,
+      wordIndex,
+      isDragging,
+      hasPhrase,
+      baseHandleMouseEnter,
+      fetchTranslation,
+    ]
+  );
+
+  const handleMouseLeaveWord = useCallback(() => {
+    if (!isDragging && !hasPhrase) {
+      handleMouseLeave();
+    }
+  }, [isDragging, hasPhrase, handleMouseLeave]);
+
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLSpanElement>) => {
+      if (hasPhrase) {
+        dragContext?.closePhraseTooltip();
+        return;
+      }
+      if (isDragging) return;
+
       if (isClicked) {
         setIsClicked(false);
         setIsEditing(false);
@@ -195,33 +285,40 @@ export function TranslatableWord({
         setIsClicked(true);
         fetchTranslation();
       }
-      // Need to set anchorEl manually since we're not using the base handleClick
-      event.currentTarget && baseHandleMouseEnter(event);
+      if (event.currentTarget) {
+        baseHandleMouseEnter(event);
+      }
     },
-    [isClicked, setIsClicked, fetchTranslation, baseHandleMouseEnter]
+    [
+      hasPhrase,
+      isDragging,
+      isClicked,
+      setIsClicked,
+      fetchTranslation,
+      baseHandleMouseEnter,
+      dragContext,
+    ]
   );
 
-  const handleMouseEnter = useCallback(
-    (event: React.MouseEvent<HTMLSpanElement>) => {
-      baseHandleMouseEnter(event);
-      fetchTranslation();
-    },
-    [baseHandleMouseEnter, fetchTranslation]
-  );
-
-  const WordComponent = isHighlighted ? HighlightedSpan : TappableSpan;
+  const showSingleWordTooltip = open && !isDragging && !hasPhrase;
+  const WordComponent = isHighlighted
+    ? SelectableHighlightedSpan
+    : SelectableSpan;
 
   return (
     <>
       <WordComponent
+        ref={spanRef}
+        $isSelected={isSelected}
         onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseEnter={handleMouseEnterWord}
+        onMouseLeave={handleMouseLeaveWord}
       >
         {word}
       </WordComponent>
       <WordTooltipPopper
-        open={open}
+        open={showSingleWordTooltip}
         anchorEl={anchorEl}
         popperRef={popperRef}
         modifiers={[{ name: 'offset', options: { offset: [0, 4] } }]}
@@ -270,4 +367,3 @@ export function TranslatableWord({
     </>
   );
 }
-

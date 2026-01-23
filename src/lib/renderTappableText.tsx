@@ -1,4 +1,5 @@
 import { TranslatableWord } from '../components/TranslatableWord';
+import { TranslatableText } from '../components/TranslatableText';
 
 interface RenderTappableTextOptions {
   translations?: Record<string, string>;
@@ -24,7 +25,8 @@ export function renderTappableText(
   } = options;
   const tokens = text.split(/(\s+)/);
 
-  return tokens.map((token, index) => {
+  let wordIndex = 0;
+  const elements = tokens.map((token, index) => {
     if (/^\s+$/.test(token)) {
       return token;
     }
@@ -33,11 +35,14 @@ export function renderTappableText(
       ?.replace(/[.,!?;:"""''()]/g, '')
       .toLowerCase();
     const isHighlighted = !!(cleanHighlight && cleanToken === cleanHighlight);
+    const currentWordIndex = wordIndex;
+    wordIndex++;
 
     return (
       <TranslatableWord
         key={index}
         word={token}
+        wordIndex={currentWordIndex}
         sentenceContext={sentenceContext}
         isHighlighted={isHighlighted}
         translations={translations}
@@ -48,4 +53,13 @@ export function renderTappableText(
       />
     );
   });
+
+  return (
+    <TranslatableText
+      sentenceContext={sentenceContext}
+      onDailyLimitReached={onDailyLimitReached}
+    >
+      {elements}
+    </TranslatableText>
+  );
 }
