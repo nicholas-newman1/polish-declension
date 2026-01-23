@@ -1,4 +1,4 @@
-import { TappableWord } from '../components/TappableWord';
+import { TranslatableWord } from '../components/TranslatableWord';
 
 interface RenderTappableTextOptions {
   translations?: Record<string, string>;
@@ -35,7 +35,7 @@ export function renderTappableText(
     const isHighlighted = !!(cleanHighlight && cleanToken === cleanHighlight);
 
     return (
-      <TappableWord
+      <TranslatableWord
         key={index}
         word={token}
         sentenceContext={sentenceContext}

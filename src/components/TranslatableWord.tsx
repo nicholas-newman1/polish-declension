@@ -1,53 +1,21 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  Box,
-  CircularProgress,
-  Popper,
-  Paper,
-  Typography,
-  styled,
-  IconButton,
-  TextField,
-  InputAdornment,
-} from '@mui/material';
+import { CircularProgress, Typography, IconButton, TextField, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '../lib/styled';
 import {
   translate,
   RateLimitMinuteError,
   RateLimitDailyError,
 } from '../lib/translate';
-
-const TappableWordSpan = styled('span')(({ theme }) => ({
-  cursor: 'pointer',
-  borderRadius: 2,
-  transition: 'background-color 0.15s',
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
-
-const HighlightedWordSpan = styled('span')(({ theme }) => ({
-  color: theme.palette.primary.main,
-  fontWeight: 600,
-  cursor: 'pointer',
-  borderRadius: 2,
-  transition: 'background-color 0.15s',
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
-
-const PopoverContent = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(1, 1.5),
-  minWidth: 60,
-  textAlign: 'center',
-  color: theme.palette.tooltip.text,
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(0.5),
-}));
+import {
+  useTooltipInteraction,
+  TappableSpan,
+  HighlightedSpan,
+  TooltipContent,
+  WordTooltipPopper,
+} from './shared';
 
 const EditButton = styled(IconButton)(({ theme }) => ({
   padding: 2,
@@ -87,24 +55,7 @@ const ActionIconButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const TooltipPaper = styled(Paper)(({ theme }) => ({
-  position: 'relative',
-  backgroundColor: theme.palette.tooltip.main,
-  '&::after': {
-    content: '""',
-    position: 'absolute',
-    bottom: -6,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: 0,
-    height: 0,
-    borderLeft: '6px solid transparent',
-    borderRight: '6px solid transparent',
-    borderTop: `6px solid ${theme.palette.tooltip.main}`,
-  },
-}));
-
-export interface TappableWordProps {
+export interface TranslatableWordProps {
   word: string;
   sentenceContext?: string;
   isHighlighted?: boolean;
@@ -115,7 +66,7 @@ export interface TappableWordProps {
   isAdmin?: boolean;
 }
 
-export function TappableWord({
+export function TranslatableWord({
   word,
   sentenceContext,
   isHighlighted,
@@ -124,40 +75,26 @@ export function TappableWord({
   onDailyLimitReached,
   onUpdateTranslation,
   isAdmin = false,
-}: TappableWordProps) {
-  const [anchorEl, setAnchorEl] = useState<HTMLSpanElement | null>(null);
+}: TranslatableWordProps) {
   const [translation, setTranslation] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
-  const popperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const open = isHovering || isClicked;
-
-  useEffect(() => {
-    if (!isClicked) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        popperRef.current &&
-        !popperRef.current.contains(target) &&
-        anchorEl &&
-        !anchorEl.contains(target)
-      ) {
-        setIsClicked(false);
-        setIsEditing(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isClicked, anchorEl]);
+  const {
+    anchorEl,
+    popperRef,
+    open,
+    isClicked,
+    setIsClicked,
+    handleMouseEnter: baseHandleMouseEnter,
+    handleMouseLeave,
+  } = useTooltipInteraction({
+    onClose: () => setIsEditing(false),
+  });
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -194,7 +131,6 @@ export function TappableWord({
       if (err instanceof RateLimitMinuteError) {
         setError('Too many requests');
       } else if (err instanceof RateLimitDailyError) {
-        setIsHovering(false);
         setIsClicked(false);
         onDailyLimitReached?.(err.resetTime);
       } else {
@@ -211,6 +147,7 @@ export function TappableWord({
     onDailyLimitReached,
     translation,
     loading,
+    setIsClicked,
   ]);
 
   const handleStartEdit = () => {
@@ -251,7 +188,6 @@ export function TappableWord({
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLSpanElement>) => {
-      setAnchorEl(event.currentTarget);
       if (isClicked) {
         setIsClicked(false);
         setIsEditing(false);
@@ -259,24 +195,21 @@ export function TappableWord({
         setIsClicked(true);
         fetchTranslation();
       }
+      // Need to set anchorEl manually since we're not using the base handleClick
+      event.currentTarget && baseHandleMouseEnter(event);
     },
-    [isClicked, fetchTranslation]
+    [isClicked, setIsClicked, fetchTranslation, baseHandleMouseEnter]
   );
 
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLSpanElement>) => {
-      setAnchorEl(event.currentTarget);
-      setIsHovering(true);
+      baseHandleMouseEnter(event);
       fetchTranslation();
     },
-    [fetchTranslation]
+    [baseHandleMouseEnter, fetchTranslation]
   );
 
-  const handleMouseLeave = useCallback(() => {
-    setIsHovering(false);
-  }, []);
-
-  const WordComponent = isHighlighted ? HighlightedWordSpan : TappableWordSpan;
+  const WordComponent = isHighlighted ? HighlightedSpan : TappableSpan;
 
   return (
     <>
@@ -287,60 +220,54 @@ export function TappableWord({
       >
         {word}
       </WordComponent>
-      <Popper
+      <WordTooltipPopper
         open={open}
         anchorEl={anchorEl}
-        placement="top"
-        modifiers={[
-          {
-            name: 'offset',
-            options: { offset: [0, 4] },
-          },
-        ]}
+        popperRef={popperRef}
+        modifiers={[{ name: 'offset', options: { offset: [0, 4] } }]}
       >
-        <TooltipPaper ref={popperRef} elevation={8}>
-          <PopoverContent>
-            {loading || isSaving ? (
-              <CircularProgress size={16} sx={{ color: 'tooltip.text' }} />
-            ) : error ? (
-              <Typography variant="caption" sx={{ color: 'tooltip.error' }}>
-                {error}
+        <TooltipContent>
+          {loading || isSaving ? (
+            <CircularProgress size={16} sx={{ color: 'tooltip.text' }} />
+          ) : error ? (
+            <Typography variant="caption" sx={{ color: 'tooltip.error' }}>
+              {error}
+            </Typography>
+          ) : isEditing ? (
+            <EditInput
+              size="small"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              inputRef={inputRef}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <ActionIconButton size="small" onClick={handleSaveEdit}>
+                      <CheckIcon sx={{ fontSize: 14 }} />
+                    </ActionIconButton>
+                    <ActionIconButton size="small" onClick={handleCancelEdit}>
+                      <CloseIcon sx={{ fontSize: 14 }} />
+                    </ActionIconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          ) : (
+            <>
+              <Typography variant="body2" fontWeight={500}>
+                {translation}
               </Typography>
-            ) : isEditing ? (
-              <EditInput
-                size="small"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                inputRef={inputRef}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <ActionIconButton size="small" onClick={handleSaveEdit}>
-                        <CheckIcon sx={{ fontSize: 14 }} />
-                      </ActionIconButton>
-                      <ActionIconButton size="small" onClick={handleCancelEdit}>
-                        <CloseIcon sx={{ fontSize: 14 }} />
-                      </ActionIconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            ) : (
-              <>
-                <Typography variant="body2" fontWeight={500}>
-                  {translation}
-                </Typography>
-                {isAdmin && translation && (
-                  <EditButton size="small" onClick={handleStartEdit}>
-                    <EditIcon sx={{ fontSize: 14 }} />
-                  </EditButton>
-                )}
-              </>
-            )}
-          </PopoverContent>
-        </TooltipPaper>
-      </Popper>
+              {isAdmin && translation && (
+                <EditButton size="small" onClick={handleStartEdit}>
+                  <EditIcon sx={{ fontSize: 14 }} />
+                </EditButton>
+              )}
+            </>
+          )}
+        </TooltipContent>
+      </WordTooltipPopper>
     </>
   );
 }
+
