@@ -578,6 +578,7 @@ export function DeclensionPage() {
               key={`practice-${currentPracticeCard.id}-${practiceIndex}`}
               card={currentPracticeCard}
               practiceMode
+              isAdmin={isAdmin}
               onNext={handlePracticeNext}
             />
           ) : (
@@ -598,6 +599,7 @@ export function DeclensionPage() {
             card={currentSessionCard.card}
             intervals={intervals}
             canEdit={canEditCurrentCard}
+            isAdmin={isAdmin}
             onRate={handleRate}
             onEdit={handleOpenEditModal}
           />

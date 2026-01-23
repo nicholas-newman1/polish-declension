@@ -4,6 +4,7 @@ interface RenderTappableTextOptions {
   translationCache: React.MutableRefObject<Map<string, string>>;
   onDailyLimitReached?: (resetTime: string) => void;
   sentenceContext: string;
+  isAdmin?: boolean;
 }
 
 export function renderTappableText(
@@ -11,7 +12,8 @@ export function renderTappableText(
   options: RenderTappableTextOptions,
   highlightedWord?: string
 ) {
-  const { translationCache, onDailyLimitReached, sentenceContext } = options;
+  const { translationCache, onDailyLimitReached, sentenceContext, isAdmin } =
+    options;
   const tokens = text.split(/(\s+)/);
 
   return tokens.map((token, index) => {
@@ -32,6 +34,7 @@ export function renderTappableText(
         isHighlighted={isHighlighted}
         translationCache={translationCache}
         onDailyLimitReached={onDailyLimitReached}
+        isAdmin={isAdmin}
       />
     );
   });

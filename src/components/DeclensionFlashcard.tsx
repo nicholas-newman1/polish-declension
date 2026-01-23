@@ -29,6 +29,7 @@ interface DeclensionFlashcardProps {
   practiceMode?: boolean;
   intervals?: DeclensionRatingIntervals;
   canEdit?: boolean;
+  isAdmin?: boolean;
   onRate?: (rating: Grade) => void;
   onNext?: () => void;
   onEdit?: () => void;
@@ -143,6 +144,7 @@ export function DeclensionFlashcard({
   practiceMode = false,
   intervals,
   canEdit = false,
+  isAdmin = false,
   onRate,
   onNext,
   onEdit,
@@ -156,8 +158,9 @@ export function DeclensionFlashcard({
       translationCache,
       onDailyLimitReached: handleDailyLimitReached,
       sentenceContext: card.back,
+      isAdmin,
     }),
-    [handleDailyLimitReached, card.back]
+    [handleDailyLimitReached, card.back, isAdmin]
   );
 
   return (

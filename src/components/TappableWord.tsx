@@ -6,7 +6,13 @@ import {
   Paper,
   Typography,
   styled,
+  IconButton,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   translate,
   RateLimitMinuteError,
@@ -14,6 +20,7 @@ import {
 } from '../lib/translate';
 import getCachedTranslation from '../lib/translationCache/getCachedTranslation';
 import getCacheKey from '../lib/translationCache/getCacheKey';
+import updateCachedTranslation from '../lib/translationCache/updateCachedTranslation';
 
 const TappableWordSpan = styled('span')(({ theme }) => ({
   cursor: 'pointer',
@@ -40,6 +47,47 @@ const PopoverContent = styled(Box)(({ theme }) => ({
   minWidth: 60,
   textAlign: 'center',
   color: theme.palette.tooltip.text,
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.5),
+}));
+
+const EditButton = styled(IconButton)(({ theme }) => ({
+  padding: 2,
+  color: theme.palette.tooltip.muted,
+  '&:hover': {
+    color: theme.palette.tooltip.text,
+    backgroundColor: 'transparent',
+  },
+}));
+
+const EditInput = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-root': {
+    color: theme.palette.tooltip.text,
+    fontSize: '0.875rem',
+    padding: 0,
+  },
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(0.5, 1),
+    minWidth: 80,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.tooltip.muted,
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.tooltip.text,
+  },
+  '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.tooltip.accent,
+  },
+}));
+
+const ActionIconButton = styled(IconButton)(({ theme }) => ({
+  padding: 2,
+  color: theme.palette.tooltip.text,
+  '&:hover': {
+    backgroundColor: 'transparent',
+  },
 }));
 
 const TooltipPaper = styled(Paper)(({ theme }) => ({
@@ -65,6 +113,7 @@ export interface TappableWordProps {
   isHighlighted?: boolean;
   translationCache: React.MutableRefObject<Map<string, string>>;
   onDailyLimitReached?: (resetTime: string) => void;
+  isAdmin?: boolean;
 }
 
 export function TappableWord({
@@ -73,12 +122,17 @@ export function TappableWord({
   isHighlighted,
   translationCache,
   onDailyLimitReached,
+  isAdmin = false,
 }: TappableWordProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLSpanElement | null>(null);
   const [translation, setTranslation] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const popperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const open = Boolean(anchorEl);
 
@@ -94,6 +148,7 @@ export function TappableWord({
         !anchorEl.contains(target)
       ) {
         setAnchorEl(null);
+        setIsEditing(false);
       }
     };
 
@@ -101,19 +156,66 @@ export function TappableWord({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open, anchorEl]);
 
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const cleanWord = word.replace(/[.,!?;:"""''()]/g, '').toLowerCase();
+
+  const handleStartEdit = () => {
+    setEditValue(translation || '');
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditValue('');
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editValue.trim() || editValue === translation) {
+      handleCancelEdit();
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await updateCachedTranslation(cleanWord, editValue.trim(), sentenceContext);
+      const cacheKey = getCacheKey(cleanWord, sentenceContext);
+      translationCache.current.set(cacheKey, editValue.trim());
+      setTranslation(editValue.trim());
+      setIsEditing(false);
+    } catch {
+      setError('Save failed');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSaveEdit();
+    } else if (event.key === 'Escape') {
+      handleCancelEdit();
+    }
+  };
+
   const handleClick = useCallback(
     async (event: React.MouseEvent<HTMLSpanElement>) => {
       const target = event.currentTarget;
 
       if (anchorEl) {
         setAnchorEl(null);
+        setIsEditing(false);
         return;
       }
 
       setAnchorEl(target);
       setError(null);
 
-      const cleanWord = word.replace(/[.,!?;:"""''()]/g, '').toLowerCase();
       if (!cleanWord) {
         setAnchorEl(null);
         return;
@@ -157,7 +259,7 @@ export function TappableWord({
         setLoading(false);
       }
     },
-    [anchorEl, word, sentenceContext, translationCache, onDailyLimitReached]
+    [anchorEl, cleanWord, sentenceContext, translationCache, onDailyLimitReached]
   );
 
   const WordComponent = isHighlighted ? HighlightedWordSpan : TappableWordSpan;
@@ -178,16 +280,43 @@ export function TappableWord({
       >
         <TooltipPaper ref={popperRef} elevation={8}>
           <PopoverContent>
-            {loading ? (
+            {loading || isSaving ? (
               <CircularProgress size={16} sx={{ color: 'tooltip.text' }} />
             ) : error ? (
               <Typography variant="caption" sx={{ color: 'tooltip.error' }}>
                 {error}
               </Typography>
+            ) : isEditing ? (
+              <EditInput
+                size="small"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                inputRef={inputRef}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <ActionIconButton size="small" onClick={handleSaveEdit}>
+                        <CheckIcon sx={{ fontSize: 14 }} />
+                      </ActionIconButton>
+                      <ActionIconButton size="small" onClick={handleCancelEdit}>
+                        <CloseIcon sx={{ fontSize: 14 }} />
+                      </ActionIconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             ) : (
-              <Typography variant="body2" fontWeight={500}>
-                {translation}
-              </Typography>
+              <>
+                <Typography variant="body2" fontWeight={500}>
+                  {translation}
+                </Typography>
+                {isAdmin && translation && (
+                  <EditButton size="small" onClick={handleStartEdit}>
+                    <EditIcon sx={{ fontSize: 14 }} />
+                  </EditButton>
+                )}
+              </>
             )}
           </PopoverContent>
         </TooltipPaper>
