@@ -24,6 +24,7 @@ import type {
 } from '../types/vocabulary';
 import type {
   Sentence,
+  CustomSentence,
   SentenceReviewDataStore,
   SentenceSettings,
   SentenceDirection,
@@ -54,6 +55,7 @@ import saveSentenceReviewData from '../lib/storage/saveSentenceReviewData';
 import saveSentenceSettings from '../lib/storage/saveSentenceSettings';
 import { loadCustomVocabulary } from '../lib/storage/customVocabulary';
 import { loadCustomDeclension } from '../lib/storage/customDeclension';
+import { loadCustomSentences } from '../lib/storage/customSentences';
 import clearDeclensionData from '../lib/storage/clearDeclensionData';
 import clearVocabularyData from '../lib/storage/clearVocabularyData';
 import clearSentenceData from '../lib/storage/clearSentenceData';
@@ -118,6 +120,8 @@ export interface ReviewDataContextType {
   sentenceReviewStores: Record<SentenceDirection, SentenceReviewDataStore>;
   sentenceSettings: SentenceSettings;
   sentences: Sentence[];
+  customSentences: CustomSentence[];
+  systemSentences: Sentence[];
   sentenceTags: SentenceTagsData;
   updateSentenceReviewStore: (
     direction: SentenceDirection,
@@ -129,6 +133,8 @@ export interface ReviewDataContextType {
   ) => Promise<void>;
   clearSentenceReviewData: (direction: SentenceDirection) => Promise<void>;
   setSentences: (sentences: Sentence[]) => void;
+  setCustomSentences: (sentences: CustomSentence[]) => void;
+  setSystemSentences: (sentences: Sentence[]) => void;
   addSentenceTag: (category: TagCategory, tag: string) => Promise<void>;
   removeSentenceTag: (category: TagCategory, tag: string) => Promise<void>;
 
@@ -314,9 +320,15 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
   const [sentenceSettings, setSentenceSettings] = useState<SentenceSettings>(
     DEFAULT_SENTENCE_SETTINGS
   );
-  const [sentences, setSentences] = useState<Sentence[]>([]);
+  const [customSentences, setCustomSentences] = useState<CustomSentence[]>([]);
+  const [systemSentences, setSystemSentences] = useState<Sentence[]>([]);
   const [sentenceTags, setSentenceTags] =
     useState<SentenceTagsData>(DEFAULT_TAGS);
+
+  const sentences = useMemo<Sentence[]>(
+    () => [...customSentences, ...systemSentences],
+    [customSentences, systemSentences]
+  );
 
   const counts = useMemo<ReviewCounts>(() => {
     const userId = getUserId();
@@ -386,6 +398,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadedSentenceTags,
       loadedCustomWords,
       loadedCustomDeclensionCards,
+      loadedCustomSentences,
       vocabularySnapshot,
       declensionCardsSnapshot,
       sentencesSnapshot,
@@ -397,6 +410,7 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       loadSentenceTags(),
       loadCustomVocabulary(),
       loadCustomDeclension(),
+      loadCustomSentences(),
       getDocs(collection(db, 'vocabulary')),
       getDocs(collection(db, 'declensionCards')),
       getDocs(collection(db, 'sentences')),
@@ -438,7 +452,8 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
       'en-to-pl': enToPlStore,
     });
     setSentenceSettings(loadedSentenceSettings);
-    setSentences(loadedSentences);
+    setCustomSentences(loadedCustomSentences);
+    setSystemSentences(loadedSentences);
     setSentenceTags(loadedSentenceTags);
     setSentenceReviewStores({
       'pl-to-en': sentencePlToEnStore,
@@ -653,11 +668,15 @@ export function ReviewDataProvider({ children }: { children: ReactNode }) {
         sentenceReviewStores,
         sentenceSettings,
         sentences,
+        customSentences,
+        systemSentences,
         sentenceTags,
         updateSentenceReviewStore,
         updateSentenceSettings: updateSentenceSettingsFn,
         clearSentenceReviewData: clearSentenceReviewDataFn,
-        setSentences,
+        setSentences: setSystemSentences,
+        setCustomSentences,
+        setSystemSentences,
         addSentenceTag,
         removeSentenceTag,
         counts,

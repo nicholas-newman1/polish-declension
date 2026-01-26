@@ -20,6 +20,7 @@ import { SentencesPage } from './pages/SentencesPage';
 import { VocabularyPage } from './pages/VocabularyPage';
 import { CustomVocabularyPage } from './pages/CustomVocabularyPage';
 import { CustomDeclensionPage } from './pages/CustomDeclensionPage';
+import { CustomSentencesPage } from './pages/CustomSentencesPage';
 import { StatsPage } from './pages/StatsPage';
 import { SentenceGeneratorPage } from './pages/SentenceGenerator';
 
@@ -71,6 +72,10 @@ createRoot(document.getElementById('root')!).render(
                         <Route
                           path="/my-declensions"
                           element={<CustomDeclensionPage />}
+                        />
+                        <Route
+                          path="/my-sentences"
+                          element={<CustomSentencesPage />}
                         />
                         <Route path="/stats" element={<StatsPage />} />
                         <Route

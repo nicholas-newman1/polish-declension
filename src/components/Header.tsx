@@ -13,7 +13,7 @@ import {
   Divider,
   styled,
 } from '@mui/material';
-import { Person, LibraryBooks, BarChart, ArrowBack } from '@mui/icons-material';
+import { Person, Abc, School, Translate, BarChart, ArrowBack } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import getFirstName from '../lib/utils/getFirstName';
@@ -80,6 +80,11 @@ export function Header({ user, onSignOut, pageTitle, backPath }: HeaderProps) {
     navigate('/my-declensions');
   };
 
+  const handleMySentences = () => {
+    handleMenuClose();
+    navigate('/my-sentences');
+  };
+
   const handleStats = () => {
     handleMenuClose();
     navigate('/stats');
@@ -134,15 +139,21 @@ export function Header({ user, onSignOut, pageTitle, backPath }: HeaderProps) {
               <Divider />
               <MenuItem onClick={handleMyVocabulary}>
                 <ListItemIcon>
-                  <LibraryBooks fontSize="small" />
+                  <Abc fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>My Vocabulary</ListItemText>
               </MenuItem>
               <MenuItem onClick={handleMyDeclensions}>
                 <ListItemIcon>
-                  <LibraryBooks fontSize="small" />
+                  <School fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>My Declensions</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleMySentences}>
+                <ListItemIcon>
+                  <Translate fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>My Sentences</ListItemText>
               </MenuItem>
               <Divider />
               <MenuItem onClick={handleStats}>

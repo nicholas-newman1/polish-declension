@@ -68,6 +68,7 @@ interface EditSentenceModalProps {
   onClose: () => void;
   onSave: (data: Omit<Sentence, 'id'>) => void;
   sentence: Sentence | null;
+  isCreating?: boolean;
 }
 
 const getDefaultValues = (sentence: Sentence | null): FormData => ({
@@ -82,6 +83,7 @@ export function EditSentenceModal({
   onClose,
   onSave,
   sentence,
+  isCreating = false,
 }: EditSentenceModalProps) {
   const { sentenceTags } = useReviewData();
   const allTags = [
@@ -120,7 +122,9 @@ export function EditSentenceModal({
   return (
     <StyledDialog open={open} onClose={handleClose}>
       <Header>
-        <DialogTitle sx={{ p: 0, fontWeight: 500 }}>Edit Sentence</DialogTitle>
+        <DialogTitle sx={{ p: 0, fontWeight: 500 }}>
+          {isCreating ? 'Add Sentence' : 'Edit Sentence'}
+        </DialogTitle>
         <IconButton onClick={handleClose} size="small" aria-label="close">
           <CloseIcon />
         </IconButton>
@@ -212,7 +216,7 @@ export function EditSentenceModal({
             variant="contained"
             disabled={!isValid}
           >
-            Save Changes
+            {isCreating ? 'Add Sentence' : 'Save Changes'}
           </Button>
         </RightActions>
       </Actions>

@@ -1,5 +1,6 @@
 import type { Card as FSRSCard, ReviewLog } from 'ts-fsrs';
 import type { TranslationDirection } from '../components/DirectionToggle';
+import type { CustomItemBase } from './customItems';
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
@@ -19,6 +20,15 @@ export interface Sentence {
   tags: string[];
   translations?: Record<string, string>;
   createdAt?: unknown;
+  isCustom?: boolean;
+}
+
+export interface CustomSentence extends CustomItemBase {
+  polish: string;
+  english: string;
+  level: CEFRLevel;
+  tags: string[];
+  translations?: Record<string, string>;
 }
 
 export interface SentenceBank {

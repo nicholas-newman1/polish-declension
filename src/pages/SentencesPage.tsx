@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography, Stack } from '@mui/material';
 import { styled } from '../lib/styled';
+import { AddButton } from '../components/AddButton';
 import { PracticeModeButton } from '../components/PracticeModeButton';
 import { SettingsButton } from '../components/SettingsButton';
 import {
@@ -17,6 +18,7 @@ import { SentenceSettingsPanel } from '../components/SentenceSettingsPanel';
 import { EditSentenceModal } from '../components/EditSentenceModal';
 import type {
   Sentence,
+  CustomSentence,
   SentenceReviewDataStore,
   SentenceDirectionSettings,
   SentenceDirection,
@@ -36,6 +38,7 @@ import { useOptimistic } from '../hooks/useOptimistic';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { useTranslationContext } from '../hooks/useTranslationContext';
 import { updateSentence, deleteSentence, updateSentenceTranslation } from '../lib/storage/systemSentences';
+import { saveCustomSentences } from '../lib/storage/customSentences';
 import shuffleArray from '../lib/utils/shuffleArray';
 import { includesSentenceId } from '../lib/storage/helpers';
 
@@ -67,10 +70,13 @@ export function SentencesPage({ mode }: SentencesPageProps) {
     sentenceReviewStores,
     sentenceSettings: settings,
     sentences: contextSentences,
+    customSentences: contextCustomSentences,
+    systemSentences: contextSystemSentences,
     updateSentenceReviewStore,
     updateSentenceSettings,
     clearSentenceReviewData,
     setSentences: setContextSentences,
+    setCustomSentences: setContextCustomSentences,
   } = useReviewData();
 
   const [sentences, applyOptimisticSentences] = useOptimistic(
@@ -80,10 +86,18 @@ export function SentencesPage({ mode }: SentencesPageProps) {
     }
   );
 
+  const [customSentences, applyOptimisticCustomSentences] = useOptimistic(
+    contextCustomSentences,
+    {
+      onError: () => showSnackbar('Failed to save. Please try again.', 'error'),
+    }
+  );
+
   const [showSettings, setShowSettings] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingSentence, setEditingSentence] = useState<Sentence | null>(null);
+  const [isCreatingSentence, setIsCreatingSentence] = useState(false);
 
   const [learningQueue, setLearningQueue] = useState<SentenceSessionCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -317,6 +331,7 @@ export function SentencesPage({ mode }: SentencesPageProps) {
   const handleOpenEditModal = useCallback(() => {
     if (!currentSessionCard) return;
     setEditingSentence(currentSessionCard.sentence);
+    setIsCreatingSentence(false);
     setShowEditModal(true);
   }, [currentSessionCard]);
 
@@ -352,6 +367,38 @@ export function SentencesPage({ mode }: SentencesPageProps) {
     );
     setPracticeCards((prev) => prev.filter((s) => s.id !== sentenceId));
   };
+
+  const handleAddSentence = useCallback(
+    (sentenceData: Omit<Sentence, 'id'>) => {
+      const newSentence: CustomSentence = {
+        ...sentenceData,
+        id: `custom_${Date.now()}`,
+        isCustom: true,
+        createdAt: Date.now(),
+      };
+      const newCustomSentences = [...customSentences, newSentence];
+
+      applyOptimisticCustomSentences(newCustomSentences, async () => {
+        await saveCustomSentences(newCustomSentences);
+        setContextCustomSentences(newCustomSentences);
+      });
+
+      const mergedSentences = [...newCustomSentences, ...contextSystemSentences];
+      const filtered = mergedSentences.filter((s) =>
+        directionSettings.selectedLevels.includes(s.level)
+      );
+      buildSession(filtered, reviewStore, directionSettings);
+    },
+    [
+      customSentences,
+      contextSystemSentences,
+      applyOptimisticCustomSentences,
+      setContextCustomSentences,
+      buildSession,
+      reviewStore,
+      directionSettings,
+    ]
+  );
 
   const handleSaveSentence = useCallback(
     (sentenceData: Omit<Sentence, 'id'>) => {
@@ -471,6 +518,17 @@ export function SentencesPage({ mode }: SentencesPageProps) {
           onClick={() => setShowSettings(!showSettings)}
           disabled={isLoading}
         />
+
+        {user && (
+          <AddButton
+            onClick={() => {
+              setIsCreatingSentence(true);
+              setShowEditModal(true);
+            }}
+            aria-label="add sentence"
+            disabled={isLoading}
+          />
+        )}
       </ControlsRow>
 
       {showSettings && (
@@ -586,9 +644,11 @@ export function SentencesPage({ mode }: SentencesPageProps) {
         onClose={() => {
           setShowEditModal(false);
           setEditingSentence(null);
+          setIsCreatingSentence(false);
         }}
-        onSave={handleSaveSentence}
+        onSave={isCreatingSentence ? handleAddSentence : handleSaveSentence}
         sentence={editingSentence}
+        isCreating={isCreatingSentence}
       />
     </>
   );

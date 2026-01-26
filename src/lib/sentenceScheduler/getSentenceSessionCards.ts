@@ -14,8 +14,10 @@ export default function getSentenceSessionCards(
   reviewStore: SentenceReviewDataStore,
   settings: SentenceDirectionSettings
 ): { reviewCards: SentenceSessionCard[]; newCards: SentenceSessionCard[] } {
-  const reviewCards: SentenceSessionCard[] = [];
-  const newCards: SentenceSessionCard[] = [];
+  const customReviewCards: SentenceSessionCard[] = [];
+  const customNewCards: SentenceSessionCard[] = [];
+  const systemReviewCards: SentenceSessionCard[] = [];
+  const systemNewCards: SentenceSessionCard[] = [];
   const remainingNewCardsToday =
     settings.newCardsPerDay - reviewStore.newCardsToday.length;
 
@@ -27,27 +29,34 @@ export default function getSentenceSessionCards(
     const state = reviewData.fsrsCard.state;
     const isNew = state === 0;
     const isLearning = state === 1 || state === 3;
+    const isCustom = sentence.isCustom === true;
+    const targetNewCards = isCustom ? customNewCards : systemNewCards;
+    const targetReviewCards = isCustom ? customReviewCards : systemReviewCards;
 
     if (isNew) {
       if (
         !includesSentenceId(reviewStore.newCardsToday, sentence.id) &&
-        newCards.length < remainingNewCardsToday
+        (customNewCards.length + systemNewCards.length) < remainingNewCardsToday
       ) {
-        newCards.push({ sentence, reviewData, isNew: true });
+        targetNewCards.push({ sentence, reviewData, isNew: true });
       }
     } else if (isLearning) {
       if (!includesSentenceId(reviewStore.reviewedToday, sentence.id)) {
-        reviewCards.push({ sentence, reviewData, isNew: false });
+        targetReviewCards.push({ sentence, reviewData, isNew: false });
       }
     } else if (isDue(reviewData.fsrsCard)) {
       if (!includesSentenceId(reviewStore.reviewedToday, sentence.id)) {
-        reviewCards.push({ sentence, reviewData, isNew: false });
+        targetReviewCards.push({ sentence, reviewData, isNew: false });
       }
     }
   }
 
-  reviewCards.sort(sortByDueDate);
+  customReviewCards.sort(sortByDueDate);
+  systemReviewCards.sort(sortByDueDate);
 
-  return { reviewCards, newCards };
+  return {
+    reviewCards: [...customReviewCards, ...systemReviewCards],
+    newCards: [...customNewCards, ...systemNewCards],
+  };
 }
 

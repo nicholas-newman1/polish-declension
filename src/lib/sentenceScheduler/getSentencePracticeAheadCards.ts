@@ -10,7 +10,8 @@ export default function getSentencePracticeAheadCards(
   reviewStore: SentenceReviewDataStore,
   count: number
 ): SentenceSessionCard[] {
-  const practiceCards: SentenceSessionCard[] = [];
+  const customPracticeCards: SentenceSessionCard[] = [];
+  const systemPracticeCards: SentenceSessionCard[] = [];
 
   for (const sentence of allSentences) {
     const reviewData = getOrCreateSentenceCardReviewData(
@@ -28,12 +29,18 @@ export default function getSentencePracticeAheadCards(
     );
 
     if (!isDueCard || reviewedToday) {
-      practiceCards.push({ sentence, reviewData, isNew: false });
+      const isCustom = sentence.isCustom === true;
+      if (isCustom) {
+        customPracticeCards.push({ sentence, reviewData, isNew: false });
+      } else {
+        systemPracticeCards.push({ sentence, reviewData, isNew: false });
+      }
     }
   }
 
-  practiceCards.sort(sortByDueDate);
+  customPracticeCards.sort(sortByDueDate);
+  systemPracticeCards.sort(sortByDueDate);
 
-  return practiceCards.slice(0, count);
+  return [...customPracticeCards, ...systemPracticeCards].slice(0, count);
 }
 

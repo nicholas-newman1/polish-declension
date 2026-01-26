@@ -8,7 +8,8 @@ export default function getSentenceExtraNewCards(
   reviewStore: SentenceReviewDataStore,
   count: number
 ): SentenceSessionCard[] {
-  const newCards: SentenceSessionCard[] = [];
+  const customNewCards: SentenceSessionCard[] = [];
+  const systemNewCards: SentenceSessionCard[] = [];
 
   for (const sentence of allSentences) {
     const reviewData = getOrCreateSentenceCardReviewData(
@@ -18,11 +19,16 @@ export default function getSentenceExtraNewCards(
     const isNew = reviewData.fsrsCard.state === 0;
 
     if (isNew && !includesSentenceId(reviewStore.newCardsToday, sentence.id)) {
-      newCards.push({ sentence, reviewData, isNew: true });
-      if (newCards.length >= count) break;
+      const isCustom = sentence.isCustom === true;
+      if (isCustom) {
+        customNewCards.push({ sentence, reviewData, isNew: true });
+      } else {
+        systemNewCards.push({ sentence, reviewData, isNew: true });
+      }
+      if (customNewCards.length + systemNewCards.length >= count) break;
     }
   }
 
-  return newCards;
+  return [...customNewCards, ...systemNewCards].slice(0, count);
 }
 

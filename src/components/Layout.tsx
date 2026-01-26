@@ -202,18 +202,18 @@ const NAV_ITEMS: Array<{
     description: 'Home',
   },
   {
-    path: '/declension',
-    icon: School,
-    label: 'Declension',
-    description: 'Practice noun declensions',
-    reviewCountKey: 'declension',
-  },
-  {
     path: '/vocabulary',
     icon: Abc,
     label: 'Vocabulary',
     description: 'Top 1000 Polish words',
     reviewCountKey: 'vocabulary',
+  },
+  {
+    path: '/declension',
+    icon: School,
+    label: 'Declension',
+    description: 'Practice noun declensions',
+    reviewCountKey: 'declension',
   },
   {
     path: '/sentences',
@@ -242,6 +242,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/sentences/production': 'Production',
   '/my-vocabulary': 'My Vocabulary',
   '/my-declensions': 'My Declensions',
+  '/my-sentences': 'My Sentences',
   '/stats': 'Statistics',
   '/admin/generator': 'Sentence Generator',
 };
