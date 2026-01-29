@@ -309,7 +309,7 @@ function getCorrespondingAspectPairForm(form: DrillableForm, aspectPairVerb: Ver
   const { tense, formKey } = form;
 
   if (tense === 'present') {
-    if (aspectPairVerb.aspect === 'Perfective') {
+    if (aspectPairVerb.aspect === 'Perfective' && aspectPairVerb.conjugations.future) {
       const futureForm =
         aspectPairVerb.conjugations.future[
           formKey as keyof typeof aspectPairVerb.conjugations.future
@@ -319,13 +319,13 @@ function getCorrespondingAspectPairForm(form: DrillableForm, aspectPairVerb: Ver
   }
 
   if (tense === 'future') {
-    if (aspectPairVerb.aspect === 'Imperfective') {
+    if (aspectPairVerb.aspect === 'Imperfective' && aspectPairVerb.conjugations.present) {
       const presentForm =
         aspectPairVerb.conjugations.present[
           formKey as keyof typeof aspectPairVerb.conjugations.present
         ];
       return presentForm?.pl ?? null;
-    } else {
+    } else if (aspectPairVerb.conjugations.future) {
       const futureForm =
         aspectPairVerb.conjugations.future[
           formKey as keyof typeof aspectPairVerb.conjugations.future
