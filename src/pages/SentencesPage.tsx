@@ -543,6 +543,39 @@ export function SentencesPage({ mode }: SentencesPageProps) {
               )
             ) : isFinished ? (
               <FinishedState
+                currentFeature="sentences"
+                currentDirection={currentDirection}
+                otherDirectionDueCount={
+                  currentDirection === 'pl-to-en'
+                    ? progressStats.sentencesByDirection['en-to-pl'].total.due
+                    : progressStats.sentencesByDirection['pl-to-en'].total.due
+                }
+                otherDirectionLabel={currentDirection === 'pl-to-en' ? 'Production' : 'Recognition'}
+                onSwitchDirection={() => {
+                  const route = currentDirection === 'pl-to-en' ? 'production' : 'recognition';
+                  navigate(`/sentences/${route}`);
+                }}
+                otherFeaturesDue={[
+                  {
+                    feature: 'vocabulary',
+                    label: 'Vocabulary',
+                    dueCount: progressStats.vocabulary.due,
+                    path: '/vocabulary',
+                  },
+                  {
+                    feature: 'conjugation',
+                    label: 'Conjugation',
+                    dueCount: progressStats.conjugation.due,
+                    path: '/conjugation',
+                  },
+                  {
+                    feature: 'declension',
+                    label: 'Declension',
+                    dueCount: progressStats.declension.due,
+                    path: '/declension',
+                  },
+                ]}
+                onNavigateToFeature={(path) => navigate(path)}
                 practiceAheadCount={practiceAheadCount}
                 setPracticeAheadCount={setPracticeAheadCount}
                 extraNewCardsCount={extraNewCardsCount}

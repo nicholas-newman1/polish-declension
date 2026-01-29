@@ -537,6 +537,39 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
               )
             ) : isFinished ? (
               <FinishedState
+                currentFeature="vocabulary"
+                currentDirection={currentDirection}
+                otherDirectionDueCount={
+                  currentDirection === 'pl-to-en'
+                    ? progressStats.vocabularyByDirection['en-to-pl'].due
+                    : progressStats.vocabularyByDirection['pl-to-en'].due
+                }
+                otherDirectionLabel={currentDirection === 'pl-to-en' ? 'Production' : 'Recognition'}
+                onSwitchDirection={() => {
+                  const route = currentDirection === 'pl-to-en' ? 'production' : 'recognition';
+                  navigate(`/vocabulary/${route}`);
+                }}
+                otherFeaturesDue={[
+                  {
+                    feature: 'sentences',
+                    label: 'Sentences',
+                    dueCount: progressStats.sentences.due,
+                    path: '/sentences',
+                  },
+                  {
+                    feature: 'conjugation',
+                    label: 'Conjugation',
+                    dueCount: progressStats.conjugation.due,
+                    path: '/conjugation',
+                  },
+                  {
+                    feature: 'declension',
+                    label: 'Declension',
+                    dueCount: progressStats.declension.due,
+                    path: '/declension',
+                  },
+                ]}
+                onNavigateToFeature={(path) => navigate(path)}
                 practiceAheadCount={practiceAheadCount}
                 setPracticeAheadCount={setPracticeAheadCount}
                 extraNewCardsCount={extraNewCardsCount}

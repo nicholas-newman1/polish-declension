@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography, styled } from '@mui/material';
 import {
@@ -38,6 +39,7 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { useReviewData } from '../hooks/useReviewData';
 import { useOptimistic } from '../hooks/useOptimistic';
 import { useSnackbar } from '../hooks/useSnackbar';
+import { useProgressStats } from '../hooks/useProgressStats';
 import { DEFAULT_DECLENSION_SETTINGS } from '../constants';
 import shuffleArray from '../lib/utils/shuffleArray';
 
@@ -57,8 +59,10 @@ const MainContent = styled(Box)({
 });
 
 export function DeclensionPage() {
+  const navigate = useNavigate();
   const { user, isAdmin } = useAuthContext();
   const { showSnackbar } = useSnackbar();
+  const progressStats = useProgressStats();
   const {
     loading: contextLoading,
     customDeclensionCards: contextCustomDeclensionCards,
@@ -578,6 +582,28 @@ export function DeclensionPage() {
           )
         ) : isFinished ? (
           <FinishedState
+            currentFeature="declension"
+            otherFeaturesDue={[
+              {
+                feature: 'vocabulary',
+                label: 'Vocabulary',
+                dueCount: progressStats.vocabulary.due,
+                path: '/vocabulary',
+              },
+              {
+                feature: 'sentences',
+                label: 'Sentences',
+                dueCount: progressStats.sentences.due,
+                path: '/sentences',
+              },
+              {
+                feature: 'conjugation',
+                label: 'Conjugation',
+                dueCount: progressStats.conjugation.due,
+                path: '/conjugation',
+              },
+            ]}
+            onNavigateToFeature={(path) => navigate(path)}
             practiceAheadCount={practiceAheadCount}
             setPracticeAheadCount={setPracticeAheadCount}
             extraNewCardsCount={extraNewCardsCount}

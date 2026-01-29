@@ -426,6 +426,39 @@ export function ConjugationPage({ mode }: ConjugationPageProps) {
               )
             ) : isFinished ? (
               <FinishedState
+                currentFeature="conjugation"
+                currentDirection={currentDirection}
+                otherDirectionDueCount={
+                  currentDirection === 'pl-to-en'
+                    ? progressStats.conjugationByDirection['en-to-pl'].due
+                    : progressStats.conjugationByDirection['pl-to-en'].due
+                }
+                otherDirectionLabel={currentDirection === 'pl-to-en' ? 'Production' : 'Recognition'}
+                onSwitchDirection={() => {
+                  const route = currentDirection === 'pl-to-en' ? 'production' : 'recognition';
+                  navigate(`/conjugation/${route}`);
+                }}
+                otherFeaturesDue={[
+                  {
+                    feature: 'vocabulary',
+                    label: 'Vocabulary',
+                    dueCount: progressStats.vocabulary.due,
+                    path: '/vocabulary',
+                  },
+                  {
+                    feature: 'sentences',
+                    label: 'Sentences',
+                    dueCount: progressStats.sentences.due,
+                    path: '/sentences',
+                  },
+                  {
+                    feature: 'declension',
+                    label: 'Declension',
+                    dueCount: progressStats.declension.due,
+                    path: '/declension',
+                  },
+                ]}
+                onNavigateToFeature={(path) => navigate(path)}
                 practiceAheadCount={practiceAheadCount}
                 setPracticeAheadCount={setPracticeAheadCount}
                 extraNewCardsCount={extraNewCardsCount}
