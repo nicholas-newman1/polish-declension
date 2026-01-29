@@ -6,6 +6,30 @@
     "verbClass": "Irregular"
   },
   {
+    "id": "chciec",
+    "infinitive": "chcieć",
+    "aspect": "Imperfective",
+    "verbClass": "Irregular"
+  },
+  {
+    "id": "miec",
+    "infinitive": "mieć",
+    "aspect": "Imperfective",
+    "verbClass": "Irregular"
+  },
+  {
+    "id": "moc",
+    "infinitive": "móc",
+    "aspect": "Imperfective",
+    "verbClass": "Irregular"
+  },
+  {
+    "id": "musiec",
+    "infinitive": "musieć",
+    "aspect": "Imperfective",
+    "verbClass": "Irregular"
+  },
+  {
     "id": "napisac",
     "infinitive": "napisać",
     "aspect": "Perfective",
@@ -16,5 +40,11 @@
     "infinitive": "pisać",
     "aspect": "Imperfective",
     "verbClass": "-ać"
+  },
+  {
+    "id": "wiedziec",
+    "infinitive": "wiedzieć",
+    "aspect": "Imperfective",
+    "verbClass": "Irregular"
   }
 ]

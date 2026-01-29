@@ -64,6 +64,7 @@ export interface Verb {
   verbClass: VerbClass;
   isIrregular: boolean;
   isReflexive: boolean;
+  isImpersonal?: boolean;
   conjugations: {
     present: Record<PresentFormKey, ConjugationForm>;
     past: Record<PastFormKey, ConjugationForm>;

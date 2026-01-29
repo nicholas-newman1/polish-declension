@@ -4,21 +4,35 @@ export type Tense = 'present' | 'past' | 'future' | 'imperative' | 'conditional'
 
 export type PresentFormKey = '1sg' | '2sg' | '3sg' | '1pl' | '2pl' | '3pl';
 export type PastFormKey =
-  | '1sg_m' | '1sg_f'
-  | '2sg_m' | '2sg_f'
-  | '3sg_m' | '3sg_f' | '3sg_n'
-  | '1pl_m' | '1pl_f'
-  | '2pl_m' | '2pl_f'
-  | '3pl_m' | '3pl_f';
+  | '1sg_m'
+  | '1sg_f'
+  | '2sg_m'
+  | '2sg_f'
+  | '3sg_m'
+  | '3sg_f'
+  | '3sg_n'
+  | '1pl_m'
+  | '1pl_f'
+  | '2pl_m'
+  | '2pl_f'
+  | '3pl_m'
+  | '3pl_f';
 export type FutureFormKey = '1sg' | '2sg' | '3sg' | '1pl' | '2pl' | '3pl';
 export type ImperativeFormKey = '2sg' | '1pl' | '2pl';
 export type ConditionalFormKey =
-  | '1sg_m' | '1sg_f'
-  | '2sg_m' | '2sg_f'
-  | '3sg_m' | '3sg_f' | '3sg_n'
-  | '1pl_m' | '1pl_f'
-  | '2pl_m' | '2pl_f'
-  | '3pl_m' | '3pl_f';
+  | '1sg_m'
+  | '1sg_f'
+  | '2sg_m'
+  | '2sg_f'
+  | '3sg_m'
+  | '3sg_f'
+  | '3sg_n'
+  | '1pl_m'
+  | '1pl_f'
+  | '2pl_m'
+  | '2pl_f'
+  | '3pl_m'
+  | '3pl_f';
 
 export interface ConjugationForm {
   pl: string;
@@ -35,11 +49,13 @@ export interface Verb {
   verbClass: VerbClass;
   isIrregular: boolean;
   isReflexive: boolean;
+  isDefective?: boolean;
+  isImpersonal?: boolean;
   conjugations: {
-    present: Record<PresentFormKey, ConjugationForm>;
+    present?: Record<PresentFormKey, ConjugationForm>;
     past: Record<PastFormKey, ConjugationForm>;
     future: Record<FutureFormKey, ConjugationForm>;
-    imperative: Record<ImperativeFormKey, ConjugationForm>;
+    imperative?: Record<ImperativeFormKey, ConjugationForm>;
     conditional: Record<ConditionalFormKey, ConjugationForm>;
   };
 }
@@ -57,22 +73,53 @@ export const VALID_TENSES: Tense[] = ['present', 'past', 'future', 'imperative',
 
 export const PRESENT_FORM_KEYS: PresentFormKey[] = ['1sg', '2sg', '3sg', '1pl', '2pl', '3pl'];
 export const PAST_FORM_KEYS: PastFormKey[] = [
-  '1sg_m', '1sg_f',
-  '2sg_m', '2sg_f',
-  '3sg_m', '3sg_f', '3sg_n',
-  '1pl_m', '1pl_f',
-  '2pl_m', '2pl_f',
-  '3pl_m', '3pl_f',
+  '1sg_m',
+  '1sg_f',
+  '2sg_m',
+  '2sg_f',
+  '3sg_m',
+  '3sg_f',
+  '3sg_n',
+  '1pl_m',
+  '1pl_f',
+  '2pl_m',
+  '2pl_f',
+  '3pl_m',
+  '3pl_f',
 ];
 export const FUTURE_FORM_KEYS: FutureFormKey[] = ['1sg', '2sg', '3sg', '1pl', '2pl', '3pl'];
 export const IMPERATIVE_FORM_KEYS: ImperativeFormKey[] = ['2sg', '1pl', '2pl'];
 export const CONDITIONAL_FORM_KEYS: ConditionalFormKey[] = [
-  '1sg_m', '1sg_f',
-  '2sg_m', '2sg_f',
-  '3sg_m', '3sg_f', '3sg_n',
-  '1pl_m', '1pl_f',
-  '2pl_m', '2pl_f',
-  '3pl_m', '3pl_f',
+  '1sg_m',
+  '1sg_f',
+  '2sg_m',
+  '2sg_f',
+  '3sg_m',
+  '3sg_f',
+  '3sg_n',
+  '1pl_m',
+  '1pl_f',
+  '2pl_m',
+  '2pl_f',
+  '3pl_m',
+  '3pl_f',
+];
+
+export const IMPERSONAL_PRESENT_FORM_KEYS: PresentFormKey[] = ['3sg', '3pl'];
+export const IMPERSONAL_PAST_FORM_KEYS: PastFormKey[] = [
+  '3sg_m',
+  '3sg_f',
+  '3sg_n',
+  '3pl_m',
+  '3pl_f',
+];
+export const IMPERSONAL_FUTURE_FORM_KEYS: FutureFormKey[] = ['3sg', '3pl'];
+export const IMPERSONAL_CONDITIONAL_FORM_KEYS: ConditionalFormKey[] = [
+  '3sg_m',
+  '3sg_f',
+  '3sg_n',
+  '3pl_m',
+  '3pl_f',
 ];
 
 export function isValidAspect(value: string): value is Aspect {
@@ -110,7 +157,9 @@ function validateConjugationForm(
 
   if (requireAlternatives) {
     if (!f.plAlternatives || !Array.isArray(f.plAlternatives) || f.plAlternatives.length === 0) {
-      errors.push(`${verbId}.conjugations.${tense}.${formKey}.plAlternatives: required for imperfective future`);
+      errors.push(
+        `${verbId}.conjugations.${tense}.${formKey}.plAlternatives: required for imperfective future`
+      );
     }
   }
 
@@ -118,7 +167,9 @@ function validateConjugationForm(
     if (!Array.isArray(f.plAlternatives)) {
       errors.push(`${verbId}.conjugations.${tense}.${formKey}.plAlternatives: must be an array`);
     } else if (!f.plAlternatives.every((a: unknown) => typeof a === 'string')) {
-      errors.push(`${verbId}.conjugations.${tense}.${formKey}.plAlternatives: all items must be strings`);
+      errors.push(
+        `${verbId}.conjugations.${tense}.${formKey}.plAlternatives: all items must be strings`
+      );
     }
   }
 
@@ -149,7 +200,9 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
   }
 
   if (!v.verbClass || !isValidVerbClass(v.verbClass as string)) {
-    errors.push(`${verbId}: invalid "verbClass" (must be one of: ${VALID_VERB_CLASSES.join(', ')})`);
+    errors.push(
+      `${verbId}: invalid "verbClass" (must be one of: ${VALID_VERB_CLASSES.join(', ')})`
+    );
   }
 
   if (typeof v.isIrregular !== 'boolean') {
@@ -158,6 +211,14 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
 
   if (typeof v.isReflexive !== 'boolean') {
     errors.push(`${verbId}: "isReflexive" must be boolean`);
+  }
+
+  if (v.isDefective !== undefined && typeof v.isDefective !== 'boolean') {
+    errors.push(`${verbId}: "isDefective" must be boolean`);
+  }
+
+  if (v.isImpersonal !== undefined && typeof v.isImpersonal !== 'boolean') {
+    errors.push(`${verbId}: "isImpersonal" must be boolean`);
   }
 
   if (v.aspectPair !== undefined) {
@@ -170,7 +231,9 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
       } else {
         const pv = pairVerb as Record<string, unknown>;
         if (pv.aspectPair !== verbId) {
-          errors.push(`${verbId}: aspectPair cross-reference mismatch - "${v.aspectPair}" does not point back`);
+          errors.push(
+            `${verbId}: aspectPair cross-reference mismatch - "${v.aspectPair}" does not point back`
+          );
         }
       }
     }
@@ -183,11 +246,14 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
 
   const conj = v.conjugations as Record<string, unknown>;
 
+  const isImpersonal = v.isImpersonal === true;
+
   if (v.aspect === 'Imperfective') {
     if (!conj.present || typeof conj.present !== 'object') {
       errors.push(`${verbId}: imperfective verb must have "present" conjugations`);
     } else {
-      for (const key of PRESENT_FORM_KEYS) {
+      const presentKeys = isImpersonal ? IMPERSONAL_PRESENT_FORM_KEYS : PRESENT_FORM_KEYS;
+      for (const key of presentKeys) {
         const present = conj.present as Record<string, unknown>;
         errors.push(...validateConjugationForm(present[key], key, 'present', verbId));
       }
@@ -197,7 +263,8 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
   if (!conj.past || typeof conj.past !== 'object') {
     errors.push(`${verbId}: missing "past" conjugations`);
   } else {
-    for (const key of PAST_FORM_KEYS) {
+    const pastKeys = isImpersonal ? IMPERSONAL_PAST_FORM_KEYS : PAST_FORM_KEYS;
+    for (const key of pastKeys) {
       const past = conj.past as Record<string, unknown>;
       errors.push(...validateConjugationForm(past[key], key, 'past', verbId));
     }
@@ -207,25 +274,33 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
     errors.push(`${verbId}: missing "future" conjugations`);
   } else {
     const isImperfective = v.aspect === 'Imperfective';
-    for (const key of FUTURE_FORM_KEYS) {
+    const futureKeys = isImpersonal ? IMPERSONAL_FUTURE_FORM_KEYS : FUTURE_FORM_KEYS;
+    for (const key of futureKeys) {
       const future = conj.future as Record<string, unknown>;
       errors.push(...validateConjugationForm(future[key], key, 'future', verbId, isImperfective));
     }
   }
 
-  if (!conj.imperative || typeof conj.imperative !== 'object') {
-    errors.push(`${verbId}: missing "imperative" conjugations`);
+  if (v.isDefective || isImpersonal) {
+    if (conj.imperative) {
+      errors.push(`${verbId}: defective/impersonal verb should not have "imperative" conjugations`);
+    }
   } else {
-    for (const key of IMPERATIVE_FORM_KEYS) {
-      const imperative = conj.imperative as Record<string, unknown>;
-      errors.push(...validateConjugationForm(imperative[key], key, 'imperative', verbId));
+    if (!conj.imperative || typeof conj.imperative !== 'object') {
+      errors.push(`${verbId}: missing "imperative" conjugations`);
+    } else {
+      for (const key of IMPERATIVE_FORM_KEYS) {
+        const imperative = conj.imperative as Record<string, unknown>;
+        errors.push(...validateConjugationForm(imperative[key], key, 'imperative', verbId));
+      }
     }
   }
 
   if (!conj.conditional || typeof conj.conditional !== 'object') {
     errors.push(`${verbId}: missing "conditional" conjugations`);
   } else {
-    for (const key of CONDITIONAL_FORM_KEYS) {
+    const conditionalKeys = isImpersonal ? IMPERSONAL_CONDITIONAL_FORM_KEYS : CONDITIONAL_FORM_KEYS;
+    for (const key of conditionalKeys) {
       const conditional = conj.conditional as Record<string, unknown>;
       errors.push(...validateConjugationForm(conditional[key], key, 'conditional', verbId));
     }
@@ -233,4 +308,3 @@ export function validateVerb(verb: unknown, allVerbs: Map<string, unknown>): str
 
   return errors;
 }
-
