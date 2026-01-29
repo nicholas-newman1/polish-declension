@@ -168,7 +168,13 @@ export function TranslatorModal() {
           onChange={(e) => setText(e.target.value)}
           fullWidth
           autoFocus
-          inputProps={{ maxLength: MAX_TEXT_LENGTH }}
+          inputProps={{
+            maxLength: MAX_TEXT_LENGTH,
+            style: {
+              WebkitUserSelect: 'text',
+              userSelect: 'text',
+            },
+          }}
           helperText={`${text.length} / ${MAX_TEXT_LENGTH}`}
         />
 
