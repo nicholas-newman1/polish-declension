@@ -12,6 +12,24 @@
     "verbClass": "Irregular"
   },
   {
+    "id": "dac",
+    "infinitive": "dać",
+    "aspect": "Perfective",
+    "verbClass": "-ać"
+  },
+  {
+    "id": "dawac",
+    "infinitive": "dawać",
+    "aspect": "Imperfective",
+    "verbClass": "-ać"
+  },
+  {
+    "id": "isc",
+    "infinitive": "iść",
+    "aspect": "Imperfective",
+    "verbClass": "Irregular"
+  },
+  {
     "id": "miec",
     "infinitive": "mieć",
     "aspect": "Imperfective",
@@ -22,6 +40,12 @@
     "infinitive": "móc",
     "aspect": "Imperfective",
     "verbClass": "Irregular"
+  },
+  {
+    "id": "mowic",
+    "infinitive": "mówić",
+    "aspect": "Imperfective",
+    "verbClass": "-ić"
   },
   {
     "id": "musiec",
@@ -42,9 +66,33 @@
     "verbClass": "-ać"
   },
   {
+    "id": "powiedziec",
+    "infinitive": "powiedzieć",
+    "aspect": "Perfective",
+    "verbClass": "-eć"
+  },
+  {
+    "id": "pojsc",
+    "infinitive": "pójść",
+    "aspect": "Perfective",
+    "verbClass": "Irregular"
+  },
+  {
+    "id": "robic",
+    "infinitive": "robić",
+    "aspect": "Imperfective",
+    "verbClass": "-ić"
+  },
+  {
     "id": "wiedziec",
     "infinitive": "wiedzieć",
     "aspect": "Imperfective",
     "verbClass": "Irregular"
+  },
+  {
+    "id": "zrobic",
+    "infinitive": "zrobić",
+    "aspect": "Perfective",
+    "verbClass": "-ić"
   }
 ]

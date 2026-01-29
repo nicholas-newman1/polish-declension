@@ -64,13 +64,14 @@ export interface Verb {
   verbClass: VerbClass;
   isIrregular: boolean;
   isReflexive: boolean;
+  isDefective?: boolean;
   isImpersonal?: boolean;
   conjugations: {
-    present: Record<PresentFormKey, ConjugationForm>;
-    past: Record<PastFormKey, ConjugationForm>;
-    future: Record<FutureFormKey, ConjugationForm>;
-    imperative: Record<ImperativeFormKey, ConjugationForm>;
-    conditional: Record<ConditionalFormKey, ConjugationForm>;
+    present?: Record<PresentFormKey, ConjugationForm>;
+    past?: Record<PastFormKey, ConjugationForm>;
+    future?: Record<FutureFormKey, ConjugationForm>;
+    imperative?: Record<ImperativeFormKey, ConjugationForm>;
+    conditional?: Record<ConditionalFormKey, ConjugationForm>;
   };
 }
 

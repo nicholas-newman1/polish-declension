@@ -87,17 +87,25 @@ export function getDrillableFormsForVerb(verb: Verb): DrillableForm[] {
     }
   };
 
-  if (verb.aspect === 'Imperfective') {
+  if (verb.conjugations.present) {
     addForms('present', PRESENT_FORM_KEYS, verb.conjugations.present);
   }
-  addForms('past', PAST_FORM_KEYS, verb.conjugations.past);
-  addForms('future', FUTURE_FORM_KEYS, verb.conjugations.future);
-  addForms('imperative', IMPERATIVE_FORM_KEYS, verb.conjugations.imperative);
-  addForms(
-    'conditional',
-    CONDITIONAL_FORM_KEYS as ConditionalFormKey[],
-    verb.conjugations.conditional
-  );
+  if (verb.conjugations.past) {
+    addForms('past', PAST_FORM_KEYS, verb.conjugations.past);
+  }
+  if (verb.conjugations.future) {
+    addForms('future', FUTURE_FORM_KEYS, verb.conjugations.future);
+  }
+  if (verb.conjugations.imperative) {
+    addForms('imperative', IMPERATIVE_FORM_KEYS, verb.conjugations.imperative);
+  }
+  if (verb.conjugations.conditional) {
+    addForms(
+      'conditional',
+      CONDITIONAL_FORM_KEYS as ConditionalFormKey[],
+      verb.conjugations.conditional
+    );
+  }
 
   return forms;
 }
