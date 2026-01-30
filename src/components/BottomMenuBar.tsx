@@ -1,10 +1,21 @@
-import { Box, ButtonBase, Tooltip, Typography } from '@mui/material';
+import { useState } from 'react';
+import {
+  Box,
+  ButtonBase,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { styled } from '../lib/styled';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import AbcIcon from '@mui/icons-material/Abc';
 import TranslateIcon from '@mui/icons-material/Translate';
 import SpellcheckIcon from '@mui/icons-material/Spellcheck';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import { useTranslationContext } from '../hooks/useTranslationContext';
 import { useCheatSheetContext } from '../hooks/useCheatSheetContext';
 import { alpha } from '../lib/theme';
@@ -64,6 +75,13 @@ const Label = styled(Typography)({
   fontWeight: 500,
 });
 
+const CHEAT_SHEETS = [
+  { key: 'declension', label: 'Declensions', icon: MenuBookIcon },
+  { key: 'consonants', label: 'Consonants', icon: AbcIcon },
+  { key: 'yi-rule', label: '-y/-i Rule', icon: SpellcheckIcon },
+  { key: 'conjugation', label: 'Conjugations', icon: AutoStoriesIcon },
+] as const;
+
 interface BottomMenuBarProps {
   showTranslator?: boolean;
 }
@@ -71,6 +89,23 @@ interface BottomMenuBarProps {
 export function BottomMenuBar({ showTranslator = true }: BottomMenuBarProps) {
   const { openTranslator, showTranslator: isTranslatorOpen } = useTranslationContext();
   const { openSheet, activeSheet } = useCheatSheetContext();
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+
+  const isCheatSheetOpen = CHEAT_SHEETS.some((sheet) => sheet.key === activeSheet);
+  const menuOpen = Boolean(menuAnchor);
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setMenuAnchor(null);
+  };
+
+  const handleSelectSheet = (sheetKey: (typeof CHEAT_SHEETS)[number]['key']) => {
+    openSheet(sheetKey);
+    handleCloseMenu();
+  };
 
   const translatorButton = (
     <MenuButton
@@ -95,34 +130,51 @@ export function BottomMenuBar({ showTranslator = true }: BottomMenuBarProps) {
           <span>{translatorButton}</span>
         </Tooltip>
       )}
-      <MenuButton onClick={() => openSheet('declension')} aria-label="Open declension cheat sheet">
-        <IconWrapper $isActive={activeSheet === 'declension'}>
-          <MenuBookIcon fontSize="small" />
-        </IconWrapper>
-        <Label>Declensions</Label>
-      </MenuButton>
-      <MenuButton onClick={() => openSheet('consonants')} aria-label="Open consonants cheat sheet">
-        <IconWrapper $isActive={activeSheet === 'consonants'}>
-          <AbcIcon fontSize="small" />
-        </IconWrapper>
-        <Label>Consonants</Label>
-      </MenuButton>
-      <MenuButton onClick={() => openSheet('yi-rule')} aria-label="Open y/i rule cheat sheet">
-        <IconWrapper $isActive={activeSheet === 'yi-rule'}>
-          <SpellcheckIcon fontSize="small" />
-        </IconWrapper>
-        <Label>-y/-i Rule</Label>
-      </MenuButton>
 
       <MenuButton
-        onClick={() => openSheet('conjugation')}
-        aria-label="Open conjugation cheat sheet"
+        onClick={handleOpenMenu}
+        aria-label="Open cheat sheets"
+        aria-controls={menuOpen ? 'cheat-sheets-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={menuOpen ? 'true' : undefined}
       >
-        <IconWrapper $isActive={activeSheet === 'conjugation'}>
-          <AutoStoriesIcon fontSize="small" />
+        <IconWrapper $isActive={isCheatSheetOpen || menuOpen}>
+          <LibraryBooksIcon fontSize="small" />
         </IconWrapper>
-        <Label>Conjugations</Label>
+        <Label>Cheat Sheets</Label>
       </MenuButton>
+
+      <Menu
+        id="cheat-sheets-menu"
+        anchorEl={menuAnchor}
+        open={menuOpen}
+        onClose={handleCloseMenu}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        slotProps={{
+          paper: {
+            sx: {
+              mb: 1,
+              minWidth: 180,
+            },
+          },
+        }}
+      >
+        {CHEAT_SHEETS.map(({ key, label, icon: Icon }) => (
+          <MenuItem key={key} onClick={() => handleSelectSheet(key)} selected={activeSheet === key}>
+            <ListItemIcon>
+              <Icon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{label}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
     </MenuBarContainer>
   );
 }
