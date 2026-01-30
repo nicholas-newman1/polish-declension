@@ -53,7 +53,8 @@ export function useReviewCounts(): ReviewCountsContextType {
 }
 
 export interface ReviewDataContextType
-  extends DeclensionContextType,
+  extends
+    DeclensionContextType,
     VocabularyContextType,
     SentenceContextType,
     ConjugationContextType {

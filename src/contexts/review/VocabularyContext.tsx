@@ -6,7 +6,7 @@ import type {
   VocabularyReviewDataStore,
   VocabularySettings,
   VocabularyDirectionSettings,
-  VocabularyDirection,
+  TranslationDirection,
   CustomVocabularyWord,
 } from '../../types/vocabulary';
 import loadVocabularyReviewData from '../../lib/storage/loadVocabularyReviewData';
@@ -21,20 +21,20 @@ import { getDefaultVocabularyReviewStore } from '../../lib/storage/helpers';
 import { showSaveError } from '../../lib/storage/errorHandler';
 
 export interface VocabularyContextType {
-  vocabularyReviewStores: Record<VocabularyDirection, VocabularyReviewDataStore>;
+  vocabularyReviewStores: Record<TranslationDirection, VocabularyReviewDataStore>;
   vocabularySettings: VocabularySettings;
   vocabularyWords: VocabularyWord[];
   customWords: CustomVocabularyWord[];
   systemWords: VocabularyWord[];
   updateVocabularyReviewStore: (
-    direction: VocabularyDirection,
+    direction: TranslationDirection,
     store: VocabularyReviewDataStore
   ) => Promise<void>;
   updateVocabularySettings: (
-    direction: VocabularyDirection,
+    direction: TranslationDirection,
     settings: VocabularyDirectionSettings
   ) => Promise<void>;
-  clearVocabularyReviewData: (direction: VocabularyDirection) => Promise<void>;
+  clearVocabularyReviewData: (direction: TranslationDirection) => Promise<void>;
   refreshVocabularyWords: () => Promise<void>;
   setCustomWords: (words: CustomVocabularyWord[]) => void;
   setSystemWords: (words: VocabularyWord[]) => void;
@@ -47,7 +47,7 @@ interface VocabularyProviderProps {
   children: ReactNode;
   initialCustomWords?: CustomVocabularyWord[];
   initialSystemWords?: VocabularyWord[];
-  initialReviewStores?: Record<VocabularyDirection, VocabularyReviewDataStore>;
+  initialReviewStores?: Record<TranslationDirection, VocabularyReviewDataStore>;
   initialSettings?: VocabularySettings;
 }
 
@@ -59,7 +59,7 @@ export function VocabularyProvider({
   initialSettings = DEFAULT_VOCABULARY_SETTINGS,
 }: VocabularyProviderProps) {
   const [vocabularyReviewStores, setVocabularyReviewStores] = useState<
-    Record<VocabularyDirection, VocabularyReviewDataStore>
+    Record<TranslationDirection, VocabularyReviewDataStore>
   >(
     initialReviewStores ?? {
       'pl-to-en': getDefaultVocabularyReviewStore(),
@@ -76,7 +76,7 @@ export function VocabularyProvider({
   );
 
   const updateVocabularyReviewStore = useCallback(
-    async (direction: VocabularyDirection, store: VocabularyReviewDataStore) => {
+    async (direction: TranslationDirection, store: VocabularyReviewDataStore) => {
       setVocabularyReviewStores((prev) => ({
         ...prev,
         [direction]: store,
@@ -91,7 +91,7 @@ export function VocabularyProvider({
   );
 
   const updateVocabularySettingsFn = useCallback(
-    async (direction: VocabularyDirection, settings: VocabularyDirectionSettings) => {
+    async (direction: TranslationDirection, settings: VocabularyDirectionSettings) => {
       setVocabularySettings((prev) => ({
         ...prev,
         [direction]: settings,
@@ -105,7 +105,7 @@ export function VocabularyProvider({
     []
   );
 
-  const clearVocabularyReviewDataFn = useCallback(async (direction: VocabularyDirection) => {
+  const clearVocabularyReviewDataFn = useCallback(async (direction: TranslationDirection) => {
     try {
       await clearVocabularyData(direction);
       const freshStore = getDefaultVocabularyReviewStore();

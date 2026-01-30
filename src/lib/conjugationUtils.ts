@@ -7,7 +7,7 @@ import type {
   ConjugationForm,
   DrillableForm,
   ConjugationFilters,
-  ConjugationDirection,
+  TranslationDirection,
   ConditionalFormKey,
 } from '../types/conjugation';
 import {
@@ -198,7 +198,7 @@ export function validate3sgAnswer(userAnswer: string, storedVerbs: string[]): bo
 export function checkAnswer(
   userAnswer: string,
   form: ConjugationForm,
-  direction: ConjugationDirection,
+  direction: TranslationDirection,
   is3sgNonGendered: boolean
 ): boolean {
   const normalize = (s: string) =>
@@ -222,7 +222,7 @@ export function checkAnswer(
   }
 }
 
-export function getQuestionDisplay(form: DrillableForm, direction: ConjugationDirection): string {
+export function getQuestionDisplay(form: DrillableForm, direction: TranslationDirection): string {
   if (direction === 'en-to-pl') {
     const is3sgNonGendered =
       form.person === '3rd' &&
@@ -244,7 +244,7 @@ export function getQuestionDisplay(form: DrillableForm, direction: ConjugationDi
 
 export function getAnswerDisplay(
   form: DrillableForm,
-  direction: ConjugationDirection
+  direction: TranslationDirection
 ): { primary: string; alternatives?: string[] } {
   if (direction === 'en-to-pl') {
     return {

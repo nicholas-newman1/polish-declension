@@ -1,10 +1,10 @@
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { ConjugationDirection } from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/conjugation';
 import { getUserId, getConjugationDocPath } from './helpers';
 import { getConjugationSettingsDocPath } from './loadConjugationSettings';
 
-export default async function clearConjugationData(direction: ConjugationDirection): Promise<void> {
+export default async function clearConjugationData(direction: TranslationDirection): Promise<void> {
   const userId = getUserId();
   if (!userId) return;
 

@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import type {
   VocabularySettings,
   VocabularyDirectionSettings,
-  VocabularyDirection,
+  TranslationDirection,
 } from '../../types/vocabulary';
 import { getUserId } from './helpers';
 
@@ -16,12 +16,12 @@ const DEFAULT_VOCABULARY_SETTINGS: VocabularySettings = {
   'en-to-pl': { ...DEFAULT_DIRECTION_SETTINGS },
 };
 
-function getVocabularySettingsDocPath(direction: VocabularyDirection): string {
+function getVocabularySettingsDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'vocabularySettings-pl-en' : 'vocabularySettings-en-pl';
 }
 
 export async function loadVocabularyDirectionSettings(
-  direction: VocabularyDirection
+  direction: TranslationDirection
 ): Promise<VocabularyDirectionSettings> {
   const userId = getUserId();
   if (!userId) return DEFAULT_DIRECTION_SETTINGS;

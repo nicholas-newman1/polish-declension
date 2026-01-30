@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { SentenceReviewDataStore, SentenceDirection } from '../../types/sentences';
+import type { SentenceReviewDataStore, TranslationDirection } from '../../types/sentences';
 import {
   getUserId,
   getTodayString,
@@ -9,7 +9,7 @@ import {
 } from './helpers';
 
 export default async function loadSentenceReviewData(
-  direction: SentenceDirection
+  direction: TranslationDirection
 ): Promise<SentenceReviewDataStore> {
   const userId = getUserId();
   if (!userId) return getDefaultSentenceReviewStore();

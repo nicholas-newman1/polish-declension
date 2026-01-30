@@ -5,7 +5,7 @@ import type {
   Verb,
   ConjugationReviewDataStore,
   ConjugationSettings,
-  ConjugationDirection,
+  TranslationDirection,
   ConjugationDirectionSettings,
 } from '../../types/conjugation';
 import { DEFAULT_CONJUGATION_SETTINGS } from '../../types/conjugation';
@@ -19,17 +19,17 @@ import { showSaveError } from '../../lib/storage/errorHandler';
 
 export interface ConjugationContextType {
   verbs: Verb[];
-  conjugationReviewStores: Record<ConjugationDirection, ConjugationReviewDataStore>;
+  conjugationReviewStores: Record<TranslationDirection, ConjugationReviewDataStore>;
   conjugationSettings: ConjugationSettings;
   updateConjugationReviewStore: (
-    direction: ConjugationDirection,
+    direction: TranslationDirection,
     store: ConjugationReviewDataStore
   ) => Promise<void>;
   updateConjugationSettings: (
-    direction: ConjugationDirection,
+    direction: TranslationDirection,
     settings: ConjugationDirectionSettings
   ) => Promise<void>;
-  clearConjugationReviewData: (direction: ConjugationDirection) => Promise<void>;
+  clearConjugationReviewData: (direction: TranslationDirection) => Promise<void>;
   refreshVerbs: () => Promise<void>;
   setVerbs: (verbs: Verb[]) => void;
 }
@@ -40,7 +40,7 @@ export const ConjugationContext = createContext<ConjugationContextType | null>(n
 interface ConjugationProviderProps {
   children: ReactNode;
   initialVerbs?: Verb[];
-  initialReviewStores?: Record<ConjugationDirection, ConjugationReviewDataStore>;
+  initialReviewStores?: Record<TranslationDirection, ConjugationReviewDataStore>;
   initialSettings?: ConjugationSettings;
 }
 
@@ -52,7 +52,7 @@ export function ConjugationProvider({
 }: ConjugationProviderProps) {
   const [verbs, setVerbs] = useState<Verb[]>(initialVerbs);
   const [conjugationReviewStores, setConjugationReviewStores] = useState<
-    Record<ConjugationDirection, ConjugationReviewDataStore>
+    Record<TranslationDirection, ConjugationReviewDataStore>
   >(
     initialReviewStores ?? {
       'pl-to-en': getDefaultConjugationReviewStore(),
@@ -63,7 +63,7 @@ export function ConjugationProvider({
     useState<ConjugationSettings>(initialSettings);
 
   const updateConjugationReviewStore = useCallback(
-    async (direction: ConjugationDirection, store: ConjugationReviewDataStore) => {
+    async (direction: TranslationDirection, store: ConjugationReviewDataStore) => {
       setConjugationReviewStores((prev) => ({
         ...prev,
         [direction]: store,
@@ -78,7 +78,7 @@ export function ConjugationProvider({
   );
 
   const updateConjugationSettingsFn = useCallback(
-    async (direction: ConjugationDirection, settings: ConjugationDirectionSettings) => {
+    async (direction: TranslationDirection, settings: ConjugationDirectionSettings) => {
       setConjugationSettings((prev) => ({
         ...prev,
         [direction]: settings,
@@ -92,7 +92,7 @@ export function ConjugationProvider({
     []
   );
 
-  const clearConjugationReviewDataFn = useCallback(async (direction: ConjugationDirection) => {
+  const clearConjugationReviewDataFn = useCallback(async (direction: TranslationDirection) => {
     try {
       await clearConjugationData(direction);
       const freshStore = getDefaultConjugationReviewStore();

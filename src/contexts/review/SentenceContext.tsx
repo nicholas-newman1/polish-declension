@@ -4,7 +4,7 @@ import type {
   CustomSentence,
   SentenceReviewDataStore,
   SentenceSettings,
-  SentenceDirection,
+  TranslationDirection,
   SentenceDirectionSettings,
   TagCategory,
 } from '../../types/sentences';
@@ -26,21 +26,21 @@ import { getDefaultSentenceReviewStore } from '../../lib/storage/helpers';
 import { showSaveError } from '../../lib/storage/errorHandler';
 
 export interface SentenceContextType {
-  sentenceReviewStores: Record<SentenceDirection, SentenceReviewDataStore>;
+  sentenceReviewStores: Record<TranslationDirection, SentenceReviewDataStore>;
   sentenceSettings: SentenceSettings;
   sentences: Sentence[];
   customSentences: CustomSentence[];
   systemSentences: Sentence[];
   sentenceTags: SentenceTagsData;
   updateSentenceReviewStore: (
-    direction: SentenceDirection,
+    direction: TranslationDirection,
     store: SentenceReviewDataStore
   ) => Promise<void>;
   updateSentenceSettings: (
-    direction: SentenceDirection,
+    direction: TranslationDirection,
     settings: SentenceDirectionSettings
   ) => Promise<void>;
-  clearSentenceReviewData: (direction: SentenceDirection) => Promise<void>;
+  clearSentenceReviewData: (direction: TranslationDirection) => Promise<void>;
   setSentences: (sentences: Sentence[]) => void;
   setCustomSentences: (sentences: CustomSentence[]) => void;
   setSystemSentences: (sentences: Sentence[]) => void;
@@ -55,7 +55,7 @@ interface SentenceProviderProps {
   children: ReactNode;
   initialCustomSentences?: CustomSentence[];
   initialSystemSentences?: Sentence[];
-  initialReviewStores?: Record<SentenceDirection, SentenceReviewDataStore>;
+  initialReviewStores?: Record<TranslationDirection, SentenceReviewDataStore>;
   initialSettings?: SentenceSettings;
   initialTags?: SentenceTagsData;
 }
@@ -69,7 +69,7 @@ export function SentenceProvider({
   initialTags = DEFAULT_TAGS,
 }: SentenceProviderProps) {
   const [sentenceReviewStores, setSentenceReviewStores] = useState<
-    Record<SentenceDirection, SentenceReviewDataStore>
+    Record<TranslationDirection, SentenceReviewDataStore>
   >(
     initialReviewStores ?? {
       'pl-to-en': getDefaultSentenceReviewStore(),
@@ -87,7 +87,7 @@ export function SentenceProvider({
   );
 
   const updateSentenceReviewStore = useCallback(
-    async (direction: SentenceDirection, store: SentenceReviewDataStore) => {
+    async (direction: TranslationDirection, store: SentenceReviewDataStore) => {
       setSentenceReviewStores((prev) => ({
         ...prev,
         [direction]: store,
@@ -102,7 +102,7 @@ export function SentenceProvider({
   );
 
   const updateSentenceSettingsFn = useCallback(
-    async (direction: SentenceDirection, settings: SentenceDirectionSettings) => {
+    async (direction: TranslationDirection, settings: SentenceDirectionSettings) => {
       setSentenceSettings((prev) => ({
         ...prev,
         [direction]: settings,
@@ -116,7 +116,7 @@ export function SentenceProvider({
     []
   );
 
-  const clearSentenceReviewDataFn = useCallback(async (direction: SentenceDirection) => {
+  const clearSentenceReviewDataFn = useCallback(async (direction: TranslationDirection) => {
     try {
       await clearSentenceData(direction);
       const freshStore = getDefaultSentenceReviewStore();

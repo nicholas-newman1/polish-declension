@@ -1,5 +1,6 @@
 import type { Card as FSRSCard, ReviewLog } from 'ts-fsrs';
-import type { TranslationDirection } from '../components/DirectionToggle';
+export type { TranslationDirection } from './common';
+import type { TranslationDirection } from './common';
 
 export type Aspect = 'Imperfective' | 'Perfective';
 
@@ -94,9 +95,7 @@ export interface ConjugationDirectionSettings {
   newCardsPerDay: number;
 }
 
-export type ConjugationDirection = TranslationDirection;
-
-export type ConjugationSettings = Record<ConjugationDirection, ConjugationDirectionSettings>;
+export type ConjugationSettings = Record<TranslationDirection, ConjugationDirectionSettings>;
 
 export interface ConjugationFilters {
   tenses: Tense[];

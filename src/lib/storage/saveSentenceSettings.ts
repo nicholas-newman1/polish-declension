@@ -1,12 +1,12 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { SentenceDirectionSettings, SentenceDirection } from '../../types/sentences';
+import type { SentenceDirectionSettings, TranslationDirection } from '../../types/sentences';
 import { getUserId } from './helpers';
 import { getSentenceSettingsDocPath } from './loadSentenceSettings';
 
 export default async function saveSentenceSettings(
   settings: SentenceDirectionSettings,
-  direction: SentenceDirection
+  direction: TranslationDirection
 ): Promise<void> {
   const userId = getUserId();
   if (!userId) return;

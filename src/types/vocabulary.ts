@@ -42,9 +42,8 @@ export interface CustomVocabularyWord extends CustomItemBase {
   examples?: ExampleSentence[];
 }
 
-import type { TranslationDirection } from '../components/DirectionToggle';
-
-export type VocabularyDirection = TranslationDirection;
+export type { TranslationDirection } from './common';
+import type { TranslationDirection } from './common';
 
 export interface VocabularyCardReviewData {
   wordId: VocabularyWordId;
@@ -63,4 +62,4 @@ export interface VocabularyDirectionSettings {
   newCardsPerDay: number;
 }
 
-export type VocabularySettings = Record<VocabularyDirection, VocabularyDirectionSettings>;
+export type VocabularySettings = Record<TranslationDirection, VocabularyDirectionSettings>;

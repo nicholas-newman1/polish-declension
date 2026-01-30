@@ -18,7 +18,7 @@ import type {
   VocabularyWordId,
   VocabularyReviewDataStore,
   VocabularyDirectionSettings,
-  VocabularyDirection,
+  TranslationDirection,
   CustomVocabularyWord,
 } from '../types/vocabulary';
 import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
@@ -56,7 +56,7 @@ const ControlsRow = styled(Stack)(({ theme }) => ({
 }));
 
 interface VocabularyPageProps {
-  mode?: VocabularyDirection;
+  mode?: TranslationDirection;
 }
 
 export function VocabularyPage({ mode }: VocabularyPageProps) {
@@ -166,7 +166,7 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
   };
 
   const handleSelectMode = useCallback(
-    (direction: VocabularyDirection) => {
+    (direction: TranslationDirection) => {
       const route = direction === 'pl-to-en' ? 'recognition' : 'production';
       navigate(`/vocabulary/${route}`);
     },

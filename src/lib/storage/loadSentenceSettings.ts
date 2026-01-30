@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import type {
   SentenceSettings,
   SentenceDirectionSettings,
-  SentenceDirection,
+  TranslationDirection,
 } from '../../types/sentences';
 import { ALL_LEVELS } from '../../types/sentences';
 import { getUserId } from './helpers';
@@ -18,12 +18,12 @@ const DEFAULT_SENTENCE_SETTINGS: SentenceSettings = {
   'en-to-pl': { ...DEFAULT_DIRECTION_SETTINGS },
 };
 
-function getSentenceSettingsDocPath(direction: SentenceDirection): string {
+function getSentenceSettingsDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'sentenceSettings-pl-en' : 'sentenceSettings-en-pl';
 }
 
 export async function loadSentenceDirectionSettings(
-  direction: SentenceDirection
+  direction: TranslationDirection
 ): Promise<SentenceDirectionSettings> {
   const userId = getUserId();
   if (!userId) return DEFAULT_DIRECTION_SETTINGS;

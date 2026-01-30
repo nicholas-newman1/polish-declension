@@ -2,13 +2,13 @@ import { auth } from '../firebase';
 import type { DeclensionReviewDataStore, DeclensionCardId } from '../../types';
 import type {
   VocabularyReviewDataStore,
-  VocabularyDirection,
+  TranslationDirection,
   VocabularyWordId,
 } from '../../types/vocabulary';
-import type { SentenceReviewDataStore, SentenceDirection } from '../../types/sentences';
+import type { SentenceReviewDataStore, TranslationDirection } from '../../types/sentences';
 import type {
   ConjugationReviewDataStore,
-  ConjugationDirection,
+  TranslationDirection,
   ConjugationFormKey,
 } from '../../types/conjugation';
 
@@ -48,7 +48,7 @@ export function getDefaultVocabularyReviewStore(): VocabularyReviewDataStore {
   };
 }
 
-export function getVocabularyDocPath(direction: VocabularyDirection): string {
+export function getVocabularyDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'vocabularyReviewData-pl-en' : 'vocabularyReviewData-en-pl';
 }
 
@@ -65,7 +65,7 @@ export function getDefaultSentenceReviewStore(): SentenceReviewDataStore {
   };
 }
 
-export function getSentenceDocPath(direction: SentenceDirection): string {
+export function getSentenceDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'sentenceReviewData-pl-en' : 'sentenceReviewData-en-pl';
 }
 
@@ -82,6 +82,6 @@ export function getDefaultConjugationReviewStore(): ConjugationReviewDataStore {
   };
 }
 
-export function getConjugationDocPath(direction: ConjugationDirection): string {
+export function getConjugationDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'conjugationReviewData-pl-en' : 'conjugationReviewData-en-pl';
 }

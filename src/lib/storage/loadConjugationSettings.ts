@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import type {
   ConjugationSettings,
   ConjugationDirectionSettings,
-  ConjugationDirection,
+  TranslationDirection,
 } from '../../types/conjugation';
 import { getUserId } from './helpers';
 
@@ -16,12 +16,12 @@ const DEFAULT_CONJUGATION_SETTINGS: ConjugationSettings = {
   'en-to-pl': { ...DEFAULT_DIRECTION_SETTINGS },
 };
 
-function getConjugationSettingsDocPath(direction: ConjugationDirection): string {
+function getConjugationSettingsDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'conjugationSettings-pl-en' : 'conjugationSettings-en-pl';
 }
 
 export async function loadConjugationDirectionSettings(
-  direction: ConjugationDirection
+  direction: TranslationDirection
 ): Promise<ConjugationDirectionSettings> {
   const userId = getUserId();
   if (!userId) return DEFAULT_DIRECTION_SETTINGS;

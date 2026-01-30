@@ -224,11 +224,7 @@ export function FinishedState({
               >
                 +{extraNewCardsCount} new
               </SecondaryActionButton>
-              <Tooltip
-                title="Learn cards you haven't seen yet"
-                arrow
-                placement="top"
-              >
+              <Tooltip title="Learn cards you haven't seen yet" arrow placement="top">
                 <HelpOutlineIcon
                   sx={{
                     fontSize: 16,
@@ -248,11 +244,7 @@ export function FinishedState({
               >
                 Review {practiceAheadCount}
               </SecondaryActionButton>
-              <Tooltip
-                title="Review cards before they're due"
-                arrow
-                placement="top"
-              >
+              <Tooltip title="Review cards before they're due" arrow placement="top">
                 <HelpOutlineIcon
                   sx={{
                     fontSize: 16,

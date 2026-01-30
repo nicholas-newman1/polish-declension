@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { VocabularyReviewDataStore, VocabularyDirection } from '../../types/vocabulary';
+import type { VocabularyReviewDataStore, TranslationDirection } from '../../types/vocabulary';
 import {
   getUserId,
   getTodayString,
@@ -9,7 +9,7 @@ import {
 } from './helpers';
 
 export default async function loadVocabularyReviewData(
-  direction: VocabularyDirection
+  direction: TranslationDirection
 ): Promise<VocabularyReviewDataStore> {
   const userId = getUserId();
   if (!userId) return getDefaultVocabularyReviewStore();

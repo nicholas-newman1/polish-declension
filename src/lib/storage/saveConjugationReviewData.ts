@@ -1,11 +1,11 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { ConjugationReviewDataStore, ConjugationDirection } from '../../types/conjugation';
+import type { ConjugationReviewDataStore, TranslationDirection } from '../../types/conjugation';
 import { getUserId, getConjugationDocPath } from './helpers';
 
 export default async function saveConjugationReviewData(
   data: ConjugationReviewDataStore,
-  direction: ConjugationDirection
+  direction: TranslationDirection
 ): Promise<void> {
   const userId = getUserId();
   if (!userId) return;

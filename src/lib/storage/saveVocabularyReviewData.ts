@@ -1,11 +1,11 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { VocabularyReviewDataStore, VocabularyDirection } from '../../types/vocabulary';
+import type { VocabularyReviewDataStore, TranslationDirection } from '../../types/vocabulary';
 import { getUserId, getVocabularyDocPath } from './helpers';
 
 export default async function saveVocabularyReviewData(
   data: VocabularyReviewDataStore,
-  direction: VocabularyDirection
+  direction: TranslationDirection
 ): Promise<void> {
   const userId = getUserId();
   if (!userId) return;

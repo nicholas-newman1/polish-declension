@@ -1,5 +1,6 @@
 import type { Card as FSRSCard, ReviewLog } from 'ts-fsrs';
-import type { TranslationDirection } from '../components/DirectionToggle';
+export type { TranslationDirection } from './common';
+import type { TranslationDirection } from './common';
 import type { CustomItemBase } from './customItems';
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
@@ -35,8 +36,6 @@ export interface SentenceBank {
   sentences: Sentence[];
 }
 
-export type SentenceDirection = TranslationDirection;
-
 export interface SentenceCardReviewData {
   sentenceId: string;
   fsrsCard: FSRSCard;
@@ -57,4 +56,4 @@ export interface SentenceDirectionSettings {
   selectedLevels: CEFRLevel[];
 }
 
-export type SentenceSettings = Record<SentenceDirection, SentenceDirectionSettings>;
+export type SentenceSettings = Record<TranslationDirection, SentenceDirectionSettings>;

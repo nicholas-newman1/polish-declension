@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { ConjugationReviewDataStore, ConjugationDirection } from '../../types/conjugation';
+import type { ConjugationReviewDataStore, TranslationDirection } from '../../types/conjugation';
 import {
   getUserId,
   getTodayString,
@@ -9,7 +9,7 @@ import {
 } from './helpers';
 
 export default async function loadConjugationReviewData(
-  direction: ConjugationDirection
+  direction: TranslationDirection
 ): Promise<ConjugationReviewDataStore> {
   const userId = getUserId();
   if (!userId) return getDefaultConjugationReviewStore();

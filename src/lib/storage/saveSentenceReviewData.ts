@@ -1,11 +1,11 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { SentenceReviewDataStore, SentenceDirection } from '../../types/sentences';
+import type { SentenceReviewDataStore, TranslationDirection } from '../../types/sentences';
 import { getUserId, getSentenceDocPath } from './helpers';
 
 export default async function saveSentenceReviewData(
   data: SentenceReviewDataStore,
-  direction: SentenceDirection
+  direction: TranslationDirection
 ): Promise<void> {
   const userId = getUserId();
   if (!userId) return;

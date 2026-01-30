@@ -11,10 +11,10 @@ import {
   includesSentenceId,
   includesFormKey,
 } from '../lib/storage/helpers';
-import type { VocabularyDirection } from '../types/vocabulary';
-import type { SentenceDirection, CEFRLevel } from '../types/sentences';
+import type { TranslationDirection } from '../types/vocabulary';
+import type { TranslationDirection, CEFRLevel } from '../types/sentences';
 import { ALL_LEVELS } from '../types/sentences';
-import type { ConjugationDirection } from '../types/conjugation';
+import type { TranslationDirection } from '../types/conjugation';
 import { getDrillableFormsForVerb } from '../lib/conjugationUtils';
 
 export interface ProgressStats {
@@ -24,7 +24,7 @@ export interface ProgressStats {
   due: number;
 }
 
-export interface SentenceDirectionStats {
+export interface TranslationDirectionStats {
   total: ProgressStats;
   byLevel: Record<CEFRLevel, ProgressStats>;
 }
@@ -32,11 +32,11 @@ export interface SentenceDirectionStats {
 export interface AllProgressStats {
   declension: ProgressStats;
   vocabulary: ProgressStats;
-  vocabularyByDirection: Record<VocabularyDirection, ProgressStats>;
+  vocabularyByDirection: Record<TranslationDirection, ProgressStats>;
   sentences: ProgressStats;
-  sentencesByDirection: Record<SentenceDirection, SentenceDirectionStats>;
+  sentencesByDirection: Record<TranslationDirection, TranslationDirectionStats>;
   conjugation: ProgressStats;
-  conjugationByDirection: Record<ConjugationDirection, ProgressStats>;
+  conjugationByDirection: Record<TranslationDirection, ProgressStats>;
 }
 
 export function useProgressStats(): AllProgressStats {
@@ -96,7 +96,7 @@ export function useProgressStats(): AllProgressStats {
       }
     }
 
-    const computeVocabStats = (direction: VocabularyDirection): ProgressStats => {
+    const computeVocabStats = (direction: TranslationDirection): ProgressStats => {
       const store = vocabularyReviewStores[direction];
       const directionSettings = vocabularySettings[direction];
       let learned = 0;
@@ -165,7 +165,7 @@ export function useProgressStats(): AllProgressStats {
       }
     }
 
-    const computeSentenceStats = (direction: SentenceDirection): SentenceDirectionStats => {
+    const computeSentenceStats = (direction: TranslationDirection): TranslationDirectionStats => {
       const store = sentenceReviewStores[direction];
       const directionSettings = sentenceSettings[direction];
       let totalLearned = 0;
@@ -254,7 +254,7 @@ export function useProgressStats(): AllProgressStats {
       }
     }
 
-    const computeConjugationStats = (direction: ConjugationDirection): ProgressStats => {
+    const computeConjugationStats = (direction: TranslationDirection): ProgressStats => {
       const store = conjugationReviewStores[direction];
       const directionSettings = conjugationSettings[direction];
       let learned = 0;

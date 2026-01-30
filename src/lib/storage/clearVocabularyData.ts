@@ -1,9 +1,9 @@
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { VocabularyDirection } from '../../types/vocabulary';
+import type { TranslationDirection } from '../../types/vocabulary';
 import { getUserId, getVocabularyDocPath } from './helpers';
 
-export default async function clearVocabularyData(direction: VocabularyDirection): Promise<void> {
+export default async function clearVocabularyData(direction: TranslationDirection): Promise<void> {
   const userId = getUserId();
   if (!userId) return;
 

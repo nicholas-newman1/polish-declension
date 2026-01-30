@@ -56,4 +56,3 @@ export const FEATURE_NAV_ITEMS: FeatureNavItem[] = [
     statsKey: 'sentences',
   },
 ];
-

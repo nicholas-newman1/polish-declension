@@ -18,7 +18,7 @@ import type {
   CustomSentence,
   SentenceReviewDataStore,
   SentenceDirectionSettings,
-  SentenceDirection,
+  TranslationDirection,
   CEFRLevel,
 } from '../types/sentences';
 import getOrCreateSentenceCardReviewData from '../lib/storage/getOrCreateSentenceCardReviewData';
@@ -58,7 +58,7 @@ const ControlsRow = styled(Stack)(({ theme }) => ({
 }));
 
 interface SentencesPageProps {
-  mode?: SentenceDirection;
+  mode?: TranslationDirection;
 }
 
 export function SentencesPage({ mode }: SentencesPageProps) {
@@ -160,7 +160,7 @@ export function SentencesPage({ mode }: SentencesPageProps) {
   const modeStats = progressStats.sentencesByDirection;
 
   const handleSelectMode = useCallback(
-    (direction: SentenceDirection) => {
+    (direction: TranslationDirection) => {
       const route = direction === 'pl-to-en' ? 'recognition' : 'production';
       navigate(`/sentences/${route}`);
     },

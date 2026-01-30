@@ -1,15 +1,15 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { ConjugationDirectionSettings, ConjugationDirection } from '../../types/conjugation';
+import type { ConjugationDirectionSettings, TranslationDirection } from '../../types/conjugation';
 import { getUserId } from './helpers';
 
-function getConjugationSettingsDocPath(direction: ConjugationDirection): string {
+function getConjugationSettingsDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'conjugationSettings-pl-en' : 'conjugationSettings-en-pl';
 }
 
 export default async function saveConjugationSettings(
   settings: ConjugationDirectionSettings,
-  direction: ConjugationDirection
+  direction: TranslationDirection
 ): Promise<void> {
   const userId = getUserId();
   if (!userId) return;

@@ -17,7 +17,7 @@ import type {
   Verb,
   ConjugationReviewDataStore,
   ConjugationDirectionSettings,
-  ConjugationDirection,
+  TranslationDirection,
   ConjugationFilters,
   DrillableForm,
 } from '../types/conjugation';
@@ -49,7 +49,7 @@ const MainContent = styled(Box)({
 });
 
 interface ConjugationPageProps {
-  mode?: ConjugationDirection;
+  mode?: TranslationDirection;
 }
 
 export function ConjugationPage({ mode }: ConjugationPageProps) {
@@ -153,7 +153,7 @@ export function ConjugationPage({ mode }: ConjugationPageProps) {
   ]);
 
   const handleSelectMode = useCallback(
-    (direction: ConjugationDirection) => {
+    (direction: TranslationDirection) => {
       const route = direction === 'pl-to-en' ? 'recognition' : 'production';
       navigate(`/conjugation/${route}`);
     },
