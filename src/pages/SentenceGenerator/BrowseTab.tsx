@@ -78,8 +78,9 @@ export const BrowseTab = memo(function BrowseTab({
   const virtualizer = useVirtualizer({
     count: filteredSentences.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
+    estimateSize: () => 120,
     overscan: 5,
+    measureElement: (element) => element.getBoundingClientRect().height,
   });
 
   const handleDeleteSentence = useCallback(
@@ -202,6 +203,8 @@ export const BrowseTab = memo(function BrowseTab({
             return (
               <Box
                 key={sentence.id}
+                data-index={virtualRow.index}
+                ref={virtualizer.measureElement}
                 sx={{
                   position: 'absolute',
                   top: 0,

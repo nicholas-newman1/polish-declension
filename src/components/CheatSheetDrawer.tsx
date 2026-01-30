@@ -17,7 +17,7 @@ const DrawerHeader = styled(Box)(({ theme }) => ({
 
 const DrawerContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
-  paddingBottom: theme.spacing(11),
+  paddingBottom: theme.spacing(12),
   overflowY: 'auto',
 }));
 

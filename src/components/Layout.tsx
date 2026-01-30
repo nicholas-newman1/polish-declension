@@ -16,17 +16,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { styled } from '../lib/styled';
-import {
-  Menu,
-  School,
-  Translate,
-  Close,
-  Abc,
-  Home,
-  Check,
-  AutoAwesome,
-  AutoStories,
-} from '@mui/icons-material';
+import { Menu, Close, Home, Check, AutoAwesome } from '@mui/icons-material';
 import { useReviewData } from '../hooks/useReviewData';
 import { useBackClose } from '../hooks/useBackClose';
 import type { ReviewCounts } from '../contexts/review';
@@ -41,6 +31,7 @@ import { LimitReachedDialog } from './LimitReachedDialog';
 import { BottomMenuBar } from './BottomMenuBar';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { SITE_NAME } from '../constants';
+import { FEATURE_NAV_ITEMS } from '../constants/navigation';
 import { SiteLogo } from './SiteLogo';
 
 export const DRAWER_WIDTH = 260;
@@ -80,10 +71,10 @@ const ContentArea = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: theme.spacing(2),
-  paddingBottom: theme.spacing(10),
+  paddingBottom: theme.spacing(16),
   [theme.breakpoints.up('md')]: {
     padding: theme.spacing(3),
-    paddingBottom: theme.spacing(10),
+    paddingBottom: theme.spacing(16),
   },
 }));
 
@@ -192,34 +183,13 @@ const NAV_ITEMS: Array<{
     label: 'Dashboard',
     description: 'Home',
   },
-  {
-    path: '/vocabulary',
-    icon: Abc,
-    label: 'Vocabulary',
-    description: 'Top 1000 Polish words',
-    reviewCountKey: 'vocabulary',
-  },
-  {
-    path: '/declension',
-    icon: School,
-    label: 'Declension',
-    description: 'Practice noun declensions',
-    reviewCountKey: 'declension',
-  },
-  {
-    path: '/sentences',
-    icon: Translate,
-    label: 'Sentences',
-    description: 'Translate full sentences',
-    reviewCountKey: 'sentences',
-  },
-  {
-    path: '/conjugation',
-    icon: AutoStories,
-    label: 'Conjugation',
-    description: 'Verb conjugations',
-    reviewCountKey: 'conjugation',
-  },
+  ...FEATURE_NAV_ITEMS.map((item) => ({
+    path: item.path,
+    icon: item.icon,
+    label: item.label,
+    description: item.description,
+    reviewCountKey: item.statsKey,
+  })),
   {
     path: '/admin/generator',
     icon: AutoAwesome,
