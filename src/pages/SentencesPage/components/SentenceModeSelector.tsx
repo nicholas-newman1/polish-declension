@@ -1,7 +1,8 @@
 import { Box, Typography, LinearProgress } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { ModeSelector } from '../../../components/ModeSelector';
-import type { TranslationDirection, CEFRLevel } from '../../../types/sentences';
+import type { CEFRLevel } from '../../../types/sentences';
+import type { TranslationDirection } from '../../../types/common';
 import { ALL_LEVELS } from '../../../types/sentences';
 import type { TranslationDirectionStats } from '../../../hooks/useProgressStats';
 
@@ -96,4 +97,3 @@ export function SentenceModeSelector({ stats, loading, onSelectMode }: SentenceM
     />
   );
 }
-

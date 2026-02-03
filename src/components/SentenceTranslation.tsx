@@ -14,7 +14,8 @@ import { KeyboardArrowLeft, KeyboardArrowRight, ExpandMore, ExpandLess } from '@
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { renderTappableText } from '../lib/renderTappableText';
-import { DirectionToggle, type TranslationDirection } from './DirectionToggle';
+import { DirectionToggle } from './DirectionToggle';
+import type { TranslationDirection } from '../types/common';
 import { useReviewData } from '../hooks/useReviewData';
 import { useTranslationContext } from '../hooks/useTranslationContext';
 import type { Sentence, CEFRLevel, TagCategory } from '../types/sentences';

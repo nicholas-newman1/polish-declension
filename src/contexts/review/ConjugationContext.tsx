@@ -5,9 +5,9 @@ import type {
   Verb,
   ConjugationReviewDataStore,
   ConjugationSettings,
-  TranslationDirection,
   ConjugationDirectionSettings,
 } from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/common';
 import { DEFAULT_CONJUGATION_SETTINGS } from '../../types/conjugation';
 import loadConjugationReviewData from '../../lib/storage/loadConjugationReviewData';
 import loadConjugationSettings from '../../lib/storage/loadConjugationSettings';

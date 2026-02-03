@@ -1,6 +1,6 @@
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { TranslationDirection } from '../../types/sentences';
+import type { TranslationDirection } from '../../types/common';
 import { getUserId, getSentenceDocPath } from './helpers';
 
 export default async function clearSentenceData(direction: TranslationDirection): Promise<void> {

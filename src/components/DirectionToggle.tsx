@@ -3,8 +3,6 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { styled } from '../lib/styled';
 import type { TranslationDirection } from '../types/common';
 
-export type { TranslationDirection };
-
 const StyledButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   fontWeight: 500,

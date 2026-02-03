@@ -4,7 +4,8 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
-import type { VocabularyWord, TranslationDirection } from '../../../types/vocabulary';
+import type { VocabularyWord } from '../../../types/vocabulary';
+import type { TranslationDirection } from '../../../types/common';
 
 interface VocabularyFlashcardProps {
   word: VocabularyWord;

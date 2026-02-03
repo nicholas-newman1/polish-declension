@@ -1,10 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type {
-  SentenceSettings,
-  SentenceDirectionSettings,
-  TranslationDirection,
-} from '../../types/sentences';
+import type { SentenceSettings, SentenceDirectionSettings } from '../../types/sentences';
+import type { TranslationDirection } from '../../types/common';
 import { ALL_LEVELS } from '../../types/sentences';
 import { getUserId } from './helpers';
 

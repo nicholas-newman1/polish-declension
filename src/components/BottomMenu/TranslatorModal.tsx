@@ -14,7 +14,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { translate, RateLimitMinuteError, RateLimitDailyError } from '../../lib/translate';
 import { useTranslationContext } from '../../hooks/useTranslationContext';
 import { useBackClose } from '../../hooks/useBackClose';
-import { DirectionToggle, type TranslationDirection } from '../DirectionToggle';
+import { DirectionToggle } from '../DirectionToggle';
+import type { TranslationDirection } from '../../types/common';
 
 const MAX_TEXT_LENGTH = 500;
 

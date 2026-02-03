@@ -5,7 +5,8 @@ import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
 import { renderTappableText } from '../../../lib/renderTappableText';
-import type { Sentence, TranslationDirection, CEFRLevel } from '../../../types/sentences';
+import type { Sentence, CEFRLevel } from '../../../types/sentences';
+import type { TranslationDirection } from '../../../types/common';
 
 interface SentenceFlashcardProps {
   sentence: Sentence;

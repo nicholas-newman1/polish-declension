@@ -17,10 +17,10 @@ import type {
   Verb,
   ConjugationReviewDataStore,
   ConjugationDirectionSettings,
-  TranslationDirection,
   ConjugationFilters,
   DrillableForm,
 } from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/common';
 import { DEFAULT_CONJUGATION_SETTINGS } from '../../types/conjugation';
 import getOrCreateConjugationFormReviewData from '../../lib/storage/getOrCreateConjugationFormReviewData';
 import getConjugationSessionCards from '../../lib/conjugationScheduler/getConjugationSessionCards';

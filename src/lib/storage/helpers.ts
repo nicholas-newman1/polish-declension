@@ -1,16 +1,9 @@
 import { auth } from '../firebase';
 import type { DeclensionReviewDataStore, DeclensionCardId } from '../../types';
-import type {
-  VocabularyReviewDataStore,
-  TranslationDirection,
-  VocabularyWordId,
-} from '../../types/vocabulary';
-import type { SentenceReviewDataStore, TranslationDirection } from '../../types/sentences';
-import type {
-  ConjugationReviewDataStore,
-  TranslationDirection,
-  ConjugationFormKey,
-} from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/common';
+import type { VocabularyReviewDataStore, VocabularyWordId } from '../../types/vocabulary';
+import type { SentenceReviewDataStore } from '../../types/sentences';
+import type { ConjugationReviewDataStore, ConjugationFormKey } from '../../types/conjugation';
 
 export function getTodayString(): string {
   return new Date().toISOString().split('T')[0];

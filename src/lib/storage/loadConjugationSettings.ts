@@ -1,10 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type {
-  ConjugationSettings,
-  ConjugationDirectionSettings,
-  TranslationDirection,
-} from '../../types/conjugation';
+import type { ConjugationSettings, ConjugationDirectionSettings } from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/common';
 import { getUserId } from './helpers';
 
 const DEFAULT_DIRECTION_SETTINGS: ConjugationDirectionSettings = {

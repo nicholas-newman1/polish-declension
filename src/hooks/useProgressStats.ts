@@ -11,10 +11,9 @@ import {
   includesSentenceId,
   includesFormKey,
 } from '../lib/storage/helpers';
-import type { TranslationDirection } from '../types/vocabulary';
-import type { TranslationDirection, CEFRLevel } from '../types/sentences';
+import type { TranslationDirection } from '../types/common';
+import type { CEFRLevel } from '../types/sentences';
 import { ALL_LEVELS } from '../types/sentences';
-import type { TranslationDirection } from '../types/conjugation';
 import { getDrillableFormsForVerb } from '../lib/conjugationUtils';
 
 export interface ProgressStats {

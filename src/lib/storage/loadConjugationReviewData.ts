@@ -1,6 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { ConjugationReviewDataStore, TranslationDirection } from '../../types/conjugation';
+import type { ConjugationReviewDataStore } from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/common';
 import {
   getUserId,
   getTodayString,

@@ -6,9 +6,9 @@ import type {
   VocabularyReviewDataStore,
   VocabularySettings,
   VocabularyDirectionSettings,
-  TranslationDirection,
   CustomVocabularyWord,
 } from '../../types/vocabulary';
+import type { TranslationDirection } from '../../types/common';
 import loadVocabularyReviewData from '../../lib/storage/loadVocabularyReviewData';
 import loadVocabularySettings, {
   DEFAULT_VOCABULARY_SETTINGS,

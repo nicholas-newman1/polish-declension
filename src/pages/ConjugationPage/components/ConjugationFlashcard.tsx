@@ -4,7 +4,8 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
-import type { DrillableForm, TranslationDirection, Verb } from '../../../types/conjugation';
+import type { DrillableForm, Verb } from '../../../types/conjugation';
+import type { TranslationDirection } from '../../../types/common';
 import {
   getQuestionDisplay,
   getAnswerDisplay,

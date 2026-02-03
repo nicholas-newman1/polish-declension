@@ -1,6 +1,7 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { SentenceDirectionSettings, TranslationDirection } from '../../types/sentences';
+import type { SentenceDirectionSettings } from '../../types/sentences';
+import type { TranslationDirection } from '../../types/common';
 import { getUserId } from './helpers';
 import { getSentenceSettingsDocPath } from './loadSentenceSettings';
 

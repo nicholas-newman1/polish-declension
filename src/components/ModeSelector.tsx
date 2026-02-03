@@ -5,7 +5,7 @@ import { styled } from '../lib/styled';
 import { FeatureCard } from './FeatureCard';
 import { ProgressStats } from './ProgressStats';
 import { ReviewCountBadge } from './ReviewCountBadge';
-import type { TranslationDirection } from './DirectionToggle';
+import type { TranslationDirection } from '../types/common';
 
 export interface DeckStats {
   dueCount: number;

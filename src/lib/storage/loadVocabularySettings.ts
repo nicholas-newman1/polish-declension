@@ -1,10 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type {
-  VocabularySettings,
-  VocabularyDirectionSettings,
-  TranslationDirection,
-} from '../../types/vocabulary';
+import type { VocabularySettings, VocabularyDirectionSettings } from '../../types/vocabulary';
+import type { TranslationDirection } from '../../types/common';
 import { getUserId } from './helpers';
 
 const DEFAULT_DIRECTION_SETTINGS: VocabularyDirectionSettings = {

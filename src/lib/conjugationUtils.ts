@@ -7,9 +7,9 @@ import type {
   ConjugationForm,
   DrillableForm,
   ConjugationFilters,
-  TranslationDirection,
   ConditionalFormKey,
 } from '../types/conjugation';
+import type { TranslationDirection } from '../types/common';
 import {
   PRESENT_FORM_KEYS,
   PAST_FORM_KEYS,

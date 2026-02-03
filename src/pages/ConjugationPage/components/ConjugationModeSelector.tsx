@@ -1,6 +1,6 @@
 import { ModeSelector } from '../../../components/ModeSelector';
 import type { DeckStats } from '../../../components/ModeSelector';
-import type { TranslationDirection } from '../../../types/conjugation';
+import type { TranslationDirection } from '../../../types/common';
 
 interface ConjugationModeSelectorProps {
   stats: Record<TranslationDirection, DeckStats>;

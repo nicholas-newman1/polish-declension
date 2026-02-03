@@ -4,10 +4,10 @@ import type {
   CustomSentence,
   SentenceReviewDataStore,
   SentenceSettings,
-  TranslationDirection,
   SentenceDirectionSettings,
   TagCategory,
 } from '../../types/sentences';
+import type { TranslationDirection } from '../../types/common';
 import {
   loadSentenceTags,
   saveSentenceTags,

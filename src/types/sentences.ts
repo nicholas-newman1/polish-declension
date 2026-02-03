@@ -1,5 +1,4 @@
 import type { Card as FSRSCard, ReviewLog } from 'ts-fsrs';
-export type { TranslationDirection } from './common';
 import type { TranslationDirection } from './common';
 import type { CustomItemBase } from './customItems';
 

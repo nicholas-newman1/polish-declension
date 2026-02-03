@@ -42,7 +42,6 @@ export interface CustomVocabularyWord extends CustomItemBase {
   examples?: ExampleSentence[];
 }
 
-export type { TranslationDirection } from './common';
 import type { TranslationDirection } from './common';
 
 export interface VocabularyCardReviewData {

@@ -1,6 +1,7 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { SentenceReviewDataStore, TranslationDirection } from '../../types/sentences';
+import type { SentenceReviewDataStore } from '../../types/sentences';
+import type { TranslationDirection } from '../../types/common';
 import { getUserId, getSentenceDocPath } from './helpers';
 
 export default async function saveSentenceReviewData(

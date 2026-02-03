@@ -18,9 +18,9 @@ import type {
   VocabularyWordId,
   VocabularyReviewDataStore,
   VocabularyDirectionSettings,
-  TranslationDirection,
   CustomVocabularyWord,
 } from '../../types/vocabulary';
+import type { TranslationDirection } from '../../types/common';
 import getOrCreateVocabularyCardReviewData from '../../lib/storage/getOrCreateVocabularyCardReviewData';
 import { saveCustomVocabulary } from '../../lib/storage/customVocabulary';
 import {

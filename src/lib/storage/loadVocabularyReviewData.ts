@@ -1,6 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { VocabularyReviewDataStore, TranslationDirection } from '../../types/vocabulary';
+import type { VocabularyReviewDataStore } from '../../types/vocabulary';
+import type { TranslationDirection } from '../../types/common';
 import {
   getUserId,
   getTodayString,

@@ -18,9 +18,9 @@ import type {
   CustomSentence,
   SentenceReviewDataStore,
   SentenceDirectionSettings,
-  TranslationDirection,
   CEFRLevel,
 } from '../../types/sentences';
+import type { TranslationDirection } from '../../types/common';
 import getOrCreateSentenceCardReviewData from '../../lib/storage/getOrCreateSentenceCardReviewData';
 import getSentenceSessionCards from '../../lib/sentenceScheduler/getSentenceSessionCards';
 import getSentencePracticeAheadCards from '../../lib/sentenceScheduler/getSentencePracticeAheadCards';

@@ -1,6 +1,6 @@
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { TranslationDirection } from '../../types/conjugation';
+import type { TranslationDirection } from '../../types/common';
 import { getUserId, getConjugationDocPath } from './helpers';
 import { getConjugationSettingsDocPath } from './loadConjugationSettings';
 
