@@ -563,16 +563,16 @@ export function SentencesPage({ mode }: SentencesPageProps) {
                     path: '/vocabulary',
                   },
                   {
-                    feature: 'conjugation',
-                    label: 'Conjugation',
-                    dueCount: progressStats.conjugation.due,
-                    path: '/conjugation',
-                  },
-                  {
                     feature: 'declension',
                     label: 'Declension',
                     dueCount: progressStats.declension.due,
                     path: '/declension',
+                  },
+                  {
+                    feature: 'conjugation',
+                    label: 'Conjugation',
+                    dueCount: progressStats.conjugation.due,
+                    path: '/conjugation',
                   },
                 ]}
                 onNavigateToFeature={(path) => navigate(path)}
@@ -621,4 +621,3 @@ export function SentencesPage({ mode }: SentencesPageProps) {
     </>
   );
 }
-

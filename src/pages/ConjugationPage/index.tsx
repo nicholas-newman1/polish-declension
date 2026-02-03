@@ -446,16 +446,16 @@ export function ConjugationPage({ mode }: ConjugationPageProps) {
                     path: '/vocabulary',
                   },
                   {
-                    feature: 'sentences',
-                    label: 'Sentences',
-                    dueCount: progressStats.sentences.due,
-                    path: '/sentences',
-                  },
-                  {
                     feature: 'declension',
                     label: 'Declension',
                     dueCount: progressStats.declension.due,
                     path: '/declension',
+                  },
+                  {
+                    feature: 'sentences',
+                    label: 'Sentences',
+                    dueCount: progressStats.sentences.due,
+                    path: '/sentences',
                   },
                 ]}
                 onNavigateToFeature={(path) => navigate(path)}
@@ -484,4 +484,3 @@ export function ConjugationPage({ mode }: ConjugationPageProps) {
     </>
   );
 }
-
