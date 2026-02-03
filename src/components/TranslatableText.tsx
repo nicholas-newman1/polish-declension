@@ -172,6 +172,8 @@ function TranslatableTextInner({ children }: TranslatableTextInnerProps) {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+
       const touch = e.touches[0];
       if (!touch) return;
 
@@ -190,7 +192,7 @@ function TranslatableTextInner({ children }: TranslatableTextInnerProps) {
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
       document.removeEventListener('mouseup', handleMouseUp);
