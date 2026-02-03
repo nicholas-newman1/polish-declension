@@ -130,13 +130,15 @@ export function ConjugationFlashcard({
 
   const question = (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <Stack direction="row" spacing={0.75} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
-        <TenseChip label={getTenseLabel(form.tense)} size="small" />
-        {form.person === '2nd' && form.number === 'Plural' && (
-          <PluralChip label="Plural" size="small" />
-        )}
-        {form.gender && <GenderChip label={form.gender} size="small" />}
-      </Stack>
+      {!isPolishToEnglish && (
+        <Stack direction="row" spacing={0.75} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
+          <TenseChip label={getTenseLabel(form.tense)} size="small" />
+          {form.person === '2nd' && form.number === 'Plural' && (
+            <PluralChip label="Plural" size="small" />
+          )}
+          {form.gender && <GenderChip label={form.gender} size="small" />}
+        </Stack>
+      )}
 
       <QuestionText variant="h4" color="text.primary">
         {questionDisplay}
@@ -228,4 +230,3 @@ function getCorrespondingAspectPairForm(form: DrillableForm, aspectPairVerb: Ver
 
   return null;
 }
-
