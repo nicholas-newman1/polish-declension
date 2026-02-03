@@ -1,7 +1,7 @@
 import { CheatSheetDrawer } from './CheatSheetDrawer';
 import { DeclensionCheatSheet } from './DeclensionCheatSheet';
-import { allTables } from '../data/declensionPatterns';
-import { useCheatSheetContext } from '../hooks/useCheatSheetContext';
+import { allTables } from '../../data/declensionPatterns';
+import { useCheatSheetContext } from '../../hooks/useCheatSheetContext';
 
 export function DeclensionCheatSheetDrawer() {
   const { activeSheet, closeSheet } = useCheatSheetContext();

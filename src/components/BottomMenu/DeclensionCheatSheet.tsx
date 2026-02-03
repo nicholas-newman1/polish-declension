@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Box, Typography, Tooltip, Popover, useMediaQuery, useTheme } from '@mui/material';
-import { styled } from '../lib/styled';
+import { styled } from '../../lib/styled';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import type { DeclensionTable, DeclensionEnding } from '../data/declensionPatterns';
-import { alpha } from '../lib/theme';
+import type { DeclensionTable, DeclensionEnding } from '../../data/declensionPatterns';
+import { alpha } from '../../lib/theme';
 
 const TableContainer = styled(Box)<{
   $gender: 'masculine' | 'feminine' | 'neuter';

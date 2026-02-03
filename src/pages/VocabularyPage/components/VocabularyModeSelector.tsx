@@ -1,6 +1,6 @@
-import { ModeSelector } from './ModeSelector';
-import type { DeckStats } from './ModeSelector';
-import type { TranslationDirection } from '../types/vocabulary';
+import { ModeSelector } from '../../../components/ModeSelector';
+import type { DeckStats } from '../../../components/ModeSelector';
+import type { TranslationDirection } from '../../../types/vocabulary';
 
 interface VocabularyModeSelectorProps {
   stats: Record<TranslationDirection, DeckStats>;
@@ -15,3 +15,4 @@ export function VocabularyModeSelector({
 }: VocabularyModeSelectorProps) {
   return <ModeSelector stats={stats} loading={loading} onSelectMode={onSelectMode} />;
 }
+

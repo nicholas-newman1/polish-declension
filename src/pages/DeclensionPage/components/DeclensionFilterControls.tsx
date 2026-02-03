@@ -12,14 +12,14 @@ import {
   type SelectChangeEvent,
   Stack,
 } from '@mui/material';
-import { styled } from '../lib/styled';
+import { styled } from '../../../lib/styled';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { AddButton } from './AddButton';
-import { ClearButton } from './ClearButton';
-import { PracticeModeButton } from './PracticeModeButton';
-import { SettingsButton } from './SettingsButton';
-import type { Case, Gender, Number } from '../types';
-import { CASES, GENDERS, NUMBERS } from '../constants';
+import { AddButton } from '../../../components/AddButton';
+import { ClearButton } from '../../../components/ClearButton';
+import { PracticeModeButton } from '../../../components/PracticeModeButton';
+import { SettingsButton } from '../../../components/SettingsButton';
+import type { Case, Gender, Number } from '../../../types';
+import { CASES, GENDERS, NUMBERS } from '../../../constants';
 
 const FilterFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 120,
@@ -233,3 +233,4 @@ export function DeclensionFilterControls({
     </Box>
   );
 }
+

@@ -1,6 +1,6 @@
 import { CheatSheetDrawer } from './CheatSheetDrawer';
 import { ConsonantsCheatSheet } from './ConsonantsCheatSheet';
-import { useCheatSheetContext } from '../hooks/useCheatSheetContext';
+import { useCheatSheetContext } from '../../hooks/useCheatSheetContext';
 
 export function ConsonantsCheatSheetDrawer() {
   const { activeSheet, closeSheet } = useCheatSheetContext();

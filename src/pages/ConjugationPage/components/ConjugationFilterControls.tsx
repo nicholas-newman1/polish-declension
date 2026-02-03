@@ -12,11 +12,11 @@ import {
   type SelectChangeEvent,
   Stack,
 } from '@mui/material';
-import { styled } from '../lib/styled';
+import { styled } from '../../../lib/styled';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { ClearButton } from './ClearButton';
-import { PracticeModeButton } from './PracticeModeButton';
-import { SettingsButton } from './SettingsButton';
+import { ClearButton } from '../../../components/ClearButton';
+import { PracticeModeButton } from '../../../components/PracticeModeButton';
+import { SettingsButton } from '../../../components/SettingsButton';
 import type {
   Tense,
   Person,
@@ -24,7 +24,7 @@ import type {
   Aspect,
   VerbClass,
   ConjugationGender,
-} from '../types/conjugation';
+} from '../../../types/conjugation';
 import {
   ALL_TENSES,
   ALL_PERSONS,
@@ -32,7 +32,7 @@ import {
   ALL_VERB_CLASSES,
   ALL_CONJUGATION_GENDERS,
   TENSE_LABELS,
-} from '../types/conjugation';
+} from '../../../types/conjugation';
 
 const FilterFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 120,
@@ -378,3 +378,4 @@ export function ConjugationFilterControls({
     </Box>
   );
 }
+

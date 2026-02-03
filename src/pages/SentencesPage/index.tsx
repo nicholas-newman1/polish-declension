@@ -2,17 +2,17 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography, Stack } from '@mui/material';
-import { styled } from '../lib/styled';
-import { AddButton } from '../components/AddButton';
-import { PracticeModeButton } from '../components/PracticeModeButton';
-import { SettingsButton } from '../components/SettingsButton';
-import { SentenceFlashcard, type RatingIntervals } from '../components/SentenceFlashcard';
-import { SentenceModeSelector } from '../components/SentenceModeSelector';
-import { FinishedState } from '../components/FinishedState';
-import { EmptyState } from '../components/EmptyState';
-import { ReviewCountBadge } from '../components/ReviewCountBadge';
-import { SentenceSettingsPanel } from '../components/SentenceSettingsPanel';
-import { EditSentenceModal } from '../components/EditSentenceModal';
+import { styled } from '../../lib/styled';
+import { AddButton } from '../../components/AddButton';
+import { PracticeModeButton } from '../../components/PracticeModeButton';
+import { SettingsButton } from '../../components/SettingsButton';
+import { SentenceFlashcard, type RatingIntervals } from './components/SentenceFlashcard';
+import { SentenceModeSelector } from './components/SentenceModeSelector';
+import { FinishedState } from '../../components/FinishedState';
+import { EmptyState } from '../../components/EmptyState';
+import { ReviewCountBadge } from '../../components/ReviewCountBadge';
+import { SentenceSettingsPanel } from './components/SentenceSettingsPanel';
+import { EditSentenceModal } from '../../components/EditSentenceModal';
 import type {
   Sentence,
   CustomSentence,
@@ -20,28 +20,28 @@ import type {
   SentenceDirectionSettings,
   TranslationDirection,
   CEFRLevel,
-} from '../types/sentences';
-import getOrCreateSentenceCardReviewData from '../lib/storage/getOrCreateSentenceCardReviewData';
-import getSentenceSessionCards from '../lib/sentenceScheduler/getSentenceSessionCards';
-import getSentencePracticeAheadCards from '../lib/sentenceScheduler/getSentencePracticeAheadCards';
-import getSentenceExtraNewCards from '../lib/sentenceScheduler/getSentenceExtraNewCards';
-import rateSentenceCard from '../lib/sentenceScheduler/rateSentenceCard';
-import getNextIntervals from '../lib/fsrsUtils/getNextIntervals';
-import type { SentenceSessionCard } from '../lib/sentenceScheduler/types';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useReviewData } from '../hooks/useReviewData';
-import { useProgressStats } from '../hooks/useProgressStats';
-import { useOptimistic } from '../hooks/useOptimistic';
-import { useSnackbar } from '../hooks/useSnackbar';
-import { useTranslationContext } from '../hooks/useTranslationContext';
+} from '../../types/sentences';
+import getOrCreateSentenceCardReviewData from '../../lib/storage/getOrCreateSentenceCardReviewData';
+import getSentenceSessionCards from '../../lib/sentenceScheduler/getSentenceSessionCards';
+import getSentencePracticeAheadCards from '../../lib/sentenceScheduler/getSentencePracticeAheadCards';
+import getSentenceExtraNewCards from '../../lib/sentenceScheduler/getSentenceExtraNewCards';
+import rateSentenceCard from '../../lib/sentenceScheduler/rateSentenceCard';
+import getNextIntervals from '../../lib/fsrsUtils/getNextIntervals';
+import type { SentenceSessionCard } from '../../lib/sentenceScheduler/types';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useReviewData } from '../../hooks/useReviewData';
+import { useProgressStats } from '../../hooks/useProgressStats';
+import { useOptimistic } from '../../hooks/useOptimistic';
+import { useSnackbar } from '../../hooks/useSnackbar';
+import { useTranslationContext } from '../../hooks/useTranslationContext';
 import {
   updateSentence,
   deleteSentence,
   updateSentenceTranslation,
-} from '../lib/storage/systemSentences';
-import { saveCustomSentences } from '../lib/storage/customSentences';
-import shuffleArray from '../lib/utils/shuffleArray';
-import { includesSentenceId } from '../lib/storage/helpers';
+} from '../../lib/storage/systemSentences';
+import { saveCustomSentences } from '../../lib/storage/customSentences';
+import shuffleArray from '../../lib/utils/shuffleArray';
+import { includesSentenceId } from '../../lib/storage/helpers';
 
 const MainContent = styled(Box)({
   flex: 1,
@@ -621,3 +621,4 @@ export function SentencesPage({ mode }: SentencesPageProps) {
     </>
   );
 }
+

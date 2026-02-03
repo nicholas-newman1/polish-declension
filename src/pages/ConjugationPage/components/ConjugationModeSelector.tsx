@@ -1,6 +1,6 @@
-import { ModeSelector } from './ModeSelector';
-import type { DeckStats } from './ModeSelector';
-import type { TranslationDirection } from '../types/conjugation';
+import { ModeSelector } from '../../../components/ModeSelector';
+import type { DeckStats } from '../../../components/ModeSelector';
+import type { TranslationDirection } from '../../../types/conjugation';
 
 interface ConjugationModeSelectorProps {
   stats: Record<TranslationDirection, DeckStats>;
@@ -15,3 +15,4 @@ export function ConjugationModeSelector({
 }: ConjugationModeSelectorProps) {
   return <ModeSelector stats={stats} loading={loading} onSelectMode={onSelectMode} />;
 }
+

@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import type { Grade } from 'ts-fsrs';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import { styled } from '../lib/styled';
-import { FlashcardShell } from './FlashcardShell';
-import type { RatingIntervals } from './RatingButtons';
-import type { DeclensionCard } from '../types';
-import { renderTappableText } from '../lib/renderTappableText';
-import { useTranslationContext } from '../hooks/useTranslationContext';
+import { styled } from '../../../lib/styled';
+import { FlashcardShell } from '../../../components/FlashcardShell';
+import type { RatingIntervals } from '../../../components/RatingButtons';
+import type { DeclensionCard } from '../../../types';
+import { renderTappableText } from '../../../lib/renderTappableText';
+import { useTranslationContext } from '../../../hooks/useTranslationContext';
 
 export type DeclensionRatingIntervals = RatingIntervals;
 
@@ -130,3 +130,4 @@ export function DeclensionFlashcard({
     />
   );
 }
+

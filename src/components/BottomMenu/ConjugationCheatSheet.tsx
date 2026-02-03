@@ -15,14 +15,14 @@ import {
   Chip,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { styled } from '../lib/styled';
-import { alpha } from '../lib/theme';
+import { styled } from '../../lib/styled';
+import { alpha } from '../../lib/theme';
 import {
   CONJUGATION_PATTERNS,
   TENSE_INFO,
   ASPECT_INFO,
   PERSON_ENDINGS,
-} from '../data/conjugationPatterns';
+} from '../../data/conjugationPatterns';
 
 const PatternCard = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),

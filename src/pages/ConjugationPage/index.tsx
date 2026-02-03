@@ -2,17 +2,17 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { styled } from '../lib/styled';
+import { styled } from '../../lib/styled';
 import {
   ConjugationFlashcard,
   type ConjugationRatingIntervals,
-} from '../components/ConjugationFlashcard';
-import { ConjugationModeSelector } from '../components/ConjugationModeSelector';
-import { ConjugationFilterControls } from '../components/ConjugationFilterControls';
-import { FinishedState } from '../components/FinishedState';
-import { EmptyState } from '../components/EmptyState';
-import { ReviewCountBadge } from '../components/ReviewCountBadge';
-import { SettingsPanel } from '../components/SettingsPanel';
+} from './components/ConjugationFlashcard';
+import { ConjugationModeSelector } from './components/ConjugationModeSelector';
+import { ConjugationFilterControls } from './components/ConjugationFilterControls';
+import { FinishedState } from '../../components/FinishedState';
+import { EmptyState } from '../../components/EmptyState';
+import { ReviewCountBadge } from '../../components/ReviewCountBadge';
+import { SettingsPanel } from '../../components/SettingsPanel';
 import type {
   Verb,
   ConjugationReviewDataStore,
@@ -20,25 +20,25 @@ import type {
   TranslationDirection,
   ConjugationFilters,
   DrillableForm,
-} from '../types/conjugation';
-import { DEFAULT_CONJUGATION_SETTINGS } from '../types/conjugation';
-import getOrCreateConjugationFormReviewData from '../lib/storage/getOrCreateConjugationFormReviewData';
-import getConjugationSessionCards from '../lib/conjugationScheduler/getConjugationSessionCards';
-import getConjugationPracticeAheadCards from '../lib/conjugationScheduler/getConjugationPracticeAheadCards';
-import getConjugationExtraNewCards from '../lib/conjugationScheduler/getConjugationExtraNewCards';
-import rateConjugationCard from '../lib/conjugationScheduler/rateConjugationCard';
-import getNextIntervals from '../lib/fsrsUtils/getNextIntervals';
-import type { ConjugationSessionCard } from '../lib/conjugationScheduler/types';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useReviewData } from '../hooks/useReviewData';
-import { useProgressStats } from '../hooks/useProgressStats';
-import shuffleArray from '../lib/utils/shuffleArray';
-import { includesFormKey } from '../lib/storage/helpers';
+} from '../../types/conjugation';
+import { DEFAULT_CONJUGATION_SETTINGS } from '../../types/conjugation';
+import getOrCreateConjugationFormReviewData from '../../lib/storage/getOrCreateConjugationFormReviewData';
+import getConjugationSessionCards from '../../lib/conjugationScheduler/getConjugationSessionCards';
+import getConjugationPracticeAheadCards from '../../lib/conjugationScheduler/getConjugationPracticeAheadCards';
+import getConjugationExtraNewCards from '../../lib/conjugationScheduler/getConjugationExtraNewCards';
+import rateConjugationCard from '../../lib/conjugationScheduler/rateConjugationCard';
+import getNextIntervals from '../../lib/fsrsUtils/getNextIntervals';
+import type { ConjugationSessionCard } from '../../lib/conjugationScheduler/types';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useReviewData } from '../../hooks/useReviewData';
+import { useProgressStats } from '../../hooks/useProgressStats';
+import shuffleArray from '../../lib/utils/shuffleArray';
+import { includesFormKey } from '../../lib/storage/helpers';
 import {
   getDrillableFormsForVerb,
   matchesFilters,
   getDefaultFilters,
-} from '../lib/conjugationUtils';
+} from '../../lib/conjugationUtils';
 
 const MainContent = styled(Box)({
   flex: 1,
@@ -484,3 +484,4 @@ export function ConjugationPage({ mode }: ConjugationPageProps) {
     </>
   );
 }
+

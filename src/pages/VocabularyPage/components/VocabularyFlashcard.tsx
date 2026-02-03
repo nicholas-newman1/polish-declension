@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { Grade } from 'ts-fsrs';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import { styled } from '../lib/styled';
-import { FlashcardShell } from './FlashcardShell';
-import type { RatingIntervals } from './RatingButtons';
-import type { VocabularyWord, TranslationDirection } from '../types/vocabulary';
+import { styled } from '../../../lib/styled';
+import { FlashcardShell } from '../../../components/FlashcardShell';
+import type { RatingIntervals } from '../../../components/RatingButtons';
+import type { VocabularyWord, TranslationDirection } from '../../../types/vocabulary';
 
 interface VocabularyFlashcardProps {
   word: VocabularyWord;
@@ -196,3 +196,4 @@ export function VocabularyFlashcard({
 
 // Re-export RatingIntervals for backwards compatibility
 export type { RatingIntervals };
+

@@ -9,12 +9,12 @@ import {
   Typography,
   CircularProgress,
 } from '@mui/material';
-import { styled } from '../lib/styled';
+import { styled } from '../../lib/styled';
 import CloseIcon from '@mui/icons-material/Close';
-import { translate, RateLimitMinuteError, RateLimitDailyError } from '../lib/translate';
-import { useTranslationContext } from '../hooks/useTranslationContext';
-import { useBackClose } from '../hooks/useBackClose';
-import { DirectionToggle, type TranslationDirection } from './DirectionToggle';
+import { translate, RateLimitMinuteError, RateLimitDailyError } from '../../lib/translate';
+import { useTranslationContext } from '../../hooks/useTranslationContext';
+import { useBackClose } from '../../hooks/useBackClose';
+import { DirectionToggle, type TranslationDirection } from '../DirectionToggle';
 
 const MAX_TEXT_LENGTH = 500;
 

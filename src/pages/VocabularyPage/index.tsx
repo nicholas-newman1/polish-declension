@@ -2,17 +2,17 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { Box, CircularProgress, Typography, Stack } from '@mui/material';
-import { styled } from '../lib/styled';
-import { AddButton } from '../components/AddButton';
-import { PracticeModeButton } from '../components/PracticeModeButton';
-import { SettingsButton } from '../components/SettingsButton';
-import { VocabularyFlashcard, type RatingIntervals } from '../components/VocabularyFlashcard';
-import { VocabularyModeSelector } from '../components/VocabularyModeSelector';
-import { FinishedState } from '../components/FinishedState';
-import { EmptyState } from '../components/EmptyState';
-import { ReviewCountBadge } from '../components/ReviewCountBadge';
-import { SettingsPanel } from '../components/SettingsPanel';
-import { AddVocabularyModal } from '../components/AddVocabularyModal';
+import { styled } from '../../lib/styled';
+import { AddButton } from '../../components/AddButton';
+import { PracticeModeButton } from '../../components/PracticeModeButton';
+import { SettingsButton } from '../../components/SettingsButton';
+import { VocabularyFlashcard, type RatingIntervals } from './components/VocabularyFlashcard';
+import { VocabularyModeSelector } from './components/VocabularyModeSelector';
+import { FinishedState } from '../../components/FinishedState';
+import { EmptyState } from '../../components/EmptyState';
+import { ReviewCountBadge } from '../../components/ReviewCountBadge';
+import { SettingsPanel } from '../../components/SettingsPanel';
+import { AddVocabularyModal } from '../../components/AddVocabularyModal';
 import type {
   VocabularyWord,
   VocabularyWordId,
@@ -20,26 +20,26 @@ import type {
   VocabularyDirectionSettings,
   TranslationDirection,
   CustomVocabularyWord,
-} from '../types/vocabulary';
-import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
-import { saveCustomVocabulary } from '../lib/storage/customVocabulary';
+} from '../../types/vocabulary';
+import getOrCreateVocabularyCardReviewData from '../../lib/storage/getOrCreateVocabularyCardReviewData';
+import { saveCustomVocabulary } from '../../lib/storage/customVocabulary';
 import {
   updateSystemVocabularyWord,
   deleteSystemVocabularyWord,
-} from '../lib/storage/systemVocabulary';
-import getVocabularySessionCards from '../lib/vocabularyScheduler/getVocabularySessionCards';
-import getVocabularyPracticeAheadCards from '../lib/vocabularyScheduler/getVocabularyPracticeAheadCards';
-import getVocabularyExtraNewCards from '../lib/vocabularyScheduler/getVocabularyExtraNewCards';
-import rateVocabularyCard from '../lib/vocabularyScheduler/rateVocabularyCard';
-import getVocabularyNextIntervals from '../lib/fsrsUtils/getNextIntervals';
-import type { VocabularySessionCard } from '../lib/vocabularyScheduler/types';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useOptimistic } from '../hooks/useOptimistic';
-import { useSnackbar } from '../hooks/useSnackbar';
-import { useReviewData } from '../hooks/useReviewData';
-import { useProgressStats } from '../hooks/useProgressStats';
-import shuffleArray from '../lib/utils/shuffleArray';
-import { includesWordId } from '../lib/storage/helpers';
+} from '../../lib/storage/systemVocabulary';
+import getVocabularySessionCards from '../../lib/vocabularyScheduler/getVocabularySessionCards';
+import getVocabularyPracticeAheadCards from '../../lib/vocabularyScheduler/getVocabularyPracticeAheadCards';
+import getVocabularyExtraNewCards from '../../lib/vocabularyScheduler/getVocabularyExtraNewCards';
+import rateVocabularyCard from '../../lib/vocabularyScheduler/rateVocabularyCard';
+import getVocabularyNextIntervals from '../../lib/fsrsUtils/getNextIntervals';
+import type { VocabularySessionCard } from '../../lib/vocabularyScheduler/types';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useOptimistic } from '../../hooks/useOptimistic';
+import { useSnackbar } from '../../hooks/useSnackbar';
+import { useReviewData } from '../../hooks/useReviewData';
+import { useProgressStats } from '../../hooks/useProgressStats';
+import shuffleArray from '../../lib/utils/shuffleArray';
+import { includesWordId } from '../../lib/storage/helpers';
 
 const MainContent = styled(Box)({
   flex: 1,
@@ -606,3 +606,4 @@ export function VocabularyPage({ mode }: VocabularyPageProps) {
     </>
   );
 }
+

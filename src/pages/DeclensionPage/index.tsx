@@ -5,13 +5,13 @@ import { Box, CircularProgress, Typography, styled } from '@mui/material';
 import {
   DeclensionFlashcard,
   type DeclensionRatingIntervals,
-} from '../components/DeclensionFlashcard';
-import { DeclensionFilterControls } from '../components/DeclensionFilterControls';
-import { SettingsPanel } from '../components/SettingsPanel';
-import { FinishedState } from '../components/FinishedState';
-import { EmptyState } from '../components/EmptyState';
-import { ReviewCountBadge } from '../components/ReviewCountBadge';
-import { EditDeclensionModal } from '../components/EditDeclensionModal';
+} from './components/DeclensionFlashcard';
+import { DeclensionFilterControls } from './components/DeclensionFilterControls';
+import { SettingsPanel } from '../../components/SettingsPanel';
+import { FinishedState } from '../../components/FinishedState';
+import { EmptyState } from '../../components/EmptyState';
+import { ReviewCountBadge } from '../../components/ReviewCountBadge';
+import { EditDeclensionModal } from '../../components/EditDeclensionModal';
 import type {
   DeclensionCard,
   CustomDeclensionCard,
@@ -20,28 +20,28 @@ import type {
   Number,
   DeclensionReviewDataStore,
   DeclensionSettings,
-} from '../types';
+} from '../../types';
 import {
   updateDeclensionCard,
   updateDeclensionCardTranslation,
-} from '../lib/storage/systemDeclension';
-import { saveCustomDeclension } from '../lib/storage/customDeclension';
-import { includesDeclensionCardId } from '../lib/storage/helpers';
-import { generateCustomId } from '../types/customItems';
-import getOrCreateDeclensionCardReviewData from '../lib/storage/getOrCreateDeclensionCardReviewData';
-import getDeclensionSessionCards from '../lib/declensionScheduler/getSessionCards';
-import getDeclensionPracticeAheadCards from '../lib/declensionScheduler/getPracticeAheadCards';
-import getDeclensionExtraNewCards from '../lib/declensionScheduler/getExtraNewCards';
-import rateCard from '../lib/fsrsUtils/rateCard';
-import getNextIntervals from '../lib/fsrsUtils/getNextIntervals';
-import type { DeclensionSessionCard } from '../lib/declensionScheduler/types';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useReviewData } from '../hooks/useReviewData';
-import { useOptimistic } from '../hooks/useOptimistic';
-import { useSnackbar } from '../hooks/useSnackbar';
-import { useProgressStats } from '../hooks/useProgressStats';
-import { DEFAULT_DECLENSION_SETTINGS } from '../constants';
-import shuffleArray from '../lib/utils/shuffleArray';
+} from '../../lib/storage/systemDeclension';
+import { saveCustomDeclension } from '../../lib/storage/customDeclension';
+import { includesDeclensionCardId } from '../../lib/storage/helpers';
+import { generateCustomId } from '../../types/customItems';
+import getOrCreateDeclensionCardReviewData from '../../lib/storage/getOrCreateDeclensionCardReviewData';
+import getDeclensionSessionCards from '../../lib/declensionScheduler/getSessionCards';
+import getDeclensionPracticeAheadCards from '../../lib/declensionScheduler/getPracticeAheadCards';
+import getDeclensionExtraNewCards from '../../lib/declensionScheduler/getExtraNewCards';
+import rateCard from '../../lib/fsrsUtils/rateCard';
+import getNextIntervals from '../../lib/fsrsUtils/getNextIntervals';
+import type { DeclensionSessionCard } from '../../lib/declensionScheduler/types';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useReviewData } from '../../hooks/useReviewData';
+import { useOptimistic } from '../../hooks/useOptimistic';
+import { useSnackbar } from '../../hooks/useSnackbar';
+import { useProgressStats } from '../../hooks/useProgressStats';
+import { DEFAULT_DECLENSION_SETTINGS } from '../../constants';
+import shuffleArray from '../../lib/utils/shuffleArray';
 
 const LoadingContainer = styled(Box)({
   flex: 1,
@@ -645,3 +645,4 @@ export function DeclensionPage() {
     </>
   );
 }
+

@@ -1,6 +1,6 @@
 import { CheatSheetDrawer } from './CheatSheetDrawer';
 import { ConjugationCheatSheet } from './ConjugationCheatSheet';
-import { useCheatSheetContext } from '../hooks/useCheatSheetContext';
+import { useCheatSheetContext } from '../../hooks/useCheatSheetContext';
 
 export function ConjugationCheatSheetDrawer() {
   const { activeSheet, closeSheet } = useCheatSheetContext();

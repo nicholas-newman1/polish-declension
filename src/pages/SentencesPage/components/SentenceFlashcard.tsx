@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
 import type { Grade } from 'ts-fsrs';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import { styled } from '../lib/styled';
-import { FlashcardShell } from './FlashcardShell';
-import type { RatingIntervals } from './RatingButtons';
-import { renderTappableText } from '../lib/renderTappableText';
-import type { Sentence, TranslationDirection, CEFRLevel } from '../types/sentences';
+import { styled } from '../../../lib/styled';
+import { FlashcardShell } from '../../../components/FlashcardShell';
+import type { RatingIntervals } from '../../../components/RatingButtons';
+import { renderTappableText } from '../../../lib/renderTappableText';
+import type { Sentence, TranslationDirection, CEFRLevel } from '../../../types/sentences';
 
 interface SentenceFlashcardProps {
   sentence: Sentence;
@@ -166,3 +166,4 @@ export function SentenceFlashcard({
 
 // Re-export RatingIntervals for backwards compatibility
 export type { RatingIntervals };
+

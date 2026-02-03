@@ -1,10 +1,10 @@
 import { Box, Button, Card, Chip, Divider, Stack, Typography } from '@mui/material';
 import type { User } from 'firebase/auth';
-import { styled } from '../lib/styled';
-import { alpha } from '../lib/theme';
-import { NumberInput } from './NumberInput';
-import type { CEFRLevel } from '../types/sentences';
-import { ALL_LEVELS } from '../types/sentences';
+import { styled } from '../../../lib/styled';
+import { alpha } from '../../../lib/theme';
+import { NumberInput } from '../../../components/NumberInput';
+import type { CEFRLevel } from '../../../types/sentences';
+import { ALL_LEVELS } from '../../../types/sentences';
 
 const SettingsCard = styled(Card)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -112,3 +112,4 @@ export function SentenceSettingsPanel({
     </SettingsCard>
   );
 }
+

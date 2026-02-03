@@ -1,6 +1,6 @@
 import { Box, Typography, Tooltip } from '@mui/material';
-import { styled } from '../lib/styled';
-import { alpha } from '../lib/theme';
+import { styled } from '../../lib/styled';
+import { alpha } from '../../lib/theme';
 
 interface Example {
   singular: string;

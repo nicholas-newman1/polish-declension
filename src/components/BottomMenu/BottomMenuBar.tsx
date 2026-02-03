@@ -9,17 +9,17 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { styled } from '../lib/styled';
+import { styled } from '../../lib/styled';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import AbcIcon from '@mui/icons-material/Abc';
 import TranslateIcon from '@mui/icons-material/Translate';
 import SpellcheckIcon from '@mui/icons-material/Spellcheck';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import { useTranslationContext } from '../hooks/useTranslationContext';
-import { useCheatSheetContext } from '../hooks/useCheatSheetContext';
-import { alpha } from '../lib/theme';
-import { DRAWER_WIDTH } from './Layout';
+import { useTranslationContext } from '../../hooks/useTranslationContext';
+import { useCheatSheetContext } from '../../hooks/useCheatSheetContext';
+import { alpha } from '../../lib/theme';
+import { DRAWER_WIDTH } from '../Layout';
 
 const MenuBarContainer = styled(Box)(({ theme }) => ({
   position: 'fixed',

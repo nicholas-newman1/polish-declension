@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import type { Grade } from 'ts-fsrs';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import { styled } from '../lib/styled';
-import { FlashcardShell } from './FlashcardShell';
-import type { RatingIntervals } from './RatingButtons';
-import type { DrillableForm, TranslationDirection, Verb } from '../types/conjugation';
+import { styled } from '../../../lib/styled';
+import { FlashcardShell } from '../../../components/FlashcardShell';
+import type { RatingIntervals } from '../../../components/RatingButtons';
+import type { DrillableForm, TranslationDirection, Verb } from '../../../types/conjugation';
 import {
   getQuestionDisplay,
   getAnswerDisplay,
   getTenseLabel,
   getAspectLabel,
   getVerbClassLabel,
-} from '../lib/conjugationUtils';
-import { alpha } from '../lib/theme';
+} from '../../../lib/conjugationUtils';
+import { alpha } from '../../../lib/theme';
 
 export type ConjugationRatingIntervals = RatingIntervals;
 
@@ -228,3 +228,4 @@ function getCorrespondingAspectPairForm(form: DrillableForm, aspectPairVerb: Ver
 
   return null;
 }
+
