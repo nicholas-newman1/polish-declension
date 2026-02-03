@@ -13,6 +13,7 @@ import {
   getVerbClassLabel,
 } from '../../../lib/conjugationUtils';
 import { alpha } from '../../../lib/theme';
+import { VerbConjugationTooltip } from '../../../components/VerbConjugationTooltip';
 
 export type ConjugationRatingIntervals = RatingIntervals;
 
@@ -54,7 +55,7 @@ const AlternativesText = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(0.5),
 }));
 
-const InfinitiveLabel = styled(Typography)(({ theme }) => ({
+const InfinitiveLabel = styled(Box)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontSize: '0.875rem',
   marginTop: theme.spacing(1),
@@ -141,23 +142,43 @@ export function ConjugationFlashcard({
       )}
 
       <QuestionText variant="h4" color="text.primary">
-        {questionDisplay}
+        {isPolishToEnglish ? (
+          <VerbConjugationTooltip verb={form.verb} tense={form.tense}>
+            {questionDisplay}
+          </VerbConjugationTooltip>
+        ) : (
+          questionDisplay
+        )}
       </QuestionText>
 
-      {isPolishToEnglish && <InfinitiveLabel>{form.verb.infinitive}</InfinitiveLabel>}
+      {isPolishToEnglish && (
+        <InfinitiveLabel>
+          <VerbConjugationTooltip verb={form.verb} tense={form.tense} />
+        </InfinitiveLabel>
+      )}
     </Box>
   );
 
   const answer = (
     <>
       <AnswerText variant="h4" color="text.primary">
-        {answerData.primary}
+        {!isPolishToEnglish ? (
+          <VerbConjugationTooltip verb={form.verb} tense={form.tense}>
+            {answerData.primary}
+          </VerbConjugationTooltip>
+        ) : (
+          answerData.primary
+        )}
       </AnswerText>
       {answerData.alternatives && answerData.alternatives.length > 0 && (
         <AlternativesText>Also: {answerData.alternatives.join(', ')}</AlternativesText>
       )}
 
-      {!isPolishToEnglish && <InfinitiveLabel>{form.verb.infinitive}</InfinitiveLabel>}
+      {!isPolishToEnglish && (
+        <InfinitiveLabel>
+          <VerbConjugationTooltip verb={form.verb} tense={form.tense} />
+        </InfinitiveLabel>
+      )}
 
       <Stack direction="row" spacing={0.75} sx={{ mt: 2, flexWrap: 'wrap', gap: 0.5 }}>
         <AspectChip label={getAspectLabel(form.verb.aspect)} size="small" />
