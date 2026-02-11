@@ -282,19 +282,24 @@ export function getGenderLabel(gender: ConjugationGender): string {
 
 export function getTenseLabel(tense: Tense): string {
   const labels: Record<Tense, string> = {
-    present: 'Present',
-    past: 'Past',
-    future: 'Future',
-    imperative: 'Imperative',
-    conditional: 'Conditional',
+    present: '● Present',
+    past: '◀ Past',
+    future: '▶ Future',
+    imperative: '☞ Imperative',
+    conditional: '◇ Conditional',
   };
   return labels[tense];
 }
 
 export function getAspectLabel(aspect: string): string {
-  return aspect;
+  const labels: Record<string, string> = {
+    Perfective: '✓ Perfective',
+    Imperfective: '↻ Imperfective',
+  };
+  return labels[aspect] ?? aspect;
 }
 
 export function getVerbClassLabel(verbClass: string): string {
+  if (verbClass === 'Irregular') return '✱ Irregular';
   return verbClass;
 }

@@ -74,25 +74,31 @@ const TenseChip = styled(Chip)(({ theme }) => ({
 }));
 
 const PluralChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: alpha(theme.palette.success.main, 0.15),
-  color: theme.palette.success.main,
+  backgroundColor: alpha(theme.palette.secondary.main, 0.15),
+  color: theme.palette.secondary.dark,
   fontWeight: 500,
 }));
 
 const AspectChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: alpha(theme.palette.info.main, 0.15),
-  color: theme.palette.info.main,
+  backgroundColor: alpha(theme.palette.consonants.main, 0.15),
+  color: theme.palette.consonants.main,
   fontWeight: 500,
 }));
 
-const GenderChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: alpha(theme.palette.primary.main, 0.15),
-  color: theme.palette.primary.main,
-}));
+const GenderChip = styled(Chip)<{ $gender: 'Masculine' | 'Feminine' | 'Neuter' }>(({
+  theme,
+  $gender,
+}) => {
+  const genderKey = $gender.toLowerCase() as 'masculine' | 'feminine' | 'neuter';
+  return {
+    backgroundColor: alpha(theme.palette.gender[genderKey].main, 0.15),
+    color: theme.palette.gender[genderKey].main,
+  };
+});
 
-const IrregularChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: alpha(theme.palette.error.main, 0.15),
-  color: theme.palette.error.main,
+const VerbClassChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: alpha(theme.palette.neutral.main, 0.15),
+  color: theme.palette.neutral.dark,
 }));
 
 const AspectPairBox = styled(Box)(({ theme }) => ({
@@ -136,9 +142,15 @@ export function ConjugationFlashcard({
         <Stack direction="row" spacing={0.75} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
           <TenseChip label={getTenseLabel(form.tense)} size="small" />
           {form.person === '2nd' && form.number === 'Plural' && (
-            <PluralChip label="Plural" size="small" />
+            <PluralChip label="⊕ Plural" size="small" />
           )}
-          {form.gender && <GenderChip label={form.gender} size="small" />}
+          {form.gender && (
+            <GenderChip
+              $gender={form.gender}
+              label={`${form.gender === 'Masculine' ? '♂' : form.gender === 'Feminine' ? '♀' : '○'} ${form.gender}`}
+              size="small"
+            />
+          )}
         </Stack>
       )}
 
@@ -183,8 +195,15 @@ export function ConjugationFlashcard({
 
       <Stack direction="row" spacing={0.75} sx={{ mt: 2, flexWrap: 'wrap', gap: 0.5 }}>
         <AspectChip label={getAspectLabel(form.verb.aspect)} size="small" />
-        <IrregularChip label={getVerbClassLabel(form.verb.verbClass)} size="small" />
-        {form.verb.isReflexive && <MetaChip label="Reflexive" size="small" />}
+        <VerbClassChip label={getVerbClassLabel(form.verb.verbClass)} size="small" />
+        {form.verb.isReflexive && <MetaChip label="↩ Reflexive" size="small" />}
+        {isPolishToEnglish && form.gender && (
+          <GenderChip
+            $gender={form.gender}
+            label={`${form.gender === 'Masculine' ? '♂' : form.gender === 'Feminine' ? '♀' : '○'} ${form.gender}`}
+            size="small"
+          />
+        )}
       </Stack>
 
       {aspectPairForm && aspectPairVerb && (
