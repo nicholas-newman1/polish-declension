@@ -4,11 +4,13 @@ import {
   VocabularyContext,
   SentenceContext,
   ConjugationContext,
+  AspectPairsContext,
   ReviewCountsContext,
   type DeclensionContextType,
   type VocabularyContextType,
   type SentenceContextType,
   type ConjugationContextType,
+  type AspectPairsContextType,
   type ReviewCountsContextType,
 } from '../contexts/review';
 
@@ -44,6 +46,14 @@ export function useConjugation(): ConjugationContextType {
   return context;
 }
 
+export function useAspectPairs(): AspectPairsContextType {
+  const context = useContext(AspectPairsContext);
+  if (!context) {
+    throw new Error('useAspectPairs must be used within a ReviewDataProvider');
+  }
+  return context;
+}
+
 export function useReviewCounts(): ReviewCountsContextType {
   const context = useContext(ReviewCountsContext);
   if (!context) {
@@ -57,7 +67,8 @@ export interface ReviewDataContextType
     DeclensionContextType,
     VocabularyContextType,
     SentenceContextType,
-    ConjugationContextType {
+    ConjugationContextType,
+    AspectPairsContextType {
   loading: boolean;
   counts: ReviewCountsContextType['counts'];
 }
@@ -67,6 +78,7 @@ export function useReviewData(): ReviewDataContextType {
   const vocabulary = useVocabulary();
   const sentences = useSentences();
   const conjugation = useConjugation();
+  const aspectPairs = useAspectPairs();
   const { counts, loading } = useReviewCounts();
 
   return {
@@ -74,6 +86,7 @@ export function useReviewData(): ReviewDataContextType {
     ...vocabulary,
     ...sentences,
     ...conjugation,
+    ...aspectPairs,
     loading,
     counts,
   };

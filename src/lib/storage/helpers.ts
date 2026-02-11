@@ -4,6 +4,7 @@ import type { TranslationDirection } from '../../types/common';
 import type { VocabularyReviewDataStore, VocabularyWordId } from '../../types/vocabulary';
 import type { SentenceReviewDataStore } from '../../types/sentences';
 import type { ConjugationReviewDataStore, ConjugationFormKey } from '../../types/conjugation';
+import type { AspectPairsReviewDataStore } from '../../types/aspectPairs';
 
 export function getTodayString(): string {
   return new Date().toISOString().split('T')[0];
@@ -77,4 +78,17 @@ export function getDefaultConjugationReviewStore(): ConjugationReviewDataStore {
 
 export function getConjugationDocPath(direction: TranslationDirection): string {
   return direction === 'pl-to-en' ? 'conjugationReviewData-pl-en' : 'conjugationReviewData-en-pl';
+}
+
+export function includesVerbId(array: string[], id: string): boolean {
+  return array.includes(id);
+}
+
+export function getDefaultAspectPairsReviewStore(): AspectPairsReviewDataStore {
+  return {
+    cards: {},
+    reviewedToday: [],
+    newCardsToday: [],
+    lastReviewDate: getTodayString(),
+  };
 }

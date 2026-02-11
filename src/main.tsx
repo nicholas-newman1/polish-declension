@@ -19,6 +19,7 @@ import { DeclensionPage } from './pages/DeclensionPage';
 import { SentencesPage } from './pages/SentencesPage';
 import { VocabularyPage } from './pages/VocabularyPage';
 import { ConjugationPage } from './pages/ConjugationPage';
+import { AspectPairsPage } from './pages/AspectPairsPage';
 import { CustomVocabularyPage } from './pages/CustomVocabularyPage';
 import { CustomDeclensionPage } from './pages/CustomDeclensionPage';
 import { CustomSentencesPage } from './pages/CustomSentencesPage';
@@ -56,6 +57,7 @@ createRoot(document.getElementById('root')!).render(
                           <Route path="recognition" element={<ConjugationPage mode="pl-to-en" />} />
                           <Route path="production" element={<ConjugationPage mode="en-to-pl" />} />
                         </Route>
+                        <Route path="/aspect-pairs" element={<AspectPairsPage />} />
                         <Route path="/my-vocabulary" element={<CustomVocabularyPage />} />
                         <Route path="/my-declensions" element={<CustomDeclensionPage />} />
                         <Route path="/my-sentences" element={<CustomSentencesPage />} />

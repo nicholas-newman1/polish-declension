@@ -5,11 +5,13 @@ import getOrCreateDeclensionCardReviewData from '../lib/storage/getOrCreateDecle
 import getOrCreateVocabularyCardReviewData from '../lib/storage/getOrCreateVocabularyCardReviewData';
 import getOrCreateSentenceCardReviewData from '../lib/storage/getOrCreateSentenceCardReviewData';
 import getOrCreateConjugationFormReviewData from '../lib/storage/getOrCreateConjugationFormReviewData';
+import getOrCreateAspectPairsCardReviewData from '../lib/storage/getOrCreateAspectPairsCardReviewData';
 import isDue from '../lib/fsrsUtils/isDue';
 import {
   includesDeclensionCardId,
   includesSentenceId,
   includesFormKey,
+  includesVerbId,
 } from '../lib/storage/helpers';
 import type { TranslationDirection } from '../types/common';
 import type { CEFRLevel } from '../types/sentences';
@@ -36,6 +38,7 @@ export interface AllProgressStats {
   sentencesByDirection: Record<TranslationDirection, TranslationDirectionStats>;
   conjugation: ProgressStats;
   conjugationByDirection: Record<TranslationDirection, ProgressStats>;
+  aspectPairs: ProgressStats;
 }
 
 export function useProgressStats(): AllProgressStats {
@@ -52,6 +55,9 @@ export function useProgressStats(): AllProgressStats {
     verbs,
     conjugationReviewStores,
     conjugationSettings,
+    aspectPairCards,
+    aspectPairsReviewStore,
+    aspectPairsSettings,
   } = useReviewData();
 
   return useMemo(() => {
@@ -330,6 +336,47 @@ export function useProgressStats(): AllProgressStats {
       }
     }
 
+    let aspectPairsLearned = 0;
+    let aspectPairsMastered = 0;
+    let aspectPairsDue = 0;
+    const aspectPairsRemainingNew =
+      aspectPairsSettings.newCardsPerDay - aspectPairsReviewStore.newCardsToday.length;
+    let aspectPairsNewForSession = 0;
+
+    for (const card of aspectPairCards) {
+      const verbId = card.verb.id;
+      const reviewData = getOrCreateAspectPairsCardReviewData(verbId, aspectPairsReviewStore);
+      const cardState = reviewData.fsrsCard.state;
+
+      if (cardState !== State.New) {
+        aspectPairsLearned++;
+      }
+      if (cardState === State.Review) {
+        aspectPairsMastered++;
+      }
+
+      const isNew = cardState === State.New;
+      const isLearning = cardState === State.Learning || cardState === State.Relearning;
+
+      if (isNew) {
+        if (
+          !includesVerbId(aspectPairsReviewStore.newCardsToday, verbId) &&
+          aspectPairsNewForSession < aspectPairsRemainingNew
+        ) {
+          aspectPairsNewForSession++;
+          aspectPairsDue++;
+        }
+      } else if (isLearning) {
+        if (!includesVerbId(aspectPairsReviewStore.reviewedToday, verbId)) {
+          aspectPairsDue++;
+        }
+      } else if (isDue(reviewData.fsrsCard)) {
+        if (!includesVerbId(aspectPairsReviewStore.reviewedToday, verbId)) {
+          aspectPairsDue++;
+        }
+      }
+    }
+
     return {
       declension: {
         total: declensionCards.length,
@@ -367,6 +414,12 @@ export function useProgressStats(): AllProgressStats {
         'pl-to-en': conjugationPlToEn,
         'en-to-pl': conjugationEnToPl,
       },
+      aspectPairs: {
+        total: aspectPairCards.length,
+        learned: aspectPairsLearned,
+        mastered: aspectPairsMastered,
+        due: aspectPairsDue,
+      },
     };
   }, [
     declensionCards,
@@ -381,5 +434,8 @@ export function useProgressStats(): AllProgressStats {
     verbs,
     conjugationReviewStores,
     conjugationSettings,
+    aspectPairCards,
+    aspectPairsReviewStore,
+    aspectPairsSettings,
   ]);
 }

@@ -98,7 +98,7 @@ const FeatureCountBadge = styled(CountBadge)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-export type FeatureType = 'vocabulary' | 'sentences' | 'conjugation' | 'declension';
+export type FeatureType = 'vocabulary' | 'sentences' | 'conjugation' | 'declension' | 'aspectPairs';
 export type Direction = 'pl-to-en' | 'en-to-pl';
 
 interface OtherFeatureDue {

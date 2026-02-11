@@ -1,7 +1,7 @@
-import { Abc, School, Translate, AutoStories } from '@mui/icons-material';
+import { Abc, School, Translate, AutoStories, CompareArrows } from '@mui/icons-material';
 import type { ReviewCounts } from '../contexts/review';
 
-type ColorKey = 'primary' | 'info' | 'success' | 'warning';
+type ColorKey = 'primary' | 'info' | 'success' | 'warning' | 'secondary';
 
 export interface FeatureNavItem {
   path: string;
@@ -54,5 +54,14 @@ export const FEATURE_NAV_ITEMS: FeatureNavItem[] = [
     fullDescription: 'Translate full sentences and practice with spaced repetition',
     colorKey: 'success',
     statsKey: 'sentences',
+  },
+  {
+    path: '/aspect-pairs',
+    icon: CompareArrows,
+    label: 'Aspect Pairs',
+    description: 'Perfective / imperfective pairs',
+    fullDescription: 'Practice identifying verb aspects and their pairs',
+    colorKey: 'secondary',
+    statsKey: 'aspectPairs',
   },
 ];

@@ -15,28 +15,37 @@ import type {
   ConjugationReviewDataStore,
   ConjugationDirectionSettings,
 } from '../../types/conjugation';
+import type {
+  AspectPairCard,
+  AspectPairsReviewDataStore,
+  AspectPairsSettings,
+} from '../../types/aspectPairs';
 import isDue from '../../lib/fsrsUtils/isDue';
 import getOrCreateDeclensionCardReviewData from '../../lib/storage/getOrCreateDeclensionCardReviewData';
 import getOrCreateVocabularyCardReviewData from '../../lib/storage/getOrCreateVocabularyCardReviewData';
 import getOrCreateSentenceCardReviewData from '../../lib/storage/getOrCreateSentenceCardReviewData';
 import getOrCreateConjugationFormReviewData from '../../lib/storage/getOrCreateConjugationFormReviewData';
+import getOrCreateAspectPairsCardReviewData from '../../lib/storage/getOrCreateAspectPairsCardReviewData';
 import {
   getUserId,
   includesDeclensionCardId,
   includesSentenceId,
   includesFormKey,
+  includesVerbId,
 } from '../../lib/storage/helpers';
 import { getDrillableFormsForVerb } from '../../lib/conjugationUtils';
 import { DeclensionContext } from './DeclensionContext';
 import { VocabularyContext } from './VocabularyContext';
 import { SentenceContext } from './SentenceContext';
 import { ConjugationContext } from './ConjugationContext';
+import { AspectPairsContext } from './AspectPairsContext';
 
 export interface ReviewCounts {
   declension: number;
   vocabulary: number;
   sentences: number;
   conjugation: number;
+  aspectPairs: number;
 }
 
 export interface ReviewCountsContextType {
@@ -201,6 +210,40 @@ function computeConjugationDueCount(
   return dueReviews + newForms;
 }
 
+function computeAspectPairsDueCount(
+  aspectPairCards: AspectPairCard[],
+  reviewStore: AspectPairsReviewDataStore,
+  settings: AspectPairsSettings
+): number {
+  let dueReviews = 0;
+  let newCards = 0;
+  const remainingNewCardsToday = settings.newCardsPerDay - reviewStore.newCardsToday.length;
+
+  for (const card of aspectPairCards) {
+    const verbId = card.verb.id;
+    const reviewData = getOrCreateAspectPairsCardReviewData(verbId, reviewStore);
+    const state = reviewData.fsrsCard.state;
+    const isNew = state === 0;
+    const isLearning = state === 1 || state === 3;
+
+    if (isNew) {
+      if (!includesVerbId(reviewStore.newCardsToday, verbId) && newCards < remainingNewCardsToday) {
+        newCards++;
+      }
+    } else if (isLearning) {
+      if (!includesVerbId(reviewStore.reviewedToday, verbId)) {
+        dueReviews++;
+      }
+    } else if (isDue(reviewData.fsrsCard)) {
+      if (!includesVerbId(reviewStore.reviewedToday, verbId)) {
+        dueReviews++;
+      }
+    }
+  }
+
+  return dueReviews + newCards;
+}
+
 interface ReviewCountsProviderProps {
   children: ReactNode;
   loading: boolean;
@@ -211,11 +254,19 @@ export function ReviewCountsProvider({ children, loading }: ReviewCountsProvider
   const vocabularyCtx = useContext(VocabularyContext);
   const sentenceCtx = useContext(SentenceContext);
   const conjugationCtx = useContext(ConjugationContext);
+  const aspectPairsCtx = useContext(AspectPairsContext);
 
   const counts = useMemo<ReviewCounts>(() => {
     const userId = getUserId();
-    if (!userId || !declensionCtx || !vocabularyCtx || !sentenceCtx || !conjugationCtx) {
-      return { declension: 0, vocabulary: 0, sentences: 0, conjugation: 0 };
+    if (
+      !userId ||
+      !declensionCtx ||
+      !vocabularyCtx ||
+      !sentenceCtx ||
+      !conjugationCtx ||
+      !aspectPairsCtx
+    ) {
+      return { declension: 0, vocabulary: 0, sentences: 0, conjugation: 0, aspectPairs: 0 };
     }
 
     const declensionCount = computeDeclensionDueCount(
@@ -257,13 +308,20 @@ export function ReviewCountsProvider({ children, loading }: ReviewCountsProvider
       conjugationCtx.conjugationSettings['en-to-pl']
     );
 
+    const aspectPairsCount = computeAspectPairsDueCount(
+      aspectPairsCtx.aspectPairCards,
+      aspectPairsCtx.aspectPairsReviewStore,
+      aspectPairsCtx.aspectPairsSettings
+    );
+
     return {
       declension: declensionCount,
       vocabulary: plToEnCount + enToPlCount,
       sentences: sentencePlToEnCount + sentenceEnToPlCount,
       conjugation: conjugationPlToEnCount + conjugationEnToPlCount,
+      aspectPairs: aspectPairsCount,
     };
-  }, [declensionCtx, vocabularyCtx, sentenceCtx, conjugationCtx]);
+  }, [declensionCtx, vocabularyCtx, sentenceCtx, conjugationCtx, aspectPairsCtx]);
 
   return (
     <ReviewCountsContext.Provider value={{ counts, loading }}>

@@ -81,6 +81,16 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // User aspect pairs review data - only the owner can read/write
+    match /users/{userId}/data/aspectPairsReviewData {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // User aspect pairs settings - only the owner can read/write
+    match /users/{userId}/data/aspectPairsSettings {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     // User rate limits - users can only read their own (writes done by Cloud Function)
     match /userRateLimits/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;

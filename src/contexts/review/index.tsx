@@ -10,12 +10,14 @@ import { DeclensionProvider, DeclensionContext, loadDeclensionData } from './Dec
 import { VocabularyProvider, VocabularyContext, loadVocabularyData } from './VocabularyContext';
 import { SentenceProvider, SentenceContext, loadSentenceData } from './SentenceContext';
 import { ConjugationProvider, ConjugationContext, loadConjugationData } from './ConjugationContext';
+import { AspectPairsProvider, AspectPairsContext, loadAspectPairsData } from './AspectPairsContext';
 import { ReviewCountsProvider, ReviewCountsContext } from './ReviewCountsContext';
 
 export type { DeclensionContextType } from './DeclensionContext';
 export type { VocabularyContextType } from './VocabularyContext';
 export type { SentenceContextType } from './SentenceContext';
 export type { ConjugationContextType } from './ConjugationContext';
+export type { AspectPairsContextType } from './AspectPairsContext';
 export type { ReviewCounts, ReviewCountsContextType } from './ReviewCountsContext';
 
 export {
@@ -23,6 +25,7 @@ export {
   VocabularyContext,
   SentenceContext,
   ConjugationContext,
+  AspectPairsContext,
   ReviewCountsContext,
 };
 
@@ -35,6 +38,7 @@ interface LoadedData {
   vocabularyData: Awaited<ReturnType<typeof loadVocabularyData>>;
   sentenceData: Awaited<ReturnType<typeof loadSentenceData>>;
   conjugationData: Awaited<ReturnType<typeof loadConjugationData>>;
+  aspectPairsData: Awaited<ReturnType<typeof loadAspectPairsData>>;
   systemDeclensionCards: DeclensionCard[];
   systemWords: VocabularyWord[];
   systemSentences: Sentence[];
@@ -59,6 +63,7 @@ export function ReviewDataProvider({ children }: ReviewDataProviderProps) {
       loadedVocabularyData,
       loadedSentenceData,
       loadedConjugationData,
+      loadedAspectPairsData,
       vocabularySnapshot,
       declensionCardsSnapshot,
       sentencesSnapshot,
@@ -68,6 +73,7 @@ export function ReviewDataProvider({ children }: ReviewDataProviderProps) {
       loadVocabularyData(),
       loadSentenceData(),
       loadConjugationData(),
+      loadAspectPairsData(),
       getDocs(collection(db, 'vocabulary')),
       getDocs(collection(db, 'declensionCards')),
       getDocs(collection(db, 'sentences')),
@@ -86,6 +92,7 @@ export function ReviewDataProvider({ children }: ReviewDataProviderProps) {
       vocabularyData: loadedVocabularyData,
       sentenceData: loadedSentenceData,
       conjugationData: loadedConjugationData,
+      aspectPairsData: loadedAspectPairsData,
       systemDeclensionCards: loadedSystemDeclensionCards,
       systemWords: loadedSystemWords,
       systemSentences: loadedSentences,
@@ -132,7 +139,14 @@ export function ReviewDataProvider({ children }: ReviewDataProviderProps) {
             initialReviewStores={data?.conjugationData.reviewStores}
             initialSettings={data?.conjugationData.settings}
           >
-            <ReviewCountsProvider loading={loading}>{children}</ReviewCountsProvider>
+            <AspectPairsProvider
+              key={`aspectPairs-${key}`}
+              verbs={data?.verbs ?? []}
+              initialReviewStore={data?.aspectPairsData.reviewData}
+              initialSettings={data?.aspectPairsData.settings}
+            >
+              <ReviewCountsProvider loading={loading}>{children}</ReviewCountsProvider>
+            </AspectPairsProvider>
           </ConjugationProvider>
         </SentenceProvider>
       </VocabularyProvider>
