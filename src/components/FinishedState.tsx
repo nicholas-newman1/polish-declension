@@ -145,7 +145,7 @@ export function FinishedState({
   onLearnExtra,
 }: FinishedStateProps) {
   const hasOtherDirection = otherDirectionDueCount !== undefined && otherDirectionDueCount > 0;
-  const featuresWithDue = otherFeaturesDue.filter((f) => f.dueCount > 0);
+  const featuresWithDue = otherFeaturesDue.filter((f) => f.dueCount > 0).slice(0, 2);
   const hasOtherFeatures = featuresWithDue.length > 0;
   const hasNextActions = hasOtherDirection || hasOtherFeatures;
 

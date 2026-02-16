@@ -574,6 +574,12 @@ export function SentencesPage({ mode }: SentencesPageProps) {
                     dueCount: progressStats.conjugation.due,
                     path: '/conjugation',
                   },
+                  {
+                    feature: 'aspectPairs',
+                    label: 'Aspect Pairs',
+                    dueCount: progressStats.aspectPairs.due,
+                    path: '/aspect-pairs',
+                  },
                 ]}
                 onNavigateToFeature={(path) => navigate(path)}
                 practiceAheadCount={practiceAheadCount}

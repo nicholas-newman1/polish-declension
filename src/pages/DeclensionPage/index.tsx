@@ -602,6 +602,12 @@ export function DeclensionPage() {
                 dueCount: progressStats.sentences.due,
                 path: '/sentences',
               },
+              {
+                feature: 'aspectPairs',
+                label: 'Aspect Pairs',
+                dueCount: progressStats.aspectPairs.due,
+                path: '/aspect-pairs',
+              },
             ]}
             onNavigateToFeature={(path) => navigate(path)}
             practiceAheadCount={practiceAheadCount}
