@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { styled } from '../lib/styled';
-import { Menu, Close, Home, Check, AutoAwesome } from '@mui/icons-material';
+import { Menu, Close, Home, Check, AutoAwesome, MusicNote } from '@mui/icons-material';
 import { useReviewData } from '../hooks/useReviewData';
 import { useBackClose } from '../hooks/useBackClose';
 import type { ReviewCounts } from '../contexts/review';
@@ -191,6 +191,12 @@ const NAV_ITEMS: Array<{
     reviewCountKey: item.statsKey,
   })),
   {
+    path: '/consonant-driller',
+    icon: MusicNote,
+    label: 'Consonant Driller',
+    description: 'Hard/soft consonants',
+  },
+  {
     path: '/admin/generator',
     icon: AutoAwesome,
     label: 'Generator',
@@ -211,6 +217,8 @@ const PAGE_TITLES: Record<string, string> = {
   '/conjugation': 'Conjugation',
   '/conjugation/recognition': 'Recognition',
   '/conjugation/production': 'Production',
+  '/aspect-pairs': 'Aspect Pairs',
+  '/consonant-driller': 'Consonant Driller',
   '/my-vocabulary': 'My Vocabulary',
   '/my-declensions': 'My Declensions',
   '/my-sentences': 'My Sentences',
