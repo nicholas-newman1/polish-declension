@@ -5,7 +5,9 @@ import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
 import type { AspectPairCard } from '../../../types/aspectPairs';
+import type { Verb, Tense } from '../../../types/conjugation';
 import { alpha } from '../../../lib/theme';
+import { VerbConjugationTooltip } from '../../../components/VerbConjugationTooltip';
 
 interface AspectPairsFlashcardProps {
   card: AspectPairCard;
@@ -68,6 +70,10 @@ const BiaspectualNote = styled(Typography)(({ theme }) => ({
   fontSize: '0.875rem',
 }));
 
+function getDefaultTenseForVerb(verb: Verb): Tense {
+  return verb.aspect === 'Perfective' ? 'future' : 'present';
+}
+
 export function AspectPairsFlashcard({
   card,
   practiceMode = false,
@@ -92,7 +98,7 @@ export function AspectPairsFlashcard({
   const question = (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
       <QuestionText variant="h4" color="text.primary">
-        {frontVerb.infinitive}
+        <VerbConjugationTooltip verb={frontVerb} tense={getDefaultTenseForVerb(frontVerb)} />
       </QuestionText>
     </Box>
   );
@@ -106,7 +112,7 @@ export function AspectPairsFlashcard({
       {isBiaspectual ? (
         <>
           <AnswerText variant="h5" color="text.primary">
-            {frontVerb.infinitive}
+            <VerbConjugationTooltip verb={frontVerb} tense={getDefaultTenseForVerb(frontVerb)} />
           </AnswerText>
           <BiaspectualNote>
             This verb is biaspectual — the same form is used for both perfective and imperfective.
@@ -118,7 +124,7 @@ export function AspectPairsFlashcard({
             {backVerb.aspect}:
           </Typography>
           <AnswerText variant="h5" color="text.primary">
-            {backVerb.infinitive}
+            <VerbConjugationTooltip verb={backVerb} tense={getDefaultTenseForVerb(backVerb)} />
           </AnswerText>
         </PairBox>
       )}
