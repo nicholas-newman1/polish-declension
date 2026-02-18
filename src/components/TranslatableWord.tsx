@@ -55,6 +55,7 @@ const ActionIconButton = styled(IconButton)(({ theme }) => ({
 const SelectableSpan = styled(TappableSpan, {
   shouldForwardProp: (prop) => prop !== '$isSelected',
 })<{ $isSelected?: boolean }>(({ theme, $isSelected }) => ({
+  touchAction: 'none',
   ...($isSelected && {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
@@ -67,6 +68,7 @@ const SelectableSpan = styled(TappableSpan, {
 const SelectableHighlightedSpan = styled(HighlightedSpan, {
   shouldForwardProp: (prop) => prop !== '$isSelected',
 })<{ $isSelected?: boolean }>(({ theme, $isSelected }) => ({
+  touchAction: 'none',
   ...($isSelected && {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
