@@ -27,6 +27,7 @@ export interface DeclensionCard {
   hint?: string;
   isCustom?: boolean;
   translations?: Record<string, string>;
+  audioUrl?: string;
 }
 
 export interface CustomDeclensionCard extends CustomItemBase {

@@ -1,14 +1,14 @@
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import type { Grade } from 'ts-fsrs';
-import { Box, Chip, IconButton, Stack, Typography } from '@mui/material';
-import { VolumeUp } from '@mui/icons-material';
+import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
+import { AudioButton } from '../../../components/AudioButton';
 import { renderTappableText } from '../../../lib/renderTappableText';
 import type { Sentence, CEFRLevel } from '../../../types/sentences';
 import type { TranslationDirection } from '../../../types/common';
-import { useAppSettings } from '../../../contexts/AppSettingsContext';
+import { useAudioPlayer } from '../../../hooks/useAudioPlayer';
 
 interface SentenceFlashcardProps {
   sentence: Sentence;
@@ -81,70 +81,18 @@ export function SentenceFlashcard({
   onDailyLimitReached,
   onUpdateTranslation,
 }: SentenceFlashcardProps) {
-  const { settings: appSettings } = useAppSettings();
   const [revealed, setRevealed] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const hasAutoPlayedRef = useRef(false);
-
-  const stopAudio = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-      setIsPlaying(false);
-    }
-  }, []);
-
-  const playAudio = useCallback(() => {
-    if (!sentence.audioUrl) return;
-
-    stopAudio();
-
-    const audio = new Audio(sentence.audioUrl);
-    audioRef.current = audio;
-    setIsPlaying(true);
-
-    audio.onended = () => setIsPlaying(false);
-    audio.onerror = () => setIsPlaying(false);
-    audio.play().catch(() => setIsPlaying(false));
-  }, [sentence.audioUrl, stopAudio]);
-
-  const toggleAudio = useCallback(() => {
-    if (isPlaying) {
-      stopAudio();
-    } else {
-      playAudio();
-    }
-  }, [isPlaying, stopAudio, playAudio]);
-
-  // Reset auto-play flag and stop audio when card changes
-  useEffect(() => {
-    hasAutoPlayedRef.current = false;
-    return () => stopAudio();
-  }, [sentence.id, stopAudio]);
 
   const isPolishToEnglish = direction === 'pl-to-en';
 
-  // Auto-play audio when card opens (for pl-to-en) or when revealed (for en-to-pl)
-  useEffect(() => {
-    if (!appSettings.autoPlayAudio || !sentence.audioUrl || hasAutoPlayedRef.current) return;
+  const { isPlaying, toggleAudio, hasAudio } = useAudioPlayer({
+    audioUrl: sentence.audioUrl,
+    cardId: sentence.id,
+    autoPlayOnMount: isPolishToEnglish,
+    autoPlayOnReveal: !isPolishToEnglish,
+    revealed,
+  });
 
-    if (isPolishToEnglish) {
-      // Polish is the question - play immediately when card opens
-      hasAutoPlayedRef.current = true;
-      queueMicrotask(playAudio);
-    }
-  }, [sentence.id, isPolishToEnglish, sentence.audioUrl, playAudio, appSettings.autoPlayAudio]);
-
-  useEffect(() => {
-    if (!appSettings.autoPlayAudio || !sentence.audioUrl || hasAutoPlayedRef.current) return;
-
-    if (!isPolishToEnglish && revealed) {
-      // Polish is the answer - play when revealed
-      hasAutoPlayedRef.current = true;
-      queueMicrotask(playAudio);
-    }
-  }, [revealed, isPolishToEnglish, sentence.audioUrl, playAudio, appSettings.autoPlayAudio]);
   const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
 
   const tappableTextOptions = useMemo(
@@ -192,19 +140,7 @@ export function SentenceFlashcard({
       <DirectionLabel>{directionLabel}</DirectionLabel>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <LevelChip $level={sentence.level} label={sentence.level} />
-        {sentence.audioUrl && (
-          <IconButton
-            onClick={toggleAudio}
-            size="small"
-            sx={{
-              color: isPlaying ? 'error.main' : 'text.secondary',
-              p: 0.5,
-            }}
-            aria-label={isPlaying ? 'Stop audio' : 'Play audio'}
-          >
-            <VolumeUp fontSize="small" />
-          </IconButton>
-        )}
+        {hasAudio && <AudioButton isPlaying={isPlaying} onToggle={toggleAudio} />}
       </Box>
     </Box>
   );

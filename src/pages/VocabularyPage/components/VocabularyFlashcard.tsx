@@ -4,8 +4,10 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
+import { AudioButton } from '../../../components/AudioButton';
 import type { VocabularyWord } from '../../../types/vocabulary';
 import type { TranslationDirection } from '../../../types/common';
+import { useAudioPlayer } from '../../../hooks/useAudioPlayer';
 
 interface VocabularyFlashcardProps {
   word: VocabularyWord;
@@ -36,7 +38,6 @@ const CustomLabel = styled(Typography)(({ theme }) => ({
 const HeaderLabels = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(1.5),
-  marginBottom: theme.spacing(1),
 }));
 
 const QuestionText = styled(Typography)({
@@ -108,6 +109,15 @@ export function VocabularyFlashcard({
   const [revealed, setRevealed] = useState(false);
 
   const isPolishToEnglish = direction === 'pl-to-en';
+
+  const { isPlaying, toggleAudio, hasAudio } = useAudioPlayer({
+    audioUrl: word.audioUrl,
+    cardId: word.id,
+    autoPlayOnMount: isPolishToEnglish,
+    autoPlayOnReveal: !isPolishToEnglish,
+    revealed,
+  });
+
   const questionWord = isPolishToEnglish ? word.polish : word.english;
   const answerWord = isPolishToEnglish ? word.english : word.polish;
   const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
@@ -115,10 +125,13 @@ export function VocabularyFlashcard({
   const canEditOrDelete = isCustomWord || isAdmin;
 
   const header = (
-    <HeaderLabels>
-      <DirectionLabel>{directionLabel}</DirectionLabel>
-      {isCustomWord && <CustomLabel>Custom</CustomLabel>}
-    </HeaderLabels>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+      <HeaderLabels>
+        <DirectionLabel>{directionLabel}</DirectionLabel>
+        {isCustomWord && <CustomLabel>Custom</CustomLabel>}
+      </HeaderLabels>
+      {hasAudio && <AudioButton isPlaying={isPlaying} onToggle={toggleAudio} />}
+    </Box>
   );
 
   const question = (
@@ -197,4 +210,3 @@ export function VocabularyFlashcard({
 
 // Re-export RatingIntervals for backwards compatibility
 export type { RatingIntervals };
-

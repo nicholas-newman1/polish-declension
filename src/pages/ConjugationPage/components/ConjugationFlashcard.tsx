@@ -4,6 +4,7 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
+import { AudioButton } from '../../../components/AudioButton';
 import type { DrillableForm, Verb } from '../../../types/conjugation';
 import type { TranslationDirection } from '../../../types/common';
 import {
@@ -15,6 +16,7 @@ import {
 } from '../../../lib/conjugationUtils';
 import { alpha } from '../../../lib/theme';
 import { VerbConjugationTooltip } from '../../../components/VerbConjugationTooltip';
+import { useAudioPlayer } from '../../../hooks/useAudioPlayer';
 
 export type ConjugationRatingIntervals = RatingIntervals;
 
@@ -38,7 +40,6 @@ const DirectionLabel = styled(Typography)(({ theme }) => ({
 const HeaderLabels = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(1.5),
-  marginBottom: theme.spacing(1),
 }));
 
 const QuestionText = styled(Typography)({
@@ -121,6 +122,15 @@ export function ConjugationFlashcard({
   const [revealed, setRevealed] = useState(false);
 
   const isPolishToEnglish = direction === 'pl-to-en';
+
+  const { isPlaying, toggleAudio, hasAudio } = useAudioPlayer({
+    audioUrl: form.form.audioUrl,
+    cardId: form.fullFormKey,
+    autoPlayOnMount: isPolishToEnglish,
+    autoPlayOnReveal: !isPolishToEnglish,
+    revealed,
+  });
+
   const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
 
   const questionDisplay = getQuestionDisplay(form, direction);
@@ -131,9 +141,12 @@ export function ConjugationFlashcard({
     : null;
 
   const header = (
-    <HeaderLabels>
-      <DirectionLabel>{directionLabel}</DirectionLabel>
-    </HeaderLabels>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+      <HeaderLabels>
+        <DirectionLabel>{directionLabel}</DirectionLabel>
+      </HeaderLabels>
+      {hasAudio && <AudioButton isPlaying={isPlaying} onToggle={toggleAudio} />}
+    </Box>
   );
 
   const question = (

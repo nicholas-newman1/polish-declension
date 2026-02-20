@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type { Grade } from 'ts-fsrs';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
+import { AudioButton } from '../../../components/AudioButton';
 import type { AspectPairCard } from '../../../types/aspectPairs';
 import type { Verb, Tense } from '../../../types/conjugation';
 import { alpha } from '../../../lib/theme';
 import { VerbConjugationTooltip } from '../../../components/VerbConjugationTooltip';
+import { useAppSettings } from '../../../contexts/AppSettingsContext';
 
 interface AspectPairsFlashcardProps {
   card: AspectPairCard;
@@ -20,7 +22,6 @@ interface AspectPairsFlashcardProps {
 const HeaderLabels = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(1.5),
-  marginBottom: theme.spacing(1),
 }));
 
 const DirectionLabel = styled(Typography)(({ theme }) => ({
@@ -81,18 +82,103 @@ export function AspectPairsFlashcard({
   onRate,
   onNext,
 }: AspectPairsFlashcardProps) {
+  const { settings: appSettings } = useAppSettings();
   const [revealed, setRevealed] = useState(false);
   const [showPerfectiveFirst] = useState(() => Math.random() < 0.5);
+  const [playingAudio, setPlayingAudio] = useState<'front' | 'back' | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasAutoPlayedFrontRef = useRef(false);
+  const hasAutoPlayedBackRef = useRef(false);
 
   const isBiaspectual = card.verb.id === card.pairVerb.id;
 
   const frontVerb = showPerfectiveFirst ? card.pairVerb : card.verb;
   const backVerb = showPerfectiveFirst ? card.verb : card.pairVerb;
 
+  const frontAudioUrl = frontVerb.infinitiveAudioUrl;
+  const backAudioUrl = backVerb.infinitiveAudioUrl;
+
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setPlayingAudio(null);
+    }
+  }, []);
+
+  const playAudio = useCallback(
+    (url: string, which: 'front' | 'back') => {
+      stopAudio();
+
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      setPlayingAudio(which);
+
+      audio.onended = () => setPlayingAudio(null);
+      audio.onerror = () => setPlayingAudio(null);
+      audio.play().catch(() => setPlayingAudio(null));
+    },
+    [stopAudio]
+  );
+
+  const toggleFrontAudio = useCallback(() => {
+    if (!frontAudioUrl) return;
+    if (playingAudio) {
+      stopAudio();
+    } else {
+      playAudio(frontAudioUrl, 'front');
+    }
+  }, [playingAudio, stopAudio, playAudio, frontAudioUrl]);
+
+  const toggleBackAudio = useCallback(() => {
+    if (!backAudioUrl) return;
+    if (playingAudio) {
+      stopAudio();
+    } else {
+      playAudio(backAudioUrl, 'back');
+    }
+  }, [playingAudio, stopAudio, playAudio, backAudioUrl]);
+
+  // Reset auto-play flags and stop audio when card changes
+  useEffect(() => {
+    hasAutoPlayedFrontRef.current = false;
+    hasAutoPlayedBackRef.current = false;
+    return () => stopAudio();
+  }, [card.verb.id, card.pairVerb.id, stopAudio]);
+
+  // Auto-play front verb audio when card opens
+  useEffect(() => {
+    if (!appSettings.autoPlayAudio || !frontAudioUrl || hasAutoPlayedFrontRef.current) return;
+
+    hasAutoPlayedFrontRef.current = true;
+    queueMicrotask(() => playAudio(frontAudioUrl, 'front'));
+  }, [card.verb.id, card.pairVerb.id, frontAudioUrl, playAudio, appSettings.autoPlayAudio]);
+
+  // Auto-play back verb audio when revealed (if not biaspectual)
+  useEffect(() => {
+    if (
+      !appSettings.autoPlayAudio ||
+      !backAudioUrl ||
+      hasAutoPlayedBackRef.current ||
+      isBiaspectual
+    )
+      return;
+
+    if (revealed) {
+      hasAutoPlayedBackRef.current = true;
+      queueMicrotask(() => playAudio(backAudioUrl, 'back'));
+    }
+  }, [revealed, backAudioUrl, playAudio, isBiaspectual, appSettings.autoPlayAudio]);
+
   const header = (
-    <HeaderLabels>
-      <DirectionLabel>Aspect Pairs</DirectionLabel>
-    </HeaderLabels>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+      <HeaderLabels>
+        <DirectionLabel>Aspect Pairs</DirectionLabel>
+      </HeaderLabels>
+      {frontAudioUrl && (
+        <AudioButton isPlaying={playingAudio === 'front'} onToggle={toggleFrontAudio} />
+      )}
+    </Box>
   );
 
   const question = (
@@ -123,9 +209,14 @@ export function AspectPairsFlashcard({
           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
             {backVerb.aspect}:
           </Typography>
-          <AnswerText variant="h5" color="text.primary">
-            <VerbConjugationTooltip verb={backVerb} tense={getDefaultTenseForVerb(backVerb)} />
-          </AnswerText>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <AnswerText variant="h5" color="text.primary">
+              <VerbConjugationTooltip verb={backVerb} tense={getDefaultTenseForVerb(backVerb)} />
+            </AnswerText>
+            {backAudioUrl && (
+              <AudioButton isPlaying={playingAudio === 'back'} onToggle={toggleBackAudio} />
+            )}
+          </Box>
         </PairBox>
       )}
 

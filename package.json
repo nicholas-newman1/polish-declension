@@ -17,11 +17,18 @@
     "verbs:import": "tsx scripts/verbs-import.ts",
     "verbs:validate": "tsx scripts/verbs-validate.ts",
     "verbs:sync": "tsx scripts/verbs-sync.ts",
-    "verbs:export": "tsx scripts/verbs-export.ts"
+    "verbs:export": "tsx scripts/verbs-export.ts",
+    "audio:sentences": "tsx scripts/audio-generate-sentences.ts",
+    "audio:vocabulary": "tsx scripts/audio-generate-vocabulary.ts",
+    "audio:declension": "tsx scripts/audio-generate-declension.ts",
+    "audio:conjugation": "tsx scripts/audio-generate-conjugation.ts",
+    "audio:aspect-pairs": "tsx scripts/audio-generate-aspect-pairs.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@google-cloud/storage": "^7.19.0",
+    "@google-cloud/text-to-speech": "^6.4.0",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "@tanstack/react-virtual": "^3.13.18",

@@ -4,9 +4,11 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
+import { AudioButton } from '../../../components/AudioButton';
 import type { DeclensionCard } from '../../../types';
 import { renderTappableText } from '../../../lib/renderTappableText';
 import { useTranslationContext } from '../../../hooks/useTranslationContext';
+import { useAudioPlayer } from '../../../hooks/useAudioPlayer';
 
 export type DeclensionRatingIntervals = RatingIntervals;
 
@@ -66,6 +68,13 @@ export function DeclensionFlashcard({
   const [revealed, setRevealed] = useState(false);
   const { handleDailyLimitReached } = useTranslationContext();
 
+  const { isPlaying, toggleAudio, hasAudio } = useAudioPlayer({
+    audioUrl: card.audioUrl,
+    cardId: card.id,
+    autoPlayOnReveal: true,
+    revealed,
+  });
+
   const declensionCardId = typeof card.id === 'number' ? card.id : undefined;
 
   const tappableTextOptions = useMemo(
@@ -87,7 +96,12 @@ export function DeclensionFlashcard({
     ]
   );
 
-  const header = card.isCustom ? <CustomLabel>Custom</CustomLabel> : null;
+  const header = (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {card.isCustom ? <CustomLabel>Custom</CustomLabel> : <Box />}
+      {hasAudio && <AudioButton isPlaying={isPlaying} onToggle={toggleAudio} />}
+    </Box>
+  );
 
   const question = (
     <QuestionText>{renderTappableText(card.front, tappableTextOptions)}</QuestionText>
@@ -130,4 +144,3 @@ export function DeclensionFlashcard({
     />
   );
 }
-

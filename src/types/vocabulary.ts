@@ -31,6 +31,7 @@ export interface VocabularyWord {
   notes?: string;
   examples?: ExampleSentence[];
   isCustom?: boolean;
+  audioUrl?: string;
 }
 
 export interface CustomVocabularyWord extends CustomItemBase {

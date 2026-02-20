@@ -53,6 +53,7 @@ export interface ConjugationForm {
   pl: string;
   plAlternatives?: string[];
   en: string[];
+  audioUrl?: string;
 }
 
 export interface Verb {
@@ -66,6 +67,7 @@ export interface Verb {
   isReflexive: boolean;
   isDefective?: boolean;
   isImpersonal?: boolean;
+  infinitiveAudioUrl?: string;
   conjugations: {
     present?: Record<PresentFormKey, ConjugationForm>;
     past?: Record<PastFormKey, ConjugationForm>;

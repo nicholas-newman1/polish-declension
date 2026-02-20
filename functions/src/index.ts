@@ -57,15 +57,7 @@ function getUTCDateString(): string {
 function getNextMidnightUTC(): string {
   const now = new Date();
   const tomorrow = new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() + 1,
-      0,
-      0,
-      0,
-      0
-    )
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0)
   );
   return tomorrow.toISOString();
 }
@@ -123,10 +115,7 @@ export const translate = onCall<TranslateRequest, Promise<TranslateResponse>>(
   { secrets: [deeplApiKey] },
   async (request) => {
     if (!request.auth) {
-      throw new HttpsError(
-        'unauthenticated',
-        'You must be signed in to use the translator.'
-      );
+      throw new HttpsError('unauthenticated', 'You must be signed in to use the translator.');
     }
 
     const userId = request.auth.uid;
@@ -141,10 +130,7 @@ export const translate = onCall<TranslateRequest, Promise<TranslateResponse>>(
     }
 
     if (targetLang !== 'EN' && targetLang !== 'PL') {
-      throw new HttpsError(
-        'invalid-argument',
-        'Target language must be EN or PL.'
-      );
+      throw new HttpsError('invalid-argument', 'Target language must be EN or PL.');
     }
 
     if (context && context.length > 1000) {
@@ -159,18 +145,12 @@ export const translate = onCall<TranslateRequest, Promise<TranslateResponse>>(
     }
 
     if (rateLimitData.dailyCharsUsed + text.length > MAX_CHARS_PER_DAY) {
-      throw new HttpsError(
-        'resource-exhausted',
-        `RATE_LIMIT_DAILY:${resetTime}`
-      );
+      throw new HttpsError('resource-exhausted', `RATE_LIMIT_DAILY:${resetTime}`);
     }
 
     const apiKey = deeplApiKey.value();
     if (!apiKey) {
-      throw new HttpsError(
-        'failed-precondition',
-        'Translation service is not configured.'
-      );
+      throw new HttpsError('failed-precondition', 'Translation service is not configured.');
     }
 
     const sourceLang = targetLang === 'EN' ? 'PL' : 'EN';
@@ -214,16 +194,10 @@ export const translate = onCall<TranslateRequest, Promise<TranslateResponse>>(
         recentRequests: [...filteredRequests, Date.now()],
       });
 
-    if (
-      declensionCardId &&
-      typeof declensionCardId === 'number' &&
-      targetLang === 'EN'
-    ) {
+    if (declensionCardId && typeof declensionCardId === 'number' && targetLang === 'EN') {
       const cacheKey = cleanTextForCacheKey(text);
       if (cacheKey) {
-        const cardRef = db
-          .collection('declensionCards')
-          .doc(String(declensionCardId));
+        const cardRef = db.collection('declensionCards').doc(String(declensionCardId));
         await cardRef.update({
           [`translations.${cacheKey}`]: translatedText,
         });
@@ -266,52 +240,45 @@ interface GenerateExampleResponse {
   examples: GeneratedExample[];
 }
 
-export const generateExample = onCall<
-  GenerateExampleRequest,
-  Promise<GenerateExampleResponse>
->({ secrets: [openaiApiKey] }, async (request) => {
-  if (!request.auth?.token.admin) {
-    throw new HttpsError('permission-denied', 'Admin access required.');
-  }
+export const generateExample = onCall<GenerateExampleRequest, Promise<GenerateExampleResponse>>(
+  { secrets: [openaiApiKey] },
+  async (request) => {
+    if (!request.auth?.token.admin) {
+      throw new HttpsError('permission-denied', 'Admin access required.');
+    }
 
-  const { polish, english, partOfSpeech, gender, context } = request.data;
+    const { polish, english, partOfSpeech, gender, context } = request.data;
 
-  if (!polish || typeof polish !== 'string') {
-    throw new HttpsError('invalid-argument', 'Polish word is required.');
-  }
+    if (!polish || typeof polish !== 'string') {
+      throw new HttpsError('invalid-argument', 'Polish word is required.');
+    }
 
-  if (!english || typeof english !== 'string') {
-    throw new HttpsError(
-      'invalid-argument',
-      'English translation is required.'
-    );
-  }
+    if (!english || typeof english !== 'string') {
+      throw new HttpsError('invalid-argument', 'English translation is required.');
+    }
 
-  const apiKey = openaiApiKey.value();
-  if (!apiKey) {
-    throw new HttpsError(
-      'failed-precondition',
-      'AI service is not configured.'
-    );
-  }
+    const apiKey = openaiApiKey.value();
+    if (!apiKey) {
+      throw new HttpsError('failed-precondition', 'AI service is not configured.');
+    }
 
-  const openai = new OpenAI({ apiKey });
+    const openai = new OpenAI({ apiKey });
 
-  const promptParts = [
-    `Generate 2-3 natural Polish example sentences using the word "${polish}" (${english}).`,
-  ];
+    const promptParts = [
+      `Generate 2-3 natural Polish example sentences using the word "${polish}" (${english}).`,
+    ];
 
-  if (partOfSpeech) {
-    promptParts.push(`Part of speech: ${partOfSpeech}`);
-  }
-  if (gender) {
-    promptParts.push(`Gender: ${gender}`);
-  }
-  if (context) {
-    promptParts.push(`Additional context: ${context}`);
-  }
+    if (partOfSpeech) {
+      promptParts.push(`Part of speech: ${partOfSpeech}`);
+    }
+    if (gender) {
+      promptParts.push(`Gender: ${gender}`);
+    }
+    if (context) {
+      promptParts.push(`Additional context: ${context}`);
+    }
 
-  promptParts.push(`
+    promptParts.push(`
 Requirements:
 - If the word has multiple meanings, provide one sentence for each distinct meaning
 - If the word has only one meaning, provide 2-3 sentences showing different contexts/usages
@@ -326,49 +293,46 @@ Respond with ONLY valid JSON (no markdown):
 
 The "meaning" field is optional - only include it when distinguishing between different senses of the word.`);
 
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are a Polish language expert helping create example sentences for vocabulary flashcards. Always respond with valid JSON only, no markdown formatting.',
-      },
-      {
-        role: 'user',
-        content: promptParts.join('\n'),
-      },
-    ],
-    temperature: 0.8,
-    max_tokens: 500,
-  });
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a Polish language expert helping create example sentences for vocabulary flashcards. Always respond with valid JSON only, no markdown formatting.',
+        },
+        {
+          role: 'user',
+          content: promptParts.join('\n'),
+        },
+      ],
+      temperature: 0.8,
+      max_tokens: 500,
+    });
 
-  const content = completion.choices[0]?.message?.content;
-  if (!content) {
-    throw new HttpsError('internal', 'No response from AI.');
-  }
-
-  try {
-    const cleaned = stripMarkdownCodeFences(content);
-    const parsed = JSON.parse(cleaned) as GenerateExampleResponse;
-    if (
-      !parsed.examples ||
-      !Array.isArray(parsed.examples) ||
-      parsed.examples.length === 0
-    ) {
-      throw new Error('Invalid response structure');
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      throw new HttpsError('internal', 'No response from AI.');
     }
-    for (const ex of parsed.examples) {
-      if (!ex.polish || !ex.english) {
-        throw new Error('Invalid example structure');
+
+    try {
+      const cleaned = stripMarkdownCodeFences(content);
+      const parsed = JSON.parse(cleaned) as GenerateExampleResponse;
+      if (!parsed.examples || !Array.isArray(parsed.examples) || parsed.examples.length === 0) {
+        throw new Error('Invalid response structure');
       }
+      for (const ex of parsed.examples) {
+        if (!ex.polish || !ex.english) {
+          throw new Error('Invalid example structure');
+        }
+      }
+      return parsed;
+    } catch {
+      console.error('Failed to parse AI response:', content);
+      throw new HttpsError('internal', 'Failed to parse AI response.');
     }
-    return parsed;
-  } catch {
-    console.error('Failed to parse AI response:', content);
-    throw new HttpsError('internal', 'Failed to parse AI response.');
   }
-});
+);
 
 type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
@@ -422,10 +386,7 @@ export const generateSentences = onCall<
 
   const apiKey = openaiApiKey.value();
   if (!apiKey) {
-    throw new HttpsError(
-      'failed-precondition',
-      'AI service is not configured.'
-    );
+    throw new HttpsError('failed-precondition', 'AI service is not configured.');
   }
 
   const openai = new OpenAI({ apiKey });
@@ -546,10 +507,7 @@ export const discoverCurriculum = onCall<
 
   const apiKey = openaiApiKey.value();
   if (!apiKey) {
-    throw new HttpsError(
-      'failed-precondition',
-      'AI service is not configured.'
-    );
+    throw new HttpsError('failed-precondition', 'AI service is not configured.');
   }
 
   const openai = new OpenAI({ apiKey });
@@ -624,78 +582,79 @@ interface ProcessSentenceResponse {
   level: CEFRLevel;
 }
 
-export const processSentence = onCall<
-  ProcessSentenceRequest,
-  Promise<ProcessSentenceResponse>
->({ secrets: [deeplApiKey, openaiApiKey] }, async (request) => {
-  if (!request.auth?.token.admin) {
-    throw new HttpsError('permission-denied', 'Admin access required.');
-  }
+export const processSentence = onCall<ProcessSentenceRequest, Promise<ProcessSentenceResponse>>(
+  { secrets: [deeplApiKey, openaiApiKey] },
+  async (request) => {
+    if (!request.auth?.token.admin) {
+      throw new HttpsError('permission-denied', 'Admin access required.');
+    }
 
-  const { text, sourceLang } = request.data;
+    const { text, sourceLang } = request.data;
 
-  if (!text || typeof text !== 'string' || text.length > 500) {
-    throw new HttpsError('invalid-argument', 'Valid text required (max 500 chars).');
-  }
+    if (!text || typeof text !== 'string' || text.length > 500) {
+      throw new HttpsError('invalid-argument', 'Valid text required (max 500 chars).');
+    }
 
-  if (sourceLang !== 'EN' && sourceLang !== 'PL') {
-    throw new HttpsError('invalid-argument', 'Source language must be EN or PL.');
-  }
+    if (sourceLang !== 'EN' && sourceLang !== 'PL') {
+      throw new HttpsError('invalid-argument', 'Source language must be EN or PL.');
+    }
 
-  const deeplKey = deeplApiKey.value();
-  const openaiKey = openaiApiKey.value();
+    const deeplKey = deeplApiKey.value();
+    const openaiKey = openaiApiKey.value();
 
-  if (!deeplKey || !openaiKey) {
-    throw new HttpsError('failed-precondition', 'Services not configured.');
-  }
+    if (!deeplKey || !openaiKey) {
+      throw new HttpsError('failed-precondition', 'Services not configured.');
+    }
 
-  const targetLang = sourceLang === 'EN' ? 'PL' : 'EN';
-  const translateResponse = await fetch('https://api-free.deepl.com/v2/translate', {
-    method: 'POST',
-    headers: {
-      Authorization: `DeepL-Auth-Key ${deeplKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      text: [text],
-      source_lang: sourceLang,
-      target_lang: targetLang,
-    }),
-  });
-
-  if (!translateResponse.ok) {
-    throw new HttpsError('internal', 'Translation failed.');
-  }
-
-  const translateData = await translateResponse.json();
-  const translatedText = translateData.translations?.[0]?.text;
-
-  if (!translatedText) {
-    throw new HttpsError('internal', 'No translation returned.');
-  }
-
-  const polish = sourceLang === 'PL' ? text : translatedText;
-  const english = sourceLang === 'EN' ? text : translatedText;
-
-  const openai = new OpenAI({ apiKey: openaiKey });
-
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      {
-        role: 'system',
-        content: 'You assess Polish sentences for CEFR level. Respond with ONLY the level: A1, A2, B1, B2, C1, or C2.',
+    const targetLang = sourceLang === 'EN' ? 'PL' : 'EN';
+    const translateResponse = await fetch('https://api-free.deepl.com/v2/translate', {
+      method: 'POST',
+      headers: {
+        Authorization: `DeepL-Auth-Key ${deeplKey}`,
+        'Content-Type': 'application/json',
       },
-      { role: 'user', content: polish },
-    ],
-    temperature: 0.2,
-    max_tokens: 10,
-  });
+      body: JSON.stringify({
+        text: [text],
+        source_lang: sourceLang,
+        target_lang: targetLang,
+      }),
+    });
 
-  const levelResponse = completion.choices[0]?.message?.content?.trim().toUpperCase();
-  const level = (['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(levelResponse || '')
-    ? levelResponse
-    : 'B1') as CEFRLevel;
+    if (!translateResponse.ok) {
+      throw new HttpsError('internal', 'Translation failed.');
+    }
 
-  return { polish, english, level };
-});
+    const translateData = await translateResponse.json();
+    const translatedText = translateData.translations?.[0]?.text;
+
+    if (!translatedText) {
+      throw new HttpsError('internal', 'No translation returned.');
+    }
+
+    const polish = sourceLang === 'PL' ? text : translatedText;
+    const english = sourceLang === 'EN' ? text : translatedText;
+
+    const openai = new OpenAI({ apiKey: openaiKey });
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You assess Polish sentences for CEFR level. Respond with ONLY the level: A1, A2, B1, B2, C1, or C2.',
+        },
+        { role: 'user', content: polish },
+      ],
+      temperature: 0.2,
+      max_tokens: 10,
+    });
+
+    const levelResponse = completion.choices[0]?.message?.content?.trim().toUpperCase();
+    const level = (
+      ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(levelResponse || '') ? levelResponse : 'B1'
+    ) as CEFRLevel;
+
+    return { polish, english, level };
+  }
+);
