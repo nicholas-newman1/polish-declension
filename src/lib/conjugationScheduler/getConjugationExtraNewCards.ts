@@ -2,6 +2,7 @@ import type { Verb, ConjugationReviewDataStore, ConjugationFilters } from '../..
 import { getDrillableFormsForVerb, matchesFilters } from '../conjugationUtils';
 import getOrCreateConjugationFormReviewData from '../storage/getOrCreateConjugationFormReviewData';
 import { includesFormKey } from '../storage/helpers';
+import shuffleArray from '../utils/shuffleArray';
 import type { ConjugationSessionCard } from './types';
 
 export default function getConjugationExtraNewCards(
@@ -10,15 +11,12 @@ export default function getConjugationExtraNewCards(
   filters: ConjugationFilters,
   count: number
 ): ConjugationSessionCard[] {
-  const cards: ConjugationSessionCard[] = [];
+  const allCards: ConjugationSessionCard[] = [];
 
   for (const verb of verbs) {
-    if (cards.length >= count) break;
-
     const drillableForms = getDrillableFormsForVerb(verb);
 
     for (const form of drillableForms) {
-      if (cards.length >= count) break;
       if (!matchesFilters(form, filters)) continue;
 
       const reviewData = getOrCreateConjugationFormReviewData(form.fullFormKey, reviewStore);
@@ -26,10 +24,10 @@ export default function getConjugationExtraNewCards(
       const isNew = state === 0;
 
       if (isNew && !includesFormKey(reviewStore.newFormsToday, form.fullFormKey)) {
-        cards.push({ form, reviewData, isNew: true });
+        allCards.push({ form, reviewData, isNew: true });
       }
     }
   }
 
-  return cards;
+  return shuffleArray(allCards).slice(0, count);
 }

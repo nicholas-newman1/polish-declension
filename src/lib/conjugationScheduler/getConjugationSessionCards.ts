@@ -8,6 +8,7 @@ import { getDrillableFormsForVerb, matchesFilters } from '../conjugationUtils';
 import getOrCreateConjugationFormReviewData from '../storage/getOrCreateConjugationFormReviewData';
 import { includesFormKey } from '../storage/helpers';
 import isDue from '../fsrsUtils/isDue';
+import shuffleArray from '../utils/shuffleArray';
 import type { ConjugationSessionCard } from './types';
 
 function sortByDueDate(a: ConjugationSessionCard, b: ConjugationSessionCard): number {
@@ -23,7 +24,7 @@ export default function getConjugationSessionCards(
   settings: ConjugationDirectionSettings
 ): { reviewCards: ConjugationSessionCard[]; newCards: ConjugationSessionCard[] } {
   const reviewCards: ConjugationSessionCard[] = [];
-  const newCards: ConjugationSessionCard[] = [];
+  const allNewCards: ConjugationSessionCard[] = [];
   const remainingNewFormsToday = settings.newCardsPerDay - reviewStore.newFormsToday.length;
 
   for (const verb of verbs) {
@@ -38,10 +39,9 @@ export default function getConjugationSessionCards(
       if (isNew) {
         if (
           !includesFormKey(reviewStore.newFormsToday, form.fullFormKey) &&
-          newCards.length < remainingNewFormsToday &&
           matchesFilters(form, filters)
         ) {
-          newCards.push({ form, reviewData, isNew: true });
+          allNewCards.push({ form, reviewData, isNew: true });
         }
       } else if (isLearning) {
         if (!includesFormKey(reviewStore.reviewedToday, form.fullFormKey)) {
@@ -56,6 +56,7 @@ export default function getConjugationSessionCards(
   }
 
   reviewCards.sort(sortByDueDate);
+  const newCards = shuffleArray(allNewCards).slice(0, remainingNewFormsToday);
 
   return { reviewCards, newCards };
 }
