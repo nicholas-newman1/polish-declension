@@ -13,7 +13,7 @@ import {
   Divider,
   styled,
 } from '@mui/material';
-import { Person, Abc, School, Translate, BarChart, ArrowBack } from '@mui/icons-material';
+import { Person, Abc, School, Translate, BarChart, ArrowBack, Settings } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import getFirstName from '../lib/utils/getFirstName';
@@ -90,6 +90,11 @@ export function Header({ user, onSignOut, pageTitle, backPath }: HeaderProps) {
     navigate('/stats');
   };
 
+  const handleSettings = () => {
+    handleMenuClose();
+    navigate('/settings');
+  };
+
   return (
     <Stack
       direction="row"
@@ -161,6 +166,12 @@ export function Header({ user, onSignOut, pageTitle, backPath }: HeaderProps) {
                   <BarChart fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Statistics</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleSettings}>
+                <ListItemIcon>
+                  <Settings fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Settings</ListItemText>
               </MenuItem>
               <Divider />
               <MenuItem onClick={handleSignOut}>Sign out</MenuItem>

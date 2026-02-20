@@ -25,7 +25,9 @@ import { CustomVocabularyPage } from './pages/CustomVocabularyPage';
 import { CustomDeclensionPage } from './pages/CustomDeclensionPage';
 import { CustomSentencesPage } from './pages/CustomSentencesPage';
 import { StatsPage } from './pages/StatsPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { SentenceGeneratorPage } from './pages/SentenceGenerator';
+import { AppSettingsProvider } from './contexts/AppSettingsContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -35,8 +37,9 @@ createRoot(document.getElementById('root')!).render(
         <AuthProvider>
           <AuthGate>
             <ReviewDataProvider>
-              <TranslationProvider>
-                <CheatSheetProvider>
+              <AppSettingsProvider>
+                <TranslationProvider>
+                  <CheatSheetProvider>
                   <BrowserRouter>
                     <Routes>
                       <Route path="/login" element={<SignIn />} />
@@ -64,13 +67,15 @@ createRoot(document.getElementById('root')!).render(
                         <Route path="/my-declensions" element={<CustomDeclensionPage />} />
                         <Route path="/my-sentences" element={<CustomSentencesPage />} />
                         <Route path="/stats" element={<StatsPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/admin/generator" element={<SentenceGeneratorPage />} />
                       </Route>
                       <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
                   </BrowserRouter>
-                </CheatSheetProvider>
-              </TranslationProvider>
+                  </CheatSheetProvider>
+                </TranslationProvider>
+              </AppSettingsProvider>
             </ReviewDataProvider>
           </AuthGate>
         </AuthProvider>

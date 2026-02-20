@@ -8,6 +8,7 @@ import type { RatingIntervals } from '../../../components/RatingButtons';
 import { renderTappableText } from '../../../lib/renderTappableText';
 import type { Sentence, CEFRLevel } from '../../../types/sentences';
 import type { TranslationDirection } from '../../../types/common';
+import { useAppSettings } from '../../../contexts/AppSettingsContext';
 
 interface SentenceFlashcardProps {
   sentence: Sentence;
@@ -80,6 +81,7 @@ export function SentenceFlashcard({
   onDailyLimitReached,
   onUpdateTranslation,
 }: SentenceFlashcardProps) {
+  const { settings: appSettings } = useAppSettings();
   const [revealed, setRevealed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -125,24 +127,24 @@ export function SentenceFlashcard({
 
   // Auto-play audio when card opens (for pl-to-en) or when revealed (for en-to-pl)
   useEffect(() => {
-    if (!sentence.audioUrl || hasAutoPlayedRef.current) return;
+    if (!appSettings.autoPlayAudio || !sentence.audioUrl || hasAutoPlayedRef.current) return;
 
     if (isPolishToEnglish) {
       // Polish is the question - play immediately when card opens
       hasAutoPlayedRef.current = true;
       queueMicrotask(playAudio);
     }
-  }, [sentence.id, isPolishToEnglish, sentence.audioUrl, playAudio]);
+  }, [sentence.id, isPolishToEnglish, sentence.audioUrl, playAudio, appSettings.autoPlayAudio]);
 
   useEffect(() => {
-    if (!sentence.audioUrl || hasAutoPlayedRef.current) return;
+    if (!appSettings.autoPlayAudio || !sentence.audioUrl || hasAutoPlayedRef.current) return;
 
     if (!isPolishToEnglish && revealed) {
       // Polish is the answer - play when revealed
       hasAutoPlayedRef.current = true;
       queueMicrotask(playAudio);
     }
-  }, [revealed, isPolishToEnglish, sentence.audioUrl, playAudio]);
+  }, [revealed, isPolishToEnglish, sentence.audioUrl, playAudio, appSettings.autoPlayAudio]);
   const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
 
   const tappableTextOptions = useMemo(
