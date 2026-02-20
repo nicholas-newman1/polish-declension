@@ -3,6 +3,7 @@ import getOrCreateDeclensionCardReviewData from '../storage/getOrCreateDeclensio
 import { includesDeclensionCardId } from '../storage/helpers';
 import isDue from '../fsrsUtils/isDue';
 import sortByDueDate from '../fsrsUtils/sortByDueDate';
+import shuffleArray from '../utils/shuffleArray';
 import type { DeclensionFilters, DeclensionSessionCard } from './types';
 import matchesDeclensionFilters from './matchesFilters';
 
@@ -13,9 +14,9 @@ export default function getDeclensionSessionCards(
   settings: DeclensionSettings
 ): { reviewCards: DeclensionSessionCard[]; newCards: DeclensionSessionCard[] } {
   const customReviewCards: DeclensionSessionCard[] = [];
-  const customNewCards: DeclensionSessionCard[] = [];
+  const allCustomNewCards: DeclensionSessionCard[] = [];
   const systemReviewCards: DeclensionSessionCard[] = [];
-  const systemNewCards: DeclensionSessionCard[] = [];
+  const allSystemNewCards: DeclensionSessionCard[] = [];
   const remainingNewCardsToday = settings.newCardsPerDay - reviewStore.newCardsToday.length;
 
   for (const card of allCards) {
@@ -24,14 +25,13 @@ export default function getDeclensionSessionCards(
     const isNew = state === 0;
     const isLearning = state === 1 || state === 3;
     const isCustom = card.isCustom === true;
-    const targetNewCards = isCustom ? customNewCards : systemNewCards;
+    const targetNewCards = isCustom ? allCustomNewCards : allSystemNewCards;
     const targetReviewCards = isCustom ? customReviewCards : systemReviewCards;
 
     if (isNew) {
       if (
         matchesDeclensionFilters(card, filters) &&
-        !includesDeclensionCardId(reviewStore.newCardsToday, card.id) &&
-        customNewCards.length + systemNewCards.length < remainingNewCardsToday
+        !includesDeclensionCardId(reviewStore.newCardsToday, card.id)
       ) {
         targetNewCards.push({ card, reviewData, isNew: true });
       }
@@ -49,8 +49,12 @@ export default function getDeclensionSessionCards(
   customReviewCards.sort(sortByDueDate);
   systemReviewCards.sort(sortByDueDate);
 
+  const shuffledCustomNew = shuffleArray(allCustomNewCards);
+  const shuffledSystemNew = shuffleArray(allSystemNewCards);
+  const newCards = [...shuffledCustomNew, ...shuffledSystemNew].slice(0, remainingNewCardsToday);
+
   return {
     reviewCards: [...customReviewCards, ...systemReviewCards],
-    newCards: [...customNewCards, ...systemNewCards],
+    newCards,
   };
 }

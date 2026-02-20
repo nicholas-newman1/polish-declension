@@ -1,6 +1,7 @@
 import type { DeclensionCard, DeclensionReviewDataStore } from '../../types';
 import getOrCreateDeclensionCardReviewData from '../storage/getOrCreateDeclensionCardReviewData';
 import { includesDeclensionCardId } from '../storage/helpers';
+import shuffleArray from '../utils/shuffleArray';
 import type { DeclensionFilters, DeclensionSessionCard } from './types';
 import matchesDeclensionFilters from './matchesFilters';
 
@@ -10,8 +11,8 @@ export default function getDeclensionExtraNewCards(
   filters: DeclensionFilters,
   count: number
 ): DeclensionSessionCard[] {
-  const customNewCards: DeclensionSessionCard[] = [];
-  const systemNewCards: DeclensionSessionCard[] = [];
+  const allCustomNewCards: DeclensionSessionCard[] = [];
+  const allSystemNewCards: DeclensionSessionCard[] = [];
 
   for (const card of allCards) {
     if (!matchesDeclensionFilters(card, filters)) continue;
@@ -20,11 +21,12 @@ export default function getDeclensionExtraNewCards(
     const isNew = reviewData.fsrsCard.state === 0;
 
     if (isNew && !includesDeclensionCardId(reviewStore.newCardsToday, card.id)) {
-      const targetCards = card.isCustom ? customNewCards : systemNewCards;
+      const targetCards = card.isCustom ? allCustomNewCards : allSystemNewCards;
       targetCards.push({ card, reviewData, isNew: true });
-      if (customNewCards.length + systemNewCards.length >= count) break;
     }
   }
 
-  return [...customNewCards, ...systemNewCards];
+  const shuffledCustom = shuffleArray(allCustomNewCards);
+  const shuffledSystem = shuffleArray(allSystemNewCards);
+  return [...shuffledCustom, ...shuffledSystem].slice(0, count);
 }
