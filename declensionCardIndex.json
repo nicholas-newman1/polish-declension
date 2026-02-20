@@ -1993,5 +1993,1888 @@
     "case": "Genitive",
     "gender": "Neuter",
     "number": "Singular"
+  },
+  {
+    "id": 286,
+    "front": "Szukam mojej ___ (książka).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 287,
+    "front": "Nie znam tej ___ (droga).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 288,
+    "front": "Potrzebuję trochę ___ (sól).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 289,
+    "front": "Nie widzę jego ___ (dłoń).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 290,
+    "front": "Wspominam dni mojej ___ (młodość).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 291,
+    "front": "Szukam ___ (radość) w życiu.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 292,
+    "front": "Nie tracę ___ (nadzieja).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 293,
+    "front": "Pies szuka ___ (kość).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 294,
+    "front": "Słucham tej ___ (pieśń).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 295,
+    "front": "Bez ___ (przyjaźń) życie jest smutne.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 296,
+    "front": "Nie widzę ___ (żaba).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 297,
+    "front": "Światło ___ (lampa) jest za słabe.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 298,
+    "front": "Nie lubię ___ (zima).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 299,
+    "front": "Zapach świeżej ___ (trawa) jest przyjemny.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 300,
+    "front": "Słuchamy prognozy ___ (pogoda).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 301,
+    "front": "Szukam tej ___ (kobieta).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 302,
+    "front": "To jest pokój mojej ___ (siostra).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 303,
+    "front": "Użyłam ___ (igła) do szycia.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 304,
+    "front": "Bzyczenie ___ (mucha) mnie denerwuje.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 306,
+    "front": "Zapach ___ (róża) jest piękny.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 307,
+    "front": "Kolory ___ (tęcza) są wspaniałe.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 308,
+    "front": "To jest prezent dla mojej ___ (żona).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 309,
+    "front": "Nie boję się ___ (koza).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 310,
+    "front": "Mieszkam na końcu ___ (ulica).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 312,
+    "front": "Nie mam wielu ___ (dom) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 313,
+    "front": "W restauracji jest dużo ___ (stół) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 314,
+    "front": "Na parkingu jest pięć ___ (samochód) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 315,
+    "front": "W parku bawi się grupa ___ (chłopiec) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 316,
+    "front": "To jest klub dla ___ (ojciec) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 317,
+    "front": "Nie widzę swoich ___ (palec) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 318,
+    "front": "Policja szuka ___ (złodziej) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 319,
+    "front": "Jest wiele pięknych ___ (kraj) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 320,
+    "front": "Nie rozumiem tych ___ (zwyczaj) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 321,
+    "front": "Na łące pasie się stado ___ (koń) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 322,
+    "front": "Na plaży jest dużo ___ (kamień) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 324,
+    "front": "W szkole jest wielu ___ (nauczyciel) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 325,
+    "front": "Prawa ___ (obywatel) (pl) są ważne.",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 327,
+    "front": "W hotelu jest dużo ___ (gość) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 328,
+    "front": "Na ziemi leży dużo ___ (liść) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 329,
+    "front": "Nie obcinam sobie ___ (paznokieć) (pl).",
+    "case": "Genitive",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 330,
+    "front": "Nie lubię długich ___ (noc) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 331,
+    "front": "Jest wiele ważnych ___ (rzecz) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 332,
+    "front": "Kot złapał pięć ___ (mysz) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 333,
+    "front": "Nie widzę ich ___ (twarz) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 335,
+    "front": "Mam dużo ___ (myśl) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 337,
+    "front": "Nie czuję swoich ___ (dłoń) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 338,
+    "front": "Słucham starych ___ (pieśń) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 339,
+    "front": "Bez prawdziwych ___ (przyjaźń) (pl) jest smutno.",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 340,
+    "front": "Mam dużo ___ (książka) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 341,
+    "front": "W tym mieście jest wiele ___ (kobieta) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 342,
+    "front": "W pokoju jest pięć ___ (lampa) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 343,
+    "front": "Na niebie są miliony ___ (gwiazda) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 344,
+    "front": "Mam pięć ___ (siostra) (pl).",
+    "case": "Genitive",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 345,
+    "front": "W domu jest sześć ___ (okno) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 346,
+    "front": "Nie rozumiem tych ___ (słowo) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 347,
+    "front": "Szwajcaria nie ma dostępu do ___ (morze) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 348,
+    "front": "Szukam wolnych ___ (miejsce) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 349,
+    "front": "W lesie jest wiele starych ___ (drzewo) (pl).",
+    "case": "Genitive",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 350,
+    "front": "Mówię ___ (pan) prawdę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 351,
+    "front": "Pokazuję ___ (świat) nowe technologie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 352,
+    "front": "Wysyłam ___ (dyrektor) raport.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 353,
+    "front": "Dziękuję ___ (Bóg) za wszystko.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 354,
+    "front": "Daję ___ (chłop) narzędzia.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 355,
+    "front": "Opowiadam ___ (wujek) historię.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 356,
+    "front": "Rzucam ___ (lew) mięso.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 357,
+    "front": "Daję ___ (wół) siano.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 358,
+    "front": "Opowiadam ___ (dziadek) o szkole.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 359,
+    "front": "Oddaję ___ (kat) miecz.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 360,
+    "front": "Służę ___ (car) wiernie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 361,
+    "front": "Daję ___ (kelner) napiwek.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 362,
+    "front": "Nie ufam ___ (lis).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 364,
+    "front": "Gratuluję ___ (aktor) sukcesu.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 365,
+    "front": "Przypatruję się temu ___ (las).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 366,
+    "front": "Dziwię się temu ___ (dom).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 367,
+    "front": "Dziękuję ___ (profesor) za wykład.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 369,
+    "front": "Przypatruję się jej ___ (bok).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 370,
+    "front": "Pomagam ___ (prawnik) w sprawie.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 371,
+    "front": "Daję ___ (ojciec) prezent.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 372,
+    "front": "Pomagam ___ (chłopiec) z zadaniem.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 373,
+    "front": "Nie ufam ___ (polityk).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 374,
+    "front": "Doradzam ___ (młodzieniec) ostrożność.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 375,
+    "front": "Pomagam ___ (starzec) przejść.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 376,
+    "front": "Dziękuję ___ (pisarz) za książkę.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 377,
+    "front": "Płacę ___ (kupiec) za towar.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 378,
+    "front": "Spowiadam się ___ (ksiądz).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 379,
+    "front": "Gratuluję ___ (muzyk) występu.",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 380,
+    "front": "Kłaniam się ___ (książę).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 381,
+    "front": "Nie wierzę ___ (diabeł).",
+    "case": "Dative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 382,
+    "front": "Daję ___ (matka) kwiaty.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 383,
+    "front": "Pomagam ___ (córka) z lekcjami.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 384,
+    "front": "Opowiadam ___ (babka) o pracy.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 385,
+    "front": "Przypatruję się mojej ___ (noga).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 386,
+    "front": "Dziwię się tej ___ (droga).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 387,
+    "front": "Dziękuję tej ___ (planeta) za życie.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 388,
+    "front": "Przypatruję się ___ (woda).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 389,
+    "front": "Dziwię się jego ___ (broda).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 390,
+    "front": "Mówię ___ (żona) prawdę.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 391,
+    "front": "Nie wierzę tej ___ (strona).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 392,
+    "front": "Pomagam ___ (siostra) w kuchni.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 393,
+    "front": "Kłaniam się tej ___ (góra).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 394,
+    "front": "Dziękuję ___ (szkoła) za edukację.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 395,
+    "front": "Przypatruję się tej ___ (igła).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 396,
+    "front": "Mówię ___ (klasa) o teście.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 397,
+    "front": "Daję ___ (koza) siano.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 398,
+    "front": "Przypatruję się tej ___ (mucha).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 399,
+    "front": "Przyglądam się ___ (kuchnia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 400,
+    "front": "Przypatruję się tej ___ (pralnia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 401,
+    "front": "Dziwię się tej ___ (kawiarnia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 402,
+    "front": "Dziękuję tej ___ (piekarnia) za chleb.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 403,
+    "front": "Przypatruję się ___ (sypialnia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 404,
+    "front": "Przypatruję się jej ___ (szyja).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 405,
+    "front": "Idę ku tej ___ (aleja).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 406,
+    "front": "Dziękuję ___ (ziemia) za plony.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 407,
+    "front": "Poświęcam czas ___ (historia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 408,
+    "front": "Oddaję się ___ (religia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 409,
+    "front": "Poświęcam czas ___ (chemia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 410,
+    "front": "Oddaję się ___ (geografia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 411,
+    "front": "Poświęcam czas ___ (biologia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 412,
+    "front": "Oddaję się ___ (filozofia).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 413,
+    "front": "Przypatruję się tej ___ (fala).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 414,
+    "front": "Oddaję się tej ___ (rola).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 415,
+    "front": "Poświęcam tej ___ (chwila) uwagę.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 416,
+    "front": "Oddaję się ___ (wola) bożej.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 417,
+    "front": "Przypatruję się tej ___ (kość).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 418,
+    "front": "Przysłuchuję się ___ (pieśń).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 419,
+    "front": "Oddaję się ___ (myśl).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 420,
+    "front": "Przypatruję się tej ___ (sól).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 421,
+    "front": "Ufam jej ___ (dłoń).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 422,
+    "front": "Dziękuję temu ___ (miasto) za wszystko.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 423,
+    "front": "Oddaję cześć ___ (niebo).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 424,
+    "front": "Daję ___ (dziecko) prezent.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 425,
+    "front": "Poświęcam czas swojemu ___ (ciało).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 426,
+    "front": "Przypatruję się temu ___ (jezioro).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 427,
+    "front": "Nie ufam ___ (złoto).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 428,
+    "front": "Dziwię się temu ___ (światło).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 429,
+    "front": "Ufam swojemu ___ (serce).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 431,
+    "front": "Kłaniam się ___ (słońce).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 432,
+    "front": "Poświęcam czas ___ (zdrowie).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 433,
+    "front": "Nie wierzę ___ (szczęście).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 434,
+    "front": "Poświęcam czas temu ___ (zadanie).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 435,
+    "front": "Dziwię się temu ___ (mieszkanie).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 436,
+    "front": "Daję ___ (kobieta) (pl) kwiaty.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 437,
+    "front": "Pomagam swoim ___ (córka) (pl) z lekcjami.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 438,
+    "front": "Dziękuję ___ (siostra) (pl) za pomoc.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 439,
+    "front": "Życzę wszystkim ___ (matka) (pl) szczęścia.",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 440,
+    "front": "Przypatruję się ___ (gwiazda) (pl).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 442,
+    "front": "Nie ufam swoim ___ (myśl) (pl).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 443,
+    "front": "Dziwię się jej ___ (dłoń) (pl).",
+    "case": "Dative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 444,
+    "front": "Daję ___ (dziecko) (pl) słodycze.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 445,
+    "front": "Pomagam małym ___ (miasto) (pl) w rozwoju.",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 446,
+    "front": "Kłaniam się starym ___ (drzewo) (pl).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 447,
+    "front": "Nie wierzę jego ___ (słowo) (pl).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 448,
+    "front": "Przypatruję się ___ (okno) (pl).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 449,
+    "front": "Poświęcam czas ___ (zadanie) (pl).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 450,
+    "front": "Dziwię się tym ___ (pytanie) (pl).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 451,
+    "front": "Oddaję cześć ___ (morze) (pl).",
+    "case": "Dative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 452,
+    "front": "Widzę ___ (pies).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 453,
+    "front": "Mam ___ (kot).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 454,
+    "front": "Znam twojego ___ (brat).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 455,
+    "front": "Spotykam ___ (nauczyciel).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 456,
+    "front": "Lubię mojego ___ (przyjaciel).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 457,
+    "front": "Widzę ___ (krzesło).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 458,
+    "front": "Jem ___ (jajko).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 459,
+    "front": "Piję ___ (piwo).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 460,
+    "front": "Znam to ___ (miasto).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 461,
+    "front": "Oglądam ___ (morze).",
+    "case": "Accusative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 462,
+    "front": "Widzę ___ (stół) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 463,
+    "front": "Mam ___ (dom) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 464,
+    "front": "Kupuję ___ (telefon) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 465,
+    "front": "Lubię ___ (pies) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 466,
+    "front": "Widzę ___ (kot) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 467,
+    "front": "Widzę ___ (mężczyzna) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 468,
+    "front": "Spotykam ___ (chłopiec) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 469,
+    "front": "Znam ___ (nauczyciel) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 470,
+    "front": "Uczę ___ (student) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 471,
+    "front": "Widzę ___ (lekarz) (pl).",
+    "case": "Accusative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 472,
+    "front": "Interesuję się tym ___ (ptak).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 473,
+    "front": "Jestem ___ (człowiek).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 474,
+    "front": "Droga jest pokryta ___ (śnieg).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 475,
+    "front": "On jest moim ___ (wróg).",
+    "case": "Instrumental",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 476,
+    "front": "Jem śniadanie z ___ (herbata).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 477,
+    "front": "Zajmuję się ___ (praca).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 478,
+    "front": "Kiwam ___ (głowa).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 479,
+    "front": "Piszę ___ (ręka).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 480,
+    "front": "Stoję przed ___ (okno).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 481,
+    "front": "Częstuję gości ___ (wino).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 482,
+    "front": "Interesuję się tym ___ (pole).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 483,
+    "front": "Opalamy się pod ___ (słońce).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 484,
+    "front": "Częstuję cię ___ (jabłko).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 485,
+    "front": "Piję kawę z ___ (mleko).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 486,
+    "front": "Stoję przed ___ (łóżko).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 487,
+    "front": "Opiekuję się ___ (dziecko).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 488,
+    "front": "Podpisuję się swoim ___ (imię).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 489,
+    "front": "Interesuję się tym ___ (zwierzę).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 490,
+    "front": "Stoję przed ___ (książka) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 491,
+    "front": "Jesteśmy zachwyceni ___ (góra) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 492,
+    "front": "Klaszczemy ___ (ręka) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 493,
+    "front": "Ruszam ___ (noga) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 494,
+    "front": "Pracuję ___ (noc) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 495,
+    "front": "Pies bawi się ___ (kość) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 496,
+    "front": "Zasłaniam oczy ___ (dłoń) (pl).",
+    "case": "Instrumental",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 497,
+    "front": "Stoję przed ___ (okno) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 498,
+    "front": "Interesuję się polskimi ___ (miasto) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 499,
+    "front": "Bawię się ___ (słowo) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 500,
+    "front": "Jadę między ___ (pole) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 501,
+    "front": "Fascynuję się ___ (morze) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 502,
+    "front": "Opiekuję się ___ (dziecko) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 503,
+    "front": "Interesuję się dzikimi ___ (zwierzę) (pl).",
+    "case": "Instrumental",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 504,
+    "front": "Pracuję w ___ (bank).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 505,
+    "front": "Spaceruję po ___ (park).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 506,
+    "front": "Kot siedzi na ___ (dach).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 507,
+    "front": "Myślę o tym ___ (chłopiec).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 508,
+    "front": "Jest krew na ___ (nóż).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 509,
+    "front": "Jadę na ___ (koń).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 510,
+    "front": "Rozmawiamy o ___ (nauczyciel).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 511,
+    "front": "Siedzę w ___ (samochód).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 512,
+    "front": "Pracuję w ___ (ogród).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 513,
+    "front": "Spaceruję po ___ (las).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 514,
+    "front": "Liście tańczą na ___ (wiatr).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 515,
+    "front": "Książka leży na ___ (stół).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 516,
+    "front": "Opowiadam o moim ___ (plan).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 517,
+    "front": "Spotykam go przy ___ (sklep).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 518,
+    "front": "Żyjemy w pięknym ___ (świat).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Singular"
+  },
+  {
+    "id": 519,
+    "front": "Trzymam to w ___ (ręka).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 520,
+    "front": "Czytam o tym w ___ (książka).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 521,
+    "front": "Mam ranę na ___ (noga).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 523,
+    "front": "Mówię o tej ___ (planeta).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 524,
+    "front": "Ryby pływają w ___ (woda).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 525,
+    "front": "Stoję na ___ (góra).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 526,
+    "front": "Uczę się w ___ (szkoła).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 527,
+    "front": "Gotuję w ___ (kuchnia).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 528,
+    "front": "Spotykamy się przy tej ___ (aleja).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 529,
+    "front": "Mówię o ___ (historia).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 530,
+    "front": "Surfuję na ___ (fala).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 531,
+    "front": "Pracuję w ___ (noc).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 532,
+    "front": "Widzę smutek na jej ___ (twarz).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Singular"
+  },
+  {
+    "id": 534,
+    "front": "Siedzę przy ___ (okno).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 535,
+    "front": "Myślę o tym ___ (słowo).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 536,
+    "front": "Mieszkam w ___ (miasto).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 537,
+    "front": "Czuję ból w ___ (ciało).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 538,
+    "front": "Ptaki latają na ___ (niebo).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 539,
+    "front": "Jest robak w ___ (jabłko).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 540,
+    "front": "Coś pływa w ___ (mleko).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 542,
+    "front": "Pracuję na ___ (pole).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 543,
+    "front": "Pływam w ___ (morze).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 544,
+    "front": "Czuję radość w ___ (serce).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 545,
+    "front": "Mówię o jej ___ (imię).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 546,
+    "front": "Opowiadam o tym ___ (zwierzę).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Singular"
+  },
+  {
+    "id": 547,
+    "front": "Mieszkamy w nowych ___ (dom) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 548,
+    "front": "Jeździmy w ___ (samochód) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 549,
+    "front": "Spaceruję po polskich ___ (las) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 550,
+    "front": "Podróżuję po różnych ___ (kraj) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 551,
+    "front": "Śpimy w ___ (hotel) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 552,
+    "front": "Mówię o ___ (film) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 553,
+    "front": "Myślę o moich ___ (przyjaciel) (pl).",
+    "case": "Locative",
+    "gender": "Masculine",
+    "number": "Plural"
+  },
+  {
+    "id": 554,
+    "front": "Myślę o tych ___ (kobieta) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 555,
+    "front": "Czytam o tym w ___ (książka) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 556,
+    "front": "Opowiadam o moich ___ (siostra) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 557,
+    "front": "Trzymam to w ___ (ręka) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 558,
+    "front": "Stoję na ___ (noga) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 559,
+    "front": "Pracuję po ___ (noc) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 560,
+    "front": "Boli mnie w ___ (kość) (pl).",
+    "case": "Locative",
+    "gender": "Feminine",
+    "number": "Plural"
+  },
+  {
+    "id": 561,
+    "front": "Siedzę przy ___ (okno) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 562,
+    "front": "Podróżuję po europejskich ___ (miasto) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 563,
+    "front": "Myślę o tych ___ (słowo) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 564,
+    "front": "Pracuję na ___ (pole) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 565,
+    "front": "Pływam w ciepłych ___ (morze) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 566,
+    "front": "Opowiadam o ___ (dziecko) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
+  },
+  {
+    "id": 567,
+    "front": "Czytam o dzikich ___ (zwierzę) (pl).",
+    "case": "Locative",
+    "gender": "Neuter",
+    "number": "Plural"
   }
 ]
