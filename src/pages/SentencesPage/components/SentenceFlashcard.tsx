@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import type { Grade } from 'ts-fsrs';
-import { Box, Chip, Stack, Typography } from '@mui/material';
+import { Box, Chip, IconButton, Stack, Typography } from '@mui/material';
+import { VolumeUp } from '@mui/icons-material';
 import { styled } from '../../../lib/styled';
 import { FlashcardShell } from '../../../components/FlashcardShell';
 import type { RatingIntervals } from '../../../components/RatingButtons';
@@ -80,8 +81,68 @@ export function SentenceFlashcard({
   onUpdateTranslation,
 }: SentenceFlashcardProps) {
   const [revealed, setRevealed] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasAutoPlayedRef = useRef(false);
+
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setIsPlaying(false);
+    }
+  }, []);
+
+  const playAudio = useCallback(() => {
+    if (!sentence.audioUrl) return;
+
+    stopAudio();
+
+    const audio = new Audio(sentence.audioUrl);
+    audioRef.current = audio;
+    setIsPlaying(true);
+
+    audio.onended = () => setIsPlaying(false);
+    audio.onerror = () => setIsPlaying(false);
+    audio.play().catch(() => setIsPlaying(false));
+  }, [sentence.audioUrl, stopAudio]);
+
+  const toggleAudio = useCallback(() => {
+    if (isPlaying) {
+      stopAudio();
+    } else {
+      playAudio();
+    }
+  }, [isPlaying, stopAudio, playAudio]);
+
+  // Reset auto-play flag and stop audio when card changes
+  useEffect(() => {
+    hasAutoPlayedRef.current = false;
+    return () => stopAudio();
+  }, [sentence.id, stopAudio]);
 
   const isPolishToEnglish = direction === 'pl-to-en';
+
+  // Auto-play audio when card opens (for pl-to-en) or when revealed (for en-to-pl)
+  useEffect(() => {
+    if (!sentence.audioUrl || hasAutoPlayedRef.current) return;
+
+    if (isPolishToEnglish) {
+      // Polish is the question - play immediately when card opens
+      hasAutoPlayedRef.current = true;
+      queueMicrotask(playAudio);
+    }
+  }, [sentence.id, isPolishToEnglish, sentence.audioUrl, playAudio]);
+
+  useEffect(() => {
+    if (!sentence.audioUrl || hasAutoPlayedRef.current) return;
+
+    if (!isPolishToEnglish && revealed) {
+      // Polish is the answer - play when revealed
+      hasAutoPlayedRef.current = true;
+      queueMicrotask(playAudio);
+    }
+  }, [revealed, isPolishToEnglish, sentence.audioUrl, playAudio]);
   const directionLabel = isPolishToEnglish ? 'Polish → English' : 'English → Polish';
 
   const tappableTextOptions = useMemo(
@@ -127,7 +188,22 @@ export function SentenceFlashcard({
       }}
     >
       <DirectionLabel>{directionLabel}</DirectionLabel>
-      <LevelChip $level={sentence.level} label={sentence.level} />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <LevelChip $level={sentence.level} label={sentence.level} />
+        {sentence.audioUrl && (
+          <IconButton
+            onClick={toggleAudio}
+            size="small"
+            sx={{
+              color: isPlaying ? 'error.main' : 'text.secondary',
+              p: 0.5,
+            }}
+            aria-label={isPlaying ? 'Stop audio' : 'Play audio'}
+          >
+            <VolumeUp fontSize="small" />
+          </IconButton>
+        )}
+      </Box>
     </Box>
   );
 
@@ -167,4 +243,3 @@ export function SentenceFlashcard({
 
 // Re-export RatingIntervals for backwards compatibility
 export type { RatingIntervals };
-

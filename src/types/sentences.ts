@@ -19,6 +19,7 @@ export interface Sentence {
   level: CEFRLevel;
   tags: string[];
   translations?: Record<string, string>;
+  audioUrl?: string;
   createdAt?: unknown;
   isCustom?: boolean;
 }
